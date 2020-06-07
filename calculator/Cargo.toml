@@ -1,0 +1,30 @@
+[package]
+name = "calculator"
+version = "0.0.0"
+authors = ["Ehsan M. Kermani <ehsanmo1367@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+pest = "2.1"
+pest_derive = "2.1"
+anyhow = "1.0"
+inkwell = { git = "https://github.com/TheDan64/inkwell", branch = "llvm10-0" }  # use branch according to your llvm version
+rustyline = "6.2"
+cfg-if = "0.1"
+
+[lib]
+path = "src/lib.rs"
+
+[[bin]]
+name = "main"
+path = "src/main.rs"
+test = false
+
+[[bin]]
+name = "repl"
+test = false
+
+[features]
+jit = []
+interpreter = []
+vm = []

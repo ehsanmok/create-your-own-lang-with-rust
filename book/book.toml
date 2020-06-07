@@ -1,0 +1,17 @@
+[book]
+authors = ["Ehsan M. Kermani"]
+language = "en"
+multilingual = false
+src = "src"
+title = "Create Your Own Programming Language with Rust"
+version = "0.1"
+
+[output.html]
+additional-css = ["theme/custom.css"]
+
+[output.html.search]
+enable = true
+
+[preprocessor.toc]
+command = "mdbook-toc"
+renderer = ["html"]

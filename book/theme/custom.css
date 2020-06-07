@@ -1,0 +1,15 @@
+code {
+    font: 18px Monaco,"Courier New","DejaVu Sans Mono","Bitstream Vera Sans Mono",monospace;
+    border-radius: 3px;
+    background-clip: padding-box;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    padding: 0px 3px;
+    display: inline-block;
+    margin: 0px;
+  }
+
+  .filename {
+    font-size: .8em;
+    font-weight: 600;
+  }
