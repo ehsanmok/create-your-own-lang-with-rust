@@ -12,7 +12,7 @@ All these three components are intertwined together and learning their connectio
 
 ### Instructions and the Machine Language
 
-If you want to create a "computer" from scratch, you need to start by defining an *abstract model*a for your computer. This abstract model is also referred to as **Instruction Set Architecture (ISA)** (instruction set or simply *instructions*). A CPU is an *implementation* of such ISA. A standard ISA defines its basic elements such as *data types*, *register* values, various hardware supports, I/O etc. and they all make up the  *lowest-level language* of computing which is the **Machine Language Instructions.**
+If you want to create a "computer" from scratch, you need to start by defining an *abstract model* for your computer. This abstract model is also referred to as **Instruction Set Architecture (ISA)** (instruction set or simply *instructions*). A CPU is an *implementation* of such ISA. A standard ISA defines its basic elements such as *data types*, *register* values, various hardware supports, I/O etc. and they all make up the  *lowest-level language* of computing which is the **Machine Language Instructions.**
 
 Instructions are comprised of *instruction code* (aka *operation code*, in short **opcode** or p-code) which are directly executed by CPU. An opcode can either have operand(s) or no operand. For example, in a 8-bits machine where instructions are 8-bits an opcode *load* is defined by the 4-bits **0011** following by the second 4-bits as operand with **0101** make up an instruction **00110101** in the Machine Language while the opcode for *incrementing by 1* of the previously loaded value could be **1000** with no operand.
 
@@ -40,7 +40,7 @@ Compiler is any program that translates (maps, encodes) a language A to language
 
 To distinguish between a program that translates Python to Assembly vs. Python to Java, the former is called compiler and the latter **transpiler**.
 
-### *Relativity of Terms and Definitions*
+#### *Relativity of Terms and Definitions*
 
 There is a relativity notion in most of terms involved here. Assembly is a *high-level* language comparing to the Machine Language but is considered *low-level* when viewing it from C/C++/Rust. High-level and low-level are relative terms conveying the amount of *abstractions* involved.
 
@@ -70,10 +70,10 @@ Code generation for a compiler is when the compiler *converts an IR to some Mach
 
 ## Conclusion
 
-In conclusion, we want to settle the one of the most frequently asked questions:
+In conclusion, we want to settle one of the most frequently asked questions:
 
 ## <span style="color:blue">Is Python (or a language X) Compiled or Interpreted?</span>
 
-This is in fact a <span style="color:red">WRONG</span> question to ask!
+This is in fact the <span style="color:red">WRONG</span> question to ask!
 
 Being AOT compiled, JIT compiled or interpreted is **implementation-dependent**. For example, the standard Python is [**CPython**](https://www.python.org/) which compiles a Python source code (in CPython VM) to CPython Bytecode (content of `.pyc`) and **interprets** the Bytecode. However, another implementation of Python is [**PyPy**](https://www.pypy.org/) which (more or less) compiles a Python source code (in PyPy VM) to PyPy Bytecode and **JIT** compiles the PyPy Bytecode to the Machine Code (is usually faster than CPython interpreter).

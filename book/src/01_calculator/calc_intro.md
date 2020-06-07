@@ -7,13 +7,12 @@ If you haven't cloned the [GitHub](https://github.com/ehsanmok/create-your-own-l
 ```text
 git clone https://github.com/ehsanmok/create-your-own-lang-with-rust
 cd create-your-own-lang-with-rust/calculator
-cargo test --tests
 ```
 
 To start, we have `1 + 1;` in [examples/simple.calc](../../../calculator/src/examples/simple.calc) where you can compile with
 
 ```text
-cargo build --bin main // create the executable
+cargo build --bin main // create the CLI executable for Calc
 ../target/debug/main examples/simple.calc
 ```
 

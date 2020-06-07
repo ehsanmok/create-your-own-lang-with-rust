@@ -1,13 +1,13 @@
 ## Abstract Syntax Tree (AST)
 
-AST comes into picture when we want to go from the string representation of our program like `"-1"` or `"1 + 2"` to something more manageable and easier to work with. Since our program is not a random string (we have a grammar), we can use the structure within `"-1"` and `"1 + 2"` expressions to our own advantage and come up with a *new representation* like a [tree](https://en.wikipedia.org/wiki/Tree_structure)
+AST comes into picture when we want to go from the string representation of our program like `"-1"` or `"1 + 2"` to something more manageable and easier to work with. Since our program is not a random string (the grammar is for), we can use the structure within the expressions like `"-1"` and `"1 + 2"` to our own advantage and come up with a *new representation* like a [tree](https://en.wikipedia.org/wiki/Tree_structure)
 
 <p align="center">
   </br>
     <a href><img  alt="ast" src="../img/ast.svg"> </a>
 </p>
 
-One thing to note here is the *kind* of the nodes in our tree is not the same (we don't want to be the same actually) i.e. `+` node is a different from `1` node. In fact, `+` has an **Operator** type and `1` is an integer **Int** type
+One thing to note here is that the *kinds* of the nodes in our tree are not the same i.e. `+` node is different from `1` node. In fact, `+` has an **Operator** type and `1` is an integer **Int** type
 
 
 <p align="center">
@@ -31,23 +31,24 @@ pub enum Node {
 
 Referring back to our grammar, we actually have different kinds of *recursive* expressions;
 
-* **unary** with grammar
+* **unary** grammar
   ```
   UnaryExpr = { Operator ~ Term }
   ```
-* **binary**: with grammar
+* **binary** grammar
   ```
   BinaryExpr = { Term ~ (Operator ~ Term)* }
   ```
 
-For example in `"-1 + (2 + 3)"`
+So for example, the expression `"-1 + (2 + 3)"` has this recursive structure
 
 <p align="center">
 </br>
     <a href><img alt="compiler" src="../img/ast_recursive.svg"> </a>
 </p>
 
-So we need to include those structures in our AST to make it an actual [tree data structure](https://en.wikipedia.org/wiki/Binary_tree). Notice the *inherent recursive structure in our grammar* that translates into
+To include those into our AST to make it an actual [tree data structure](https://en.wikipedia.org/wiki/Binary_tree),
+we complete our AST definition as follows
 
 
 ```rust
@@ -57,7 +58,7 @@ So we need to include those structures in our AST to make it an actual [tree dat
 ```
 <span class="filename">Filename: calculator/src/ast.rs</span>
 
-After defining our AST, we can use the `pest` generated `CalcParser::parse` to map the Rules of our `Calc` language string to the AST.
+Now, we can use the `pest` generated `CalcParser::parse` to map the Rules of our `Calc` language string to our AST.
 
 ```rust,ignore
 
@@ -66,18 +67,19 @@ After defining our AST, we can use the `pest` generated `CalcParser::parse` to m
 Checkout [calculator/src/parser.rs](../../../calculator/src/parser.rs).
 
 
-Note that `CalcParser::parse` takes care of the AST traversal and correctly linearizes it in `Vec<Node>` so we can easily feed it to other stages of compilation.
+Note that `CalcParser::parse` takes care of the AST traversal and correctly maps it to `Vec<Node>` for easier access
+in later stages of compilation.
 
 
 ## Interpreter
 
-CPU is the ultimate interpreter that is it executes opcodes as it goes. When going from our source code `&str` to AST `Node`, we changed the representation (*lowered* the representation). A basic interpreter (recursively) looks and each node of the AST (via any [tree traversal methods](https://en.wikipedia.org/wiki/Tree_traversal)) and simply **evaluates** it *recursively*
+CPU is the *ultimate interpreter*. That is, it executes opcodes as it goes. After we have changed the representation (aka *lowered* the representation) of our source code `&str` to AST `Node` the a basic interpreter looks and each node of the AST (via any [tree traversal methods](https://en.wikipedia.org/wiki/Tree_traversal)) and simply **evaluates** it *recursively*
 
 ```rust,ignore
 {{#include ../../../calculator/src/compiler/interpreter.rs:interpreter_eval}}
 ```
 
-To sum up, we define a `Compile` trait
+To sum up, we can define a `Compile` trait
 
 ```rust,ignore
 {{#include ../../../calculator/src/lib.rs:compile_trait}}

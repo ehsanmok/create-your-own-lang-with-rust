@@ -12,16 +12,17 @@ inkwell = { git = "https://github.com/TheDan64/inkwell", branch = "llvm10-0" }
 Go to [`calculator/examples/llvm` crate](../../../calculator/examples/llvm/) and `cargo run`.
 
 
-### Goal
+### Add Function
 
-We want to JIT an add function like
+We want to define an add function like
 
 ```
 add(x: i32, x: i32) -> i32 { x + y }
 ```
 
-in LLVM, but using the **LLVM language**. Since LLVM is also a VM, it has its own Bytecodes and IR. The point is we need to define *every* bit of what makes up a
-function through LLVM basic constructs such as context, module, function signature setups, argument types, basic block, etc. Here is how to *stitch* our add function together.
+but using the **LLVM language** and JIT it. Since LLVM is also a VM, it has its own Bytecodes and IR. The point is we need to define *every* bit of what makes up a function through LLVM basic constructs such as context, module, function signature setups, argument types, basic block, etc.
+
+Here is how to *stitch* our add function in LLVM
 
 1. We start by creating a `context`, adding the `addition` module and setting up the data type we want to use `i32_type` of type [`IntType`](https://thedan64.github.io/inkwell/inkwell/types/struct.IntType.html)
 
