@@ -154,10 +154,9 @@
 <p>If you haven't cloned the <a href="https://github.com/ehsanmok/create-your-own-lang-with-rust">GitHub</a> repo already, please do and navigate to the <code>calculator</code> crate</p>
 <pre><code class="language-text">git clone https://github.com/ehsanmok/create-your-own-lang-with-rust
 cd create-your-own-lang-with-rust/calculator
-cargo test --tests
 </code></pre>
 <p>To start, we have <code>1 + 1;</code> in <a href="../../../calculator/src/examples/simple.calc">examples/simple.calc</a> where you can compile with</p>
-<pre><code class="language-text">cargo build --bin main // create the executable
+<pre><code class="language-text">cargo build --bin main // create the CLI executable for Calc
 ../target/debug/main examples/simple.calc
 </code></pre>
 <p>or simply</p>

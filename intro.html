@@ -170,11 +170,11 @@ cd create-your-own-lang-with-rust
 <p>&quot;If you can’t explain something in simple terms, you don’t understand it&quot; <sup><a href="https://skeptics.stackexchange.com/questions/8742/did-einstein-say-if-you-cant-explain-it-simply-you-dont-understand-it-well-en">2</a></sup></p>
 </blockquote>
 <p><span style="font-family:Trebuchet MS"> Pedagogically, one of the most effect methods of teaching is co-creating interactively. Introducing the core aspects around the <em>simplest example</em> (here, our calculator language) helps a lot to build knowledge and confidence. For that, we will use mature technologies instead of spending tone of time on partially reinventing-the-wheel and bore the reader.</span></p>
-<p>Here is an outline of the contents in this book</p>
+<p>Here is the outline of the contents</p>
 <ul>
 <li><a href="./crash_course.html">Crash Course on Computing</a> which we briefly set up the definitions and foundations</li>
-<li>We create our first programming language <code>Calc</code> that supports simple integer addition and subtraction. The simplicity allows us to cover a lot of important topics concisely. We will use <a href="https://pest.rs">pest.rs</a> to define our grammar and generate our <code>CalcParser</code>, explain what AST is and interpreting the AST means. Next, we will introduce JIT compilation and use <a href="https://github.com/TheDan64/inkwell">inkwell: Safe Rust wrapper around LLVM</a> to JIT compile our <code>Calc</code> language. We will continue by creating a REPL for our <code>Calc</code> language and finally we will create a Virtual Machine and runtime environment and discuss its features.</li>
-<li>TODO: We will introduce <code>Jeslang</code> (a statically typed, JIT compiled language) and gradually work our way up from <code>Calc</code> language to create <code>Jeslang</code> together</li>
+<li>We create our first programming language <code>Calc</code> that supports simple integer addition and subtraction. The simplicity allows us to cover a lot of important topics concisely. We will use <a href="https://pest.rs">pest</a> to define our grammar and generate our <code>CalcParser</code>, explain what AST is and interpreting the AST means. Next, we will introduce JIT compilation and use <a href="https://github.com/TheDan64/inkwell">inkwell: Safe Rust wrapper around LLVM</a> to JIT compile our <code>Calc</code> language. We will continue by creating a REPL for our <code>Calc</code> language and finally we will create a Virtual Machine and runtime environment and discuss its features.</li>
+<li>TODO: We will introduce <code>Jeslang</code> (a statically typed language) and gradually work our way up from <code>Calc</code> language to create <code>Jeslang</code> together</li>
 <li>TODO: Object system and object oriented programming</li>
 <li>TODO: Functional language</li>
 <li>TENTATIVE: Module system and packaging</li>
@@ -182,7 +182,7 @@ cd create-your-own-lang-with-rust
 <li>TODO: Resources</li>
 </ul>
 <h2><a class="header" href="#donation" id="donation">Donation</a></h2>
-<p>If you have found this book useful, please consider donating any amount to any of the organizations below</p>
+<p>If you have found this book useful, please consider donating to any of the organizations below</p>
 <ul>
 <li><a href="https://www.childfoundation.org/page/donate">Child Foundation</a></li>
 <li><a href="https://blacklivesmatter.com/">Black Lives Matters</a></li>

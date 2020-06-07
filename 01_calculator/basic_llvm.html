@@ -155,12 +155,12 @@
 <pre><code class="language-text">inkwell = { git = &quot;https://github.com/TheDan64/inkwell&quot;, branch = &quot;llvm10-0&quot; }
 </code></pre>
 <p>Go to <a href="../../../calculator/examples/llvm/"><code>calculator/examples/llvm</code> crate</a> and <code>cargo run</code>.</p>
-<h3><a class="header" href="#goal" id="goal">Goal</a></h3>
-<p>We want to JIT an add function like</p>
+<h3><a class="header" href="#add-function" id="add-function">Add Function</a></h3>
+<p>We want to define an add function like</p>
 <pre><code>add(x: i32, x: i32) -&gt; i32 { x + y }
 </code></pre>
-<p>in LLVM, but using the <strong>LLVM language</strong>. Since LLVM is also a VM, it has its own Bytecodes and IR. The point is we need to define <em>every</em> bit of what makes up a
-function through LLVM basic constructs such as context, module, function signature setups, argument types, basic block, etc. Here is how to <em>stitch</em> our add function together.</p>
+<p>but using the <strong>LLVM language</strong> and JIT it. Since LLVM is also a VM, it has its own Bytecodes and IR. The point is we need to define <em>every</em> bit of what makes up a function through LLVM basic constructs such as context, module, function signature setups, argument types, basic block, etc.</p>
+<p>Here is how to <em>stitch</em> our add function in LLVM</p>
 <ol>
 <li>We start by creating a <code>context</code>, adding the <code>addition</code> module and setting up the data type we want to use <code>i32_type</code> of type <a href="https://thedan64.github.io/inkwell/inkwell/types/struct.IntType.html"><code>IntType</code></a></li>
 </ol>

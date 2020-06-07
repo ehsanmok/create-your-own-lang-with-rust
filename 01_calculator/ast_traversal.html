@@ -150,7 +150,7 @@
                 <div id="content" class="content">
                     <main>
                         <h2><a class="header" href="#ast-traversal-patterns" id="ast-traversal-patterns">AST Traversal Patterns</a></h2>
-<p>Recall from the previous section that JITing our <a href="./basic_llvm.html">add function</a> was very detailed and cumbersome to write. For traversing complicated ASTs, fortunately, there are some useful patterns</p>
+<p>Recall from the previous section that JITing our <a href="./basic_llvm.html">add function</a> was very detailed and cumbersome to write. Fortunately, there are some useful patterns for traversing complicated ASTs (and IRs)</p>
 <ul>
 <li><strong>Builder pattern</strong></li>
 <li><strong>Visitor pattern</strong> (Will introduce it in chapter 4)</li>
@@ -187,7 +187,7 @@ impl Eval {
 }
 </code></pre>
 <p><span class="filename">Filename: calculator/src/compiler/interpreter.rs</span></p>
-<p>but now, we can take advantage of the <a href="https://thedan64.github.io/inkwell/inkwell/builder/struct.Builder.html">inkwell Builder</a> and recursively traverse our AST</p>
+<p>but instead, we can take advantage of the <a href="https://thedan64.github.io/inkwell/inkwell/builder/struct.Builder.html">inkwell Builder</a> and recursively traverse our <code>Calc</code> AST as follows</p>
 <pre><code class="language-rust no_run noplaypen">struct RecursiveBuilder&lt;'a&gt; {
     i32_type: IntType&lt;'a&gt;,
     builder: &amp;'a Builder&lt;'a&gt;,
@@ -220,7 +220,7 @@ impl&lt;'a&gt; RecursiveBuilder&lt;'a&gt; {
     }
 }
 </code></pre>
-<p>and similar to our addition example, we can JIT our AST as follows</p>
+<p>and similar to our addition example, we can JIT the builder output</p>
 <pre><code class="language-rust no_run noplaypen">pub struct Jit;
 
 impl Compile for Jit {

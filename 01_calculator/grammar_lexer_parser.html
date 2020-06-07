@@ -150,15 +150,15 @@
                 <div id="content" class="content">
                     <main>
                         <h2><a class="header" href="#grammar-lexer-praser-pipeline" id="grammar-lexer-praser-pipeline">Grammar-Lexer-Praser Pipeline</a></h2>
-<p>Every language needs a (formal) grammar to describe its syntax and semantics. Once a program adheres to the rules of the grammar in <em>Source Code</em> (for example as input string or file format), it is tokenized then lexer adds some metadata to each token, for example where each token starts and finishes in the original Source Code. Finally parsing (reshaping or restructuring) the lexer output into our <a href="./ast.html">Abstract Syntax Tree (AST)</a> for further analysis.</p>
-<p>The following is a compiler <em>frontend</em> pipeline</p>
+<p>Here is a high-level view of a compiler <em>frontend</em> pipeline</p>
 <p align="center">
 </br>
     <a href><img alt="grammar, lexer, parser" src="../img/grammar_lexer_parser.svg"> </a>
 </p>
+<p>Every language needs a (formal) grammar to describe its syntax and semantics. Once a program adheres to the rules of the grammar in <em>Source Code</em> (for example as input string or file format), it is <em>tokenized</em> and then <em>lexer</em> adds some metadata to each token, for example where each token starts and finishes in the original source code. Lastly, parsing (reshaping or restructuring) of the lexed outputs into our <a href="./ast.html">Abstract Syntax Tree (AST)</a> occurs for later stages of compilation (compiler backend).</p>
 <h2><a class="header" href="#grammar" id="grammar">Grammar</a></h2>
 <p>While there are varieties of ways to define the grammar, in this book we will use the <a href="https://en.wikipedia.org/wiki/Parsing_expression_grammar">Parsing Expression Grammar (PEG)</a>.</p>
-<p>Here is how our simple calculator language <code>calc</code> (supporting addition and subtraction) looks like in PEG</p>
+<p>Here is how our simple calculator language <code>Calc</code> (supporting addition and subtraction) looks like in PEG</p>
 <pre><code class="language-text">Program = _{ SOI ~ Expr ~ EOF }
 
 Expr = { UnaryExpr | BinaryExpr }
@@ -185,14 +185,14 @@ EOF = _{ EOI | &quot;;&quot; }
 <li>unary or binary expressions are made of <code>Term</code> and <code>Operator</code> (<code>&quot;+&quot;</code> and <code>&quot;-&quot;</code>)</li>
 <li>the only <em>atom</em> is integer <code>Int</code></li>
 </ul>
-<p>Given a PEG grammar, luckily we can use <a href="https://pest.rs/">pest.rs</a> which is powerful <em>parser generator</em> for PEG grammars. (For more details on pest, checkout the <a href="https://pest.rs/book/">pest book</a>)</p>
-<p><code>pest</code> <em>generates</em> the parser <code>CalcParser::parse</code> from our grammar via</p>
+<p>Given a PEG grammar, luckily we can use <a href="https://pest.rs/">pest</a> which is a powerful <em>parser generator</em> for the PEG grammars. (For more details on pest, checkout the <a href="https://pest.rs/book/">pest book</a>)</p>
+<p><code>pest</code> <em>derives</em> the parser <code>CalcParser::parse</code> from our grammar</p>
 <pre><code class="language-rust ignore">#[derive(pest_derive::Parser)]
 #[grammar = &quot;grammar.pest&quot;]
 struct CalcParser;
 </code></pre>
 <p><span class="filename">Filename: calculator/src/parser.rs</span></p>
-<p>and does all the steps in the frontend pipeline so that we can start parsing a <code>Calc</code> source code (<code>source: &amp;str</code>) via the <code>Rule</code>s of our grammar</p>
+<p>and does all the steps of the frontend pipeline that we mentioned so that we can start parsing any <code>Calc</code> source code (<code>source: &amp;str</code>) via the <code>Rule</code>s of our grammar</p>
 <pre><code class="language-rust ignore">CalcParser::parse(Rule::Program, source)
 </code></pre>
 

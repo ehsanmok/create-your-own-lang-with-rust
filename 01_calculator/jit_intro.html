@@ -150,12 +150,12 @@
                 <div id="content" class="content">
                     <main>
                         <h2><a class="header" href="#just-in-time-jit-compiler-with-llvm" id="just-in-time-jit-compiler-with-llvm">Just-In-Time (JIT) Compiler with LLVM</a></h2>
-<p>JIT compilation is a combination of Ahead-Of-Time (AOT) compilation and interpretation. As we saw previously, our <code>Calc</code> interpreter evaluates AST to values (actual integer <code>i32</code> values). JIT compiler differs from interpreter in what it outputs. Intuitively, JIT outputs are like AOT outputs but generated at runtime when walking the AST similar to interpreter.</p>
+<p>JIT compilation is a combination of Ahead-Of-Time (AOT) compilation and interpretation. As we saw previously, our <code>Calc</code> interpreter evaluates AST to values (actual integer <code>i32</code> values) but a JIT compiler differs from an interpreter in what it outputs. Intuitively, JIT outputs are like AOT outputs but generated at runtime when traversing the AST (similar to interpreter).</p>
 <h3><a class="header" href="#llvm" id="llvm">LLVM</a></h3>
-<p><a href="https://en.wikipedia.org/wiki/LLVM">LLVM</a> which stands for <strong>Low-Level-Virtual-Machine</strong> is a mature compiler backend (code generator) infrastructure powering a lot of languages, such as Clang, Rust, Swift etc. It has its own IR and Virtual Machine Bytecode abstracting away the underlying hardware specific differences.</p>
+<p><a href="https://en.wikipedia.org/wiki/LLVM">LLVM</a> which stands for <strong>Low-Level-Virtual-Machine</strong>, is a mature compiler backend (code generator) infrastructure powering many languages such as <a href="https://clang.llvm.org/">Clang</a>, <a href="https://www.rust-lang.org/">Rust</a>, <a href="https://swift.org/">Swift</a>, etc. It has its own IR and Virtual Machine Bytecode abstracting away the underlying platform-specific differences.</p>
 <p>We will use <a href="https://github.com/TheDan64/inkwell">inkwell</a> which provides a safe Rust wrapper around LLVM. Remember to use the branch according to your installed <code>llvm-config --version</code>.</p>
 <h3><a class="header" href="#alternatives" id="alternatives">Alternatives</a></h3>
-<p>Other code generators that you can use (see the <a href="./exercise.html">exercises</a>) in this book (not at mature as LLVM) are <a href="https://docs.rs/cranelift-simplejit/0.64.0/cranelift_simplejit/index.html">cratelift-simpljit</a> and <a href="https://github.com/philberty/gccrs">gcc-jit</a>.</p>
+<p>Other code generators that you can use (see the <a href="./exercise.html">exercises</a>) in this book (not at mature as LLVM) are <a href="https://docs.rs/cranelift-simplejit/0.64.0/cranelift_simplejit/index.html">cratelift-simpljit</a> and <a href="http://swgillespie.me/gccjit.rs/gccjit/">gcc-jit</a>.</p>
 
                     </main>
 
