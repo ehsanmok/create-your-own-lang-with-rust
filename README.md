@@ -1,3 +1,7 @@
+# Create your own programming language with Rust
+
+![Github Pages](https://github.com/ehsanmok/create-your-own-lang-with-rust/workflows/Github%20Pages/badge.svg?branch=master)
+
 This repository contains the codes and the contents for [createlang.rs](https://createlang.rs).
 
 ## Why am I writing this book?
@@ -14,31 +18,31 @@ The following are my guidelines
 ## Installation
 
 1. Install [Rustlang via rustup](https://www.rust-lang.org/tools/install)
-2. Clone this repository
-3. To build the book locally, follow the instruction in [mdbook](https://github.com/rust-lang/mdBook)
+2. Clone this repository and follow the instructions in each chapter
+3. To build the book locally, navigate to the `book` repo and follow the instructions in [mdbook](https://github.com/rust-lang/mdBook)
 
 ## Content outline
 
 - [x] Introduction
 - [x] Crash course on Computing
-- [x] Calculator
-  - [x] Grammar, lexer and praser
-  - [x] AST and cnterpreter
+- [x] Calculator language
+  - [x] Grammar, lexer and parser
+  - [x] AST and interpreter
   - [x] JIT with LLVM
     - [x] Basic `add` function example
     - [x] AST traversal patterns
   - [x] Exercises
   - [x] VM, bytecode and interpreter
   - [x] REPL
-  - [ ] Jeslang
-    - [ ] Static typing
-    - [ ] Type inference
-    - [ ] ...
-  - [ ] Object system and OOP
-  - [ ] Functional lang
-  - [ ] (TENTATIVE) Module system and packaging
-  - [ ] (TENTATIVE) Mini-standard library
-  - [ ] Content resources
+- [ ] Jeslang
+  - [ ] Static typing
+  - [ ] Type inference
+  - [ ] ...
+- [ ] Object system and OOP
+- [ ] Functional lang
+- [ ] (TENTATIVE) Module system and packaging
+- [ ] (TENTATIVE) Mini-standard library
+- [ ] Content resources
 
 ## Donation
 
