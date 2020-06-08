@@ -7,11 +7,8 @@ title = "Create Your Own Programming Language with Rust"
 version = "0.1"
 
 [output.html]
+google-analytics = "UA-168768722-1"
 additional-css = ["theme/custom.css"]
 
 [output.html.search]
 enable = true
-
-[preprocessor.toc]
-command = "mdbook-toc"
-renderer = ["html"]
