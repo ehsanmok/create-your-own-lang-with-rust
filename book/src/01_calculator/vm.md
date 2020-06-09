@@ -32,14 +32,14 @@ In a unary expression like `"1"`, we encode `Node::Int(1)` as the opcode `[1, 0,
 
 ### Bytecode
 
-So we define
+We define
 
 ```rust,ignore
 {{#include ../../../calculator/src/compiler/vm/bytecode.rs:bytecode}}
 ```
 <span class="filename">Filename: calculator/src/compiler/vm/bytecode.rs</span>
 
-and as an example, `"1 + 2"` AST to Bytecode pictorially is
+and as an example, here is `"1 + 2"` AST to Bytecode conversion pictorially
 
 <p align="center">
 </br>
