@@ -185,14 +185,14 @@
 <p>For easy of access, we store constant <code>Node::Int(i32)</code> nodes in a separate memory and <code>OpConstant(arg)</code> tracks these values.
 In a unary expression like <code>&quot;1&quot;</code>, we encode <code>Node::Int(1)</code> as the opcode <code>[1, 0, 0]</code> as the first constant. (<strong>0x01</strong> in decimal is <strong>1</strong>).</p>
 <h3><a class="header" href="#bytecode" id="bytecode">Bytecode</a></h3>
-<p>So we define</p>
+<p>We define</p>
 <pre><code class="language-rust ignore">pub struct Bytecode {
     pub instructions: Vec&lt;u8&gt;,
     pub constants: Vec&lt;Node&gt;,
 }
 </code></pre>
 <p><span class="filename">Filename: calculator/src/compiler/vm/bytecode.rs</span></p>
-<p>and as an example, <code>&quot;1 + 2&quot;</code> AST to Bytecode pictorially is</p>
+<p>and as an example, here is <code>&quot;1 + 2&quot;</code> AST to Bytecode conversion pictorially</p>
 <p align="center">
 </br>
     <a href><img alt="ast bytecode" src="../img/ast_bytecode.svg"> </a>

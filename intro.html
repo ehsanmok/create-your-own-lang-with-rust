@@ -150,16 +150,27 @@
                 <div id="content" class="content">
                     <main>
                         <blockquote>
-<p>Materials in this book are distributed under the terms of <a href="../../LICENSE">Creative Commons BY-NC-SA 4.0</a></p>
+<p>Materials in this book are distributed under the terms of <a href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/LICENSE">Creative Commons BY-NC-SA 4.0</a></p>
 <p align="center">
    <a href><img alt="license" src="./img/by-nc-sa.png" width="250" height="100"> </a>
 </p>
 </blockquote>
-<p>This book assumes some basic knowledge of Rust language. Please take a look  at the official <a href="https://doc.rust-lang.org/book/">Rust book</a>.</p>
-<p>The accompanying codes and materials for this book are available in <a href="https://github.com/ehsanmok/create-your-own-lang-with-rust">GitHub</a>. To follow along, clone the repository</p>
+<p>This book assumes some basic knowledge of Rust language. Please take a look at the official <a href="https://doc.rust-lang.org/book/">Rust book</a>.</p>
+<p>The accompanying codes and materials for this book are available in <a href="https://github.com/ehsanmok/create-your-own-lang-with-rust">GitHub</a>. To follow along, make sure you have</p>
+<ul>
+<li>
+<p><a href="https://www.rust-lang.org/tools/install">Rust installed</a></p>
+</li>
+<li>
+<p>Cloned the repository</p>
 <pre><code class="language-text">git clone https://github.com/ehsanmok/create-your-own-lang-with-rust
 cd create-your-own-lang-with-rust
 </code></pre>
+</li>
+<li>
+<p>LLVM v10.0 installed (<a href="https://apt.llvm.org/">Debina/Ubuntu</a> or <a href="https://formulae.brew.sh/formula/llvm">macOS</a>) to run and test locally <code>cargo test --tests</code></p>
+</li>
+</ul>
 <h2><a class="header" href="#motivations-and-goals" id="motivations-and-goals">Motivations and Goals</a></h2>
 <p>This book arises from my frustration of not finding modern, clear and concise teaching materials that are readily accessible to beginners like me who wants to learn a bit on how to create their own programming language.</p>
 <p>The following are my guidelines</p>
@@ -169,7 +180,7 @@ cd create-your-own-lang-with-rust
 <blockquote>
 <p>&quot;If you can’t explain something in simple terms, you don’t understand it&quot; <sup><a href="https://skeptics.stackexchange.com/questions/8742/did-einstein-say-if-you-cant-explain-it-simply-you-dont-understand-it-well-en">2</a></sup></p>
 </blockquote>
-<p><span style="font-family:Trebuchet MS"> Pedagogically, one of the most effect methods of teaching is co-creating interactively. Introducing the core aspects around the <em>simplest example</em> (here, our calculator language) helps a lot to build knowledge and confidence. For that, we will use mature technologies instead of spending tone of time on partially reinventing-the-wheel and bore the reader.</span></p>
+<p><span style="font-family:Trebuchet MS"> Pedagogically, one of the most effective methods of teaching is co-creating interactively. Introducing the core aspects around the <em>simplest example</em> (here, our calculator language) helps a lot to build knowledge and confidence. For that, we will use mature technologies instead of spending tone of time on partially reinventing-the-wheel and bore the reader.</span></p>
 <p>Here is the outline of the contents</p>
 <ul>
 <li><a href="./crash_course.html">Crash Course on Computing</a> which we briefly set up the definitions and foundations</li>

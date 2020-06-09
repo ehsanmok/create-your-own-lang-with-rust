@@ -152,16 +152,27 @@
                 <div id="content" class="content">
                     <main>
                         <blockquote>
-<p>Materials in this book are distributed under the terms of <a href="../../LICENSE">Creative Commons BY-NC-SA 4.0</a></p>
+<p>Materials in this book are distributed under the terms of <a href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/LICENSE">Creative Commons BY-NC-SA 4.0</a></p>
 <p align="center">
    <a href><img alt="license" src="./img/by-nc-sa.png" width="250" height="100"> </a>
 </p>
 </blockquote>
-<p>This book assumes some basic knowledge of Rust language. Please take a look  at the official <a href="https://doc.rust-lang.org/book/">Rust book</a>.</p>
-<p>The accompanying codes and materials for this book are available in <a href="https://github.com/ehsanmok/create-your-own-lang-with-rust">GitHub</a>. To follow along, clone the repository</p>
+<p>This book assumes some basic knowledge of Rust language. Please take a look at the official <a href="https://doc.rust-lang.org/book/">Rust book</a>.</p>
+<p>The accompanying codes and materials for this book are available in <a href="https://github.com/ehsanmok/create-your-own-lang-with-rust">GitHub</a>. To follow along, make sure you have</p>
+<ul>
+<li>
+<p><a href="https://www.rust-lang.org/tools/install">Rust installed</a></p>
+</li>
+<li>
+<p>Cloned the repository</p>
 <pre><code class="language-text">git clone https://github.com/ehsanmok/create-your-own-lang-with-rust
 cd create-your-own-lang-with-rust
 </code></pre>
+</li>
+<li>
+<p>LLVM v10.0 installed (<a href="https://apt.llvm.org/">Debina/Ubuntu</a> or <a href="https://formulae.brew.sh/formula/llvm">macOS</a>) to run and test locally <code>cargo test --tests</code></p>
+</li>
+</ul>
 <h2><a class="header" href="#motivations-and-goals" id="motivations-and-goals">Motivations and Goals</a></h2>
 <p>This book arises from my frustration of not finding modern, clear and concise teaching materials that are readily accessible to beginners like me who wants to learn a bit on how to create their own programming language.</p>
 <p>The following are my guidelines</p>
@@ -171,7 +182,7 @@ cd create-your-own-lang-with-rust
 <blockquote>
 <p>&quot;If you can’t explain something in simple terms, you don’t understand it&quot; <sup><a href="https://skeptics.stackexchange.com/questions/8742/did-einstein-say-if-you-cant-explain-it-simply-you-dont-understand-it-well-en">2</a></sup></p>
 </blockquote>
-<p><span style="font-family:Trebuchet MS"> Pedagogically, one of the most effect methods of teaching is co-creating interactively. Introducing the core aspects around the <em>simplest example</em> (here, our calculator language) helps a lot to build knowledge and confidence. For that, we will use mature technologies instead of spending tone of time on partially reinventing-the-wheel and bore the reader.</span></p>
+<p><span style="font-family:Trebuchet MS"> Pedagogically, one of the most effective methods of teaching is co-creating interactively. Introducing the core aspects around the <em>simplest example</em> (here, our calculator language) helps a lot to build knowledge and confidence. For that, we will use mature technologies instead of spending tone of time on partially reinventing-the-wheel and bore the reader.</span></p>
 <p>Here is the outline of the contents</p>
 <ul>
 <li><a href="./crash_course.html">Crash Course on Computing</a> which we briefly set up the definitions and foundations</li>
@@ -239,11 +250,8 @@ which translates/compiles Java programs into JVM language aka Java <strong>Bytec
 <p>This is in fact the <span style="color:red">WRONG</span> question to ask!</p>
 <p>Being AOT compiled, JIT compiled or interpreted is <strong>implementation-dependent</strong>. For example, the standard Python is <a href="https://www.python.org/"><strong>CPython</strong></a> which compiles a Python source code (in CPython VM) to CPython Bytecode (content of <code>.pyc</code>) and <strong>interprets</strong> the Bytecode. However, another implementation of Python is <a href="https://www.pypy.org/"><strong>PyPy</strong></a> which (more or less) compiles a Python source code (in PyPy VM) to PyPy Bytecode and <strong>JIT</strong> compiles the PyPy Bytecode to the Machine Code (is usually faster than CPython interpreter).</p>
 <h1><a class="header" href="#calculator" id="calculator">Calculator</a></h1>
-<p>Our first programming language is a simple calculator supporting addition and subtraction. This is perhaps the simplest language helping us introducing the major topics from grammar to compilation and virtual machine.</p>
-<p>If you haven't cloned the <a href="https://github.com/ehsanmok/create-your-own-lang-with-rust">GitHub</a> repo already, please do and navigate to the <code>calculator</code> crate</p>
-<pre><code class="language-text">git clone https://github.com/ehsanmok/create-your-own-lang-with-rust
-cd create-your-own-lang-with-rust/calculator
-</code></pre>
+<p>Our first programming language is a simple calculator supporting addition and subtraction. This is perhaps the <em>simplest language</em> that helps us introducing the major topics from grammar to compilation and virtual machine.</p>
+<p>If you haven't cloned the <a href="https://github.com/ehsanmok/create-your-own-lang-with-rust">GitHub</a> repo already, please do and navigate to the <code>calculator</code> subdirectory.</p>
 <p>To start, we have <code>1 + 1;</code> in <a href="01_calculator/../../../calculator/src/examples/simple.calc">examples/simple.calc</a> where you can compile with</p>
 <pre><code class="language-text">cargo build --bin main // create the CLI executable for Calc
 ../target/debug/main examples/simple.calc
@@ -651,14 +659,14 @@ impl Compile for Jit {
 <p>For easy of access, we store constant <code>Node::Int(i32)</code> nodes in a separate memory and <code>OpConstant(arg)</code> tracks these values.
 In a unary expression like <code>&quot;1&quot;</code>, we encode <code>Node::Int(1)</code> as the opcode <code>[1, 0, 0]</code> as the first constant. (<strong>0x01</strong> in decimal is <strong>1</strong>).</p>
 <h3><a class="header" href="#bytecode-1" id="bytecode-1">Bytecode</a></h3>
-<p>So we define</p>
+<p>We define</p>
 <pre><code class="language-rust ignore">pub struct Bytecode {
     pub instructions: Vec&lt;u8&gt;,
     pub constants: Vec&lt;Node&gt;,
 }
 </code></pre>
 <p><span class="filename">Filename: calculator/src/compiler/vm/bytecode.rs</span></p>
-<p>and as an example, <code>&quot;1 + 2&quot;</code> AST to Bytecode pictorially is</p>
+<p>and as an example, here is <code>&quot;1 + 2&quot;</code> AST to Bytecode conversion pictorially</p>
 <p align="center">
 </br>
     <a href><img alt="ast bytecode" src="01_calculator/../img/ast_bytecode.svg"> </a>
