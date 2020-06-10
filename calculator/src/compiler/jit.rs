@@ -90,14 +90,14 @@ mod tests {
 
     #[test]
     fn basics() {
-        assert_eq!(Jit::from_source("1 + 2").unwrap() as i32, 3);
-        assert_eq!(Jit::from_source("2 + (2 - 1)").unwrap() as i32, 3);
-        assert_eq!(Jit::from_source("(2 + 3) - 1").unwrap() as i32, 4);
+        assert_eq!(Jit::from_source("1 + 2").unwrap(), 3);
+        assert_eq!(Jit::from_source("2 + (2 - 1)").unwrap(), 3);
+        assert_eq!(Jit::from_source("(2 + 3) - 1").unwrap(), 4);
         assert_eq!(
-            Jit::from_source("1 + ((2 + 3) - (2 + 3))").unwrap() as i32,
+            Jit::from_source("1 + ((2 + 3) - (2 + 3))").unwrap(),
             1
         );
         // parser fails
-        // assert_eq!(Jit::from_source("2 + 3 - 1").unwrap() as i32, 4);
+        // assert_eq!(Jit::from_source("2 + 3 - 1").unwrap(), 4);
     }
 }
