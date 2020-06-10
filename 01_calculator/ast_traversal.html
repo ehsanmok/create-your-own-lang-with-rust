@@ -153,7 +153,7 @@
 <p>Recall from the previous section that JITing our <a href="./basic_llvm.html">add function</a> was very detailed and cumbersome to write. Fortunately, there are some useful patterns for traversing complicated ASTs (and IRs)</p>
 <ul>
 <li><strong>Builder pattern</strong></li>
-<li><strong>Visitor pattern</strong> (Will introduce it in chapter 4)</li>
+<li><strong>Visitor pattern</strong> (Will be introduced in chapter 4)</li>
 </ul>
 <h3><a class="header" href="#builder-pattern" id="builder-pattern">Builder Pattern</a></h3>
 <p>Recall how we have interpreted our AST by traversing recursively and evaluating the nodes</p>
@@ -263,6 +263,9 @@ impl Compile for Jit {
 }
 </code></pre>
 <p><span class="filename">Filename: calculator/src/compiler/jit.rs</span></p>
+<p>Finally, we can test it</p>
+<pre><code class="language-rust ignore">assert_eq!(Jit::from_source(&quot;1 + 2&quot;).unwrap(), 3)
+</code></pre>
 
                     </main>
 

@@ -151,10 +151,10 @@
                     <main>
                         <h2><a class="header" href="#addition" id="addition">Addition</a></h2>
 <h3><a class="header" href="#setup" id="setup">Setup</a></h3>
-<p>The code is available in <a href="../../../calculator/examples/llvm/src/main.rs"><code>calculator/examples/llvm/src/main.rs</code></a>. Because my <code>llvm-config --version</code> shows <code>10.0.0</code> so I'm using <code>branch = &quot;llvm=10-0&quot;</code> in inkwell</p>
+<p>The code is available in <a href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/calculator/examples/llvm/src/main.rs"><code>calculator/examples/llvm/src/main.rs</code></a>. Because my <code>llvm-config --version</code> shows <code>10.0.0</code> so I'm using <code>branch = &quot;llvm=10-0&quot;</code> in inkwell</p>
 <pre><code class="language-text">inkwell = { git = &quot;https://github.com/TheDan64/inkwell&quot;, branch = &quot;llvm10-0&quot; }
 </code></pre>
-<p>Go to <a href="../../../calculator/examples/llvm/"><code>calculator/examples/llvm</code> crate</a> and <code>cargo run</code>.</p>
+<p>Go to <a href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/calculator/examples/llvm/"><code>calculator/examples/llvm</code></a> sub-crate and <code>cargo run</code>.</p>
 <h3><a class="header" href="#add-function" id="add-function">Add Function</a></h3>
 <p>We want to define an add function like</p>
 <pre><code>add(x: i32, x: i32) -&gt; i32 { x + y }
@@ -169,7 +169,7 @@
     let i32_type = context.i32_type();
 </code></pre>
 <ol start="2">
-<li>We define the signature of <code>add(i32, i32) -&gt; i32</code>, add the function to our module, create a <a href="(https://thedan64.github.io/inkwell/inkwell/basic_block/index.html)">basic block</a> entry point and a builder to add later parts</li>
+<li>We define the signature of <code>add(i32, i32) -&gt; i32</code>, add the function to our module, create a <a href="https://thedan64.github.io/inkwell/inkwell/basic_block/index.html">basic block</a> entry point and a builder to add later parts</li>
 </ol>
 <pre><code class="language-rust ignore">
     let fn_type = i32_type.fn_type(&amp;[i32_type.into(), i32_type.into()], false);

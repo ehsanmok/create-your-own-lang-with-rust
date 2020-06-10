@@ -150,7 +150,7 @@
                 <div id="content" class="content">
                     <main>
                         <h2><a class="header" href="#abstract-syntax-tree-ast" id="abstract-syntax-tree-ast">Abstract Syntax Tree (AST)</a></h2>
-<p>AST comes into picture when we want to go from the string representation of our program like <code>&quot;-1&quot;</code> or <code>&quot;1 + 2&quot;</code> to something more manageable and easier to work with. Since our program is not a random string (the grammar is for), we can use the structure within the expressions like <code>&quot;-1&quot;</code> and <code>&quot;1 + 2&quot;</code> to our own advantage and come up with a <em>new representation</em> like a <a href="https://en.wikipedia.org/wiki/Tree_structure">tree</a></p>
+<p>AST comes into picture when we want to go from the string representation of our program like <code>&quot;-1&quot;</code> or <code>&quot;1 + 2&quot;</code> to something more manageable and easier to work with. Since our program is not a random string (the grammar is for), we can use the structure within the expressions <code>&quot;-1&quot;</code> and <code>&quot;1 + 2&quot;</code> to our own advantage and come up with a <em>new representation</em> like a <a href="https://en.wikipedia.org/wiki/Tree_structure">tree</a></p>
 <p align="center">
   </br>
     <a href><img  alt="ast" src="../img/ast.svg"> </a>
@@ -232,7 +232,7 @@ pub fn parse(source: &amp;str) -&gt; std::result::Result&lt;Vec&lt;Node&gt;, pes
 <p>Note that <code>CalcParser::parse</code> takes care of the AST traversal and correctly maps it to <code>Vec&lt;Node&gt;</code> for easier access
 in later stages of compilation.</p>
 <h2><a class="header" href="#interpreter" id="interpreter">Interpreter</a></h2>
-<p>CPU is the <em>ultimate interpreter</em>. That is, it executes opcodes as it goes. After we have changed the representation (aka <em>lowered</em> the representation) of our source code <code>&amp;str</code> to AST <code>Node</code> the a basic interpreter looks and each node of the AST (via any <a href="https://en.wikipedia.org/wiki/Tree_traversal">tree traversal methods</a>) and simply <strong>evaluates</strong> it <em>recursively</em></p>
+<p>CPU is the <em>ultimate interpreter</em>. That is, it executes opcodes as it goes. To do that, after we have changed the representation (aka <em>lowered</em> the representation) of our source code <code>&amp;str</code> to AST <code>Node</code>, a basic interpreter looks and each node of the AST (via any <a href="https://en.wikipedia.org/wiki/Tree_traversal">tree traversal methods</a>) and simply <strong>evaluates</strong> it <em>recursively</em></p>
 <pre><code class="language-rust ignore">    pub fn eval(&amp;self, node: &amp;Node) -&gt; i32 {
         match node {
             Node::Int(n) =&gt; *n,
@@ -255,7 +255,7 @@ in later stages of compilation.</p>
         }
     }
 </code></pre>
-<p>To sum up, we can define a <code>Compile</code> trait</p>
+<p>To sum up, we define a <code>Compile</code> trait</p>
 <pre><code class="language-rust ignore">pub trait Compile {
     type Output;
 

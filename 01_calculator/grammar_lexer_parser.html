@@ -195,6 +195,7 @@ struct CalcParser;
 <p>and does all the steps of the frontend pipeline that we mentioned so that we can start parsing any <code>Calc</code> source code (<code>source: &amp;str</code>) via the <code>Rule</code>s of our grammar</p>
 <pre><code class="language-rust ignore">CalcParser::parse(Rule::Program, source)
 </code></pre>
+<p>Before doing that, we need to define our Abstract Syntax Tree (AST) in the <a href="./ast.html">next section</a>.</p>
 
                     </main>
 
