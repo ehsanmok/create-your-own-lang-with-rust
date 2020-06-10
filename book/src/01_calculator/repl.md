@@ -63,6 +63,7 @@ added instructions [1, 0, 0, 1, 0, 1] from opcode OpConstant(1)
 added instructions [1, 0, 0, 1, 0, 1, 3] from opcode OpAdd
 added instructions [1, 0, 0, 1, 0, 1, 3, 2] from opcode OpPop
 byte code: Bytecode { instructions: [1, 0, 0, 1, 0, 1, 3, 2], constants: [Int(1), Int(2)] }
+3
 >> (1 + 2) - (8 - 10)
 Compiling the source: (1 + 2) - (8 - 10)
 [BinaryExpr { op: Minus, lhs: BinaryExpr { op: Plus, lhs: Int(1), rhs: Int(2) }, rhs: BinaryExpr { op: Minus, lhs: Int(8), rhs: Int(10) } }]
@@ -76,6 +77,7 @@ added instructions [1, 0, 0, 1, 0, 1, 3, 1, 0, 2, 1, 0, 3, 4] from opcode OpSub
 added instructions [1, 0, 0, 1, 0, 1, 3, 1, 0, 2, 1, 0, 3, 4, 4] from opcode OpSub
 added instructions [1, 0, 0, 1, 0, 1, 3, 1, 0, 2, 1, 0, 3, 4, 4, 2] from opcode OpPop
 byte code: Bytecode { instructions: [1, 0, 0, 1, 0, 1, 3, 1, 0, 2, 1, 0, 3, 4, 4, 2], constants: [Int(1), Int(2), Int(8), Int(10)] }
+5
 >>>
 CTRL-C
 ```

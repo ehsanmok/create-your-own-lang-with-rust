@@ -39,6 +39,7 @@ fn main() {
                         println!("byte code: {:?}", byte_code);
                         let mut vm = VM::new(byte_code);
                         vm.run();
+                        println!("{}", vm.pop_last());
                     }
                 }
             }
