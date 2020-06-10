@@ -7,7 +7,7 @@ This book assumes some basic knowledge of Rust language. Please take a look at t
 
 The accompanying codes and materials for this book are available in [GitHub](https://github.com/ehsanmok/create-your-own-lang-with-rust). To follow along, make sure you have
 
-* [Rust installed](https://www.rust-lang.org/tools/install)
+* [Rust toolchain installed](https://www.rust-lang.org/tools/install)
 * Cloned the repository
 
     ```text

@@ -3,13 +3,13 @@
 
 ### Setup
 
-The code is available in [`calculator/examples/llvm/src/main.rs`](../../../calculator/examples/llvm/src/main.rs). Because my `llvm-config --version` shows `10.0.0` so I'm using `branch = "llvm=10-0"` in inkwell
+The code is available in [`calculator/examples/llvm/src/main.rs`](https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/calculator/examples/llvm/src/main.rs). Because my `llvm-config --version` shows `10.0.0` so I'm using `branch = "llvm=10-0"` in inkwell
 
 ```text
 inkwell = { git = "https://github.com/TheDan64/inkwell", branch = "llvm10-0" }
 ```
 
-Go to [`calculator/examples/llvm` crate](../../../calculator/examples/llvm/) and `cargo run`.
+Go to [`calculator/examples/llvm`](https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/calculator/examples/llvm/) sub-crate and `cargo run`.
 
 
 ### Add Function
@@ -30,7 +30,7 @@ Here is how to *stitch* our add function in LLVM
 {{#include ../../../calculator/examples/llvm/src/main.rs:first}}
 ```
 
-2. We define the signature of `add(i32, i32) -> i32`, add the function to our module, create a [basic block]((https://thedan64.github.io/inkwell/inkwell/basic_block/index.html)) entry point and a builder to add later parts
+2. We define the signature of `add(i32, i32) -> i32`, add the function to our module, create a [basic block](https://thedan64.github.io/inkwell/inkwell/basic_block/index.html) entry point and a builder to add later parts
 
 ```rust,ignore
 

@@ -1,6 +1,6 @@
 ## Just-In-Time (JIT) Compiler with LLVM
 
-JIT compilation is a combination of Ahead-Of-Time (AOT) compilation and interpretation. As we saw previously, our `Calc` interpreter evaluates AST to values (actual integer `i32` values) but a JIT compiler differs from an interpreter in what it outputs. Intuitively, JIT outputs are like AOT outputs but generated at runtime when traversing the AST (similar to interpreter).
+JIT compilation is a combination of Ahead-Of-Time (AOT) compilation and interpretation. As we saw previously, our `Calc` interpreter evaluates AST to values (actual integer `i32` values) but a JIT compiler differs from an interpreter in what it outputs. Intuitively, JIT outputs are like AOT outputs but generated at runtime when traversing the AST.
 
 ### LLVM
 

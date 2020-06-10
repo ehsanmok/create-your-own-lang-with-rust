@@ -3,7 +3,7 @@
 Recall from the previous section that JITing our [add function](./basic_llvm.md) was very detailed and cumbersome to write. Fortunately, there are some useful patterns for traversing complicated ASTs (and IRs)
 
 * **Builder pattern**
-* **Visitor pattern** (Will introduce it in chapter 4)
+* **Visitor pattern** (Will be introduced in chapter 4)
 
 ### Builder Pattern
 
@@ -26,3 +26,9 @@ and similar to our addition example, we can JIT the builder output
 {{#include ../../../calculator/src/compiler/jit.rs:jit_ast}}
 ```
 <span class="filename">Filename: calculator/src/compiler/jit.rs</span>
+
+Finally, we can test it
+
+```rust,ignore
+assert_eq!(Jit::from_source("1 + 2").unwrap(), 3)
+```

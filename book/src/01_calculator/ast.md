@@ -1,6 +1,6 @@
 ## Abstract Syntax Tree (AST)
 
-AST comes into picture when we want to go from the string representation of our program like `"-1"` or `"1 + 2"` to something more manageable and easier to work with. Since our program is not a random string (the grammar is for), we can use the structure within the expressions like `"-1"` and `"1 + 2"` to our own advantage and come up with a *new representation* like a [tree](https://en.wikipedia.org/wiki/Tree_structure)
+AST comes into picture when we want to go from the string representation of our program like `"-1"` or `"1 + 2"` to something more manageable and easier to work with. Since our program is not a random string (the grammar is for), we can use the structure within the expressions `"-1"` and `"1 + 2"` to our own advantage and come up with a *new representation* like a [tree](https://en.wikipedia.org/wiki/Tree_structure)
 
 <p align="center">
   </br>
@@ -73,13 +73,13 @@ in later stages of compilation.
 
 ## Interpreter
 
-CPU is the *ultimate interpreter*. That is, it executes opcodes as it goes. After we have changed the representation (aka *lowered* the representation) of our source code `&str` to AST `Node` the a basic interpreter looks and each node of the AST (via any [tree traversal methods](https://en.wikipedia.org/wiki/Tree_traversal)) and simply **evaluates** it *recursively*
+CPU is the *ultimate interpreter*. That is, it executes opcodes as it goes. To do that, after we have changed the representation (aka *lowered* the representation) of our source code `&str` to AST `Node`, a basic interpreter looks and each node of the AST (via any [tree traversal methods](https://en.wikipedia.org/wiki/Tree_traversal)) and simply **evaluates** it *recursively*
 
 ```rust,ignore
 {{#include ../../../calculator/src/compiler/interpreter.rs:interpreter_eval}}
 ```
 
-To sum up, we can define a `Compile` trait
+To sum up, we define a `Compile` trait
 
 ```rust,ignore
 {{#include ../../../calculator/src/lib.rs:compile_trait}}

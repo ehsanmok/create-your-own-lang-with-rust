@@ -41,3 +41,5 @@ and does all the steps of the frontend pipeline that we mentioned so that we can
 ```rust,ignore
 CalcParser::parse(Rule::Program, source)
 ```
+
+Before doing that, we need to define our Abstract Syntax Tree (AST) in the [next section](./ast.md).

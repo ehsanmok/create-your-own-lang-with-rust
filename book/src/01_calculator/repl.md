@@ -84,7 +84,7 @@ CTRL-C
 
 ## Conclusion
 
-This concludes our [Calculator](./calc_intro.md) chapter. We took advantage of the simplicity of our `Calc` language to cover a lot of topics.
+This concludes our [Calculator](./calc_intro.md) chapter. We took advantage of the simplicity of our `Calc` language to touch on a lot of topics.
 
 Thanks for following along and reading up this far!
 
