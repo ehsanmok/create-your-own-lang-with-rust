@@ -12,3 +12,8 @@ additional-css = ["theme/custom.css"]
 
 [output.html.search]
 enable = true
+
+[output.linkcheck]
+follow-web-links = true
+exclude = ['blacklivesmatter\.com']
+warning-policy = "error"
