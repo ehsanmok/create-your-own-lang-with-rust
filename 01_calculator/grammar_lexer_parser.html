@@ -155,10 +155,10 @@
 </br>
     <a href><img alt="grammar, lexer, parser" src="../img/grammar_lexer_parser.svg"> </a>
 </p>
-<p>Every language needs a (formal) grammar to describe its syntax and semantics. Once a program adheres to the rules of the grammar in <em>Source Code</em> (for example as input string or file format), it is <em>tokenized</em> and then <em>lexer</em> adds some metadata to each token, for example where each token starts and finishes in the original source code. Lastly, parsing (reshaping or restructuring) of the lexed outputs into our <a href="./ast.html">Abstract Syntax Tree (AST)</a> occurs for later stages of compilation (compiler backend).</p>
+<p>Every language needs a (formal) grammar to describe its syntax and semantics. Once a program adheres to the rules of the grammar in <em>Source Code</em> (for example as input string or file format), it is <em>tokenized</em> and then <em>lexer</em> adds some metadata to each token for example, where each token starts and finishes in the original source code. Lastly, parsing (reshaping or restructuring) of the lexed outputs to <a href="./ast.html">Abstract Syntax Tree</a>.</p>
 <h2><a class="header" href="#grammar" id="grammar">Grammar</a></h2>
 <p>While there are varieties of ways to define the grammar, in this book we will use the <a href="https://en.wikipedia.org/wiki/Parsing_expression_grammar">Parsing Expression Grammar (PEG)</a>.</p>
-<p>Here is how our simple calculator language <code>Calc</code> (supporting addition and subtraction) looks like in PEG</p>
+<p>Here is how our simple calculator language <code>Calc</code> (supporting addition and subtraction) grammar looks like in PEG</p>
 <pre><code class="language-text">Program = _{ SOI ~ Expr ~ EOF }
 
 Expr = { UnaryExpr | BinaryExpr }
@@ -185,7 +185,7 @@ EOF = _{ EOI | &quot;;&quot; }
 <li>unary or binary expressions are made of <code>Term</code> and <code>Operator</code> (<code>&quot;+&quot;</code> and <code>&quot;-&quot;</code>)</li>
 <li>the only <em>atom</em> is integer <code>Int</code></li>
 </ul>
-<p>Given a PEG grammar, luckily we can use <a href="https://pest.rs/">pest</a> which is a powerful <em>parser generator</em> for the PEG grammars. (For more details on pest, checkout the <a href="https://pest.rs/book/">pest book</a>)</p>
+<p>Given our grammar, we will use <a href="https://pest.rs/">pest</a> which is a powerful <em>parser generator</em> of PEG grammars. (For more details on pest, checkout the <a href="https://pest.rs/book/">pest book</a>)</p>
 <p><code>pest</code> <em>derives</em> the parser <code>CalcParser::parse</code> from our grammar</p>
 <pre><code class="language-rust ignore">#[derive(pest_derive::Parser)]
 #[grammar = &quot;grammar.pest&quot;]

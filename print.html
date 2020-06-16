@@ -170,14 +170,18 @@ cd create-your-own-lang-with-rust
 </code></pre>
 </li>
 <li>
-<p>LLVM v10.0 installed (<a href="https://apt.llvm.org/">Debina/Ubuntu</a> or <a href="https://formulae.brew.sh/formula/llvm">macOS</a>) to run and test locally <code>cargo test --tests</code></p>
+<p>LLVM installed to run and test locally <code>cargo test --tests</code></p>
+<ul>
+<li>Easiest option is LLVM v10.0 (<a href="https://apt.llvm.org/">Debina/Ubuntu</a> or <a href="https://formulae.brew.sh/formula/llvm">macOS</a>)</li>
+<li>Otherwise, in <code>Cargo.toml</code> you'd need to change the <code>inkwell = { ..., branch = &quot;your-llvm-version&quot; }</code> with LLVM version on your system (output of <code>llvm-config --version</code>)</li>
+</ul>
 </li>
 </ul>
 <h2><a class="header" href="#motivations-and-goals" id="motivations-and-goals">Motivations and Goals</a></h2>
 <p>This book arises from my frustration of not finding modern, clear and concise teaching materials that are readily accessible to beginners like me who wants to learn a bit on how to create their own programming language.</p>
 <p>The following are my guidelines</p>
 <blockquote>
-<p>&quot;If you don't know how <em>compilers</em> work, then you don't know how computers work&quot; <sup><a href="(http://steve-yegge.blogspot.com/2007/06/rich-programmer-food.html?)">1</a></sup></p>
+<p>&quot;If you don't know how <em>compilers</em> work, then you don't know how computers work&quot; <sup><a href="http://steve-yegge.blogspot.com/2007/06/rich-programmer-food.html?">1</a></sup></p>
 </blockquote>
 <blockquote>
 <p>&quot;If you can’t explain something in simple terms, you don’t understand it&quot; <sup><a href="https://skeptics.stackexchange.com/questions/8742/did-einstein-say-if-you-cant-explain-it-simply-you-dont-understand-it-well-en">2</a></sup></p>
@@ -186,7 +190,7 @@ cd create-your-own-lang-with-rust
 <p>Here is the outline of the contents</p>
 <ul>
 <li><a href="./crash_course.html">Crash Course on Computing</a> which we briefly set up the definitions and foundations</li>
-<li>We create our first programming language <code>Calc</code> that supports simple integer addition and subtraction. The simplicity allows us to cover a lot of important topics concisely. We will use <a href="https://pest.rs">pest</a> to define our grammar and generate our <code>CalcParser</code>, explain what AST is and interpreting the AST means. Next, we will introduce JIT compilation and use <a href="https://github.com/TheDan64/inkwell">inkwell: Safe Rust wrapper around LLVM</a> to JIT compile our <code>Calc</code> language. We will continue by creating a REPL for our <code>Calc</code> language and finally we will create a Virtual Machine and runtime environment and discuss its features.</li>
+<li>We create our first programming language <code>Calc</code> that supports simple integer addition and subtraction. The simplicity allows us to touch a lot of important topics. We will use <a href="https://en.wikipedia.org/wiki/Parsing_expression_grammar">PEG</a> to define our grammar, <a href="https://pest.rs">pest</a> to generate our <code>CalcParser</code> and explain what AST is and interpreting the AST means. Next, we will introduce JIT compilation and use <a href="https://github.com/TheDan64/inkwell">inkwell</a> to JIT compile our <code>Calc</code> language from its AST. To show an alternative compilation approach, we will create a Virtual Machine and a Runtime environment and discuss its features. Finally, we will write a simple REPL for our <code>Calc</code> language and test out different execution paths.</li>
 <li>TODO: We will introduce <code>Jeslang</code> (a statically typed language) and gradually work our way up from <code>Calc</code> language to create <code>Jeslang</code> together</li>
 <li>TODO: Object system and object oriented programming</li>
 <li>TODO: Functional language</li>
@@ -198,7 +202,7 @@ cd create-your-own-lang-with-rust
 <p>If you have found this book useful, please consider donating to any of the organizations below</p>
 <ul>
 <li><a href="https://www.childfoundation.org/page/donate">Child Foundation</a></li>
-<li><a href="https://blacklivesmatter.com/">Black Lives Matters</a></li>
+<li><a href="https://blacklivesmatter.com/">Black Lives Matter</a></li>
 <li><a href="https://www.foodbankscanada.ca/">Food Bank of Canada</a></li>
 </ul>
 <p>Here is a bird's-eye view of a computer program execution</p>
@@ -206,54 +210,54 @@ cd create-your-own-lang-with-rust
 </br>
     <a href><img alt="compiler" src="./img/code_compiler_executor.svg"> </a>
 </p>
-<p>All these three components are intertwined together and learning their connections is crucial in understanding what makes the <em>Computing</em> possible. Informally, a <em>language</em> is a structured text with syntax and semantics. A <em>Source Code</em> written in a programming language needs a translator / compiler of <em>some sort</em>, to translate it to <em>another</em> language / format. Then an executor of <em>some sort</em>, to execute/run the translated commands with the goal of matching the syntax (and semantics) to <em>some form</em> of output.</p>
+<p>All these three components are intertwined together and learning their connections is crucial in understanding what makes <em>Computing</em> possible. Informally, a <em>language</em> is a structured text with syntax and semantics. A <em>Source Code</em> written in a programming language needs a translator/compiler of <em>some sort</em>, to translate it to <em>another</em> language/format. Then an executor of <em>some sort</em>, to execute/run the translated commands with the goal of matching the syntax (and semantics) to <em>some form</em> of output.</p>
 <h2><a class="header" href="#elements-of-computing" id="elements-of-computing">Elements of Computing</a></h2>
 <h3><a class="header" href="#instructions-and-the-machine-language" id="instructions-and-the-machine-language">Instructions and the Machine Language</a></h3>
 <p>If you want to create a &quot;computer&quot; from scratch, you need to start by defining an <em>abstract model</em> for your computer. This abstract model is also referred to as <strong>Instruction Set Architecture (ISA)</strong> (instruction set or simply <em>instructions</em>). A CPU is an <em>implementation</em> of such ISA. A standard ISA defines its basic elements such as <em>data types</em>, <em>register</em> values, various hardware supports, I/O etc. and they all make up the  <em>lowest-level language</em> of computing which is the <strong>Machine Language Instructions.</strong></p>
-<p>Instructions are comprised of <em>instruction code</em> (aka <em>operation code</em>, in short <strong>opcode</strong> or p-code) which are directly executed by CPU. An opcode can either have operand(s) or no operand. For example, in a 8-bits machine where instructions are 8-bits an opcode <em>load</em> is defined by the 4-bits <strong>0011</strong> following by the second 4-bits as operand with <strong>0101</strong> make up an instruction <strong>00110101</strong> in the Machine Language while the opcode for <em>incrementing by 1</em> of the previously loaded value could be <strong>1000</strong> with no operand.</p>
+<p>Instructions are comprised of <em>instruction code</em> (aka <em>operation code</em>, in short <strong>opcode</strong> or p-code) which are directly executed by CPU. An opcode can either have operand(s) or no operand. For example, in an 8-bits machine where instructions are 8-bits an opcode <em>load</em> might be defined by the 4-bits <strong>0011</strong> following by the second 4-bits as operand with <strong>0101</strong> that makes up the instruction <strong>00110101</strong> in the Machine Language while the opcode for <em>incrementing by 1</em> of the previously loaded value could be defined by <strong>1000</strong> with no operand.</p>
 <p>Since <em>opcodes are like atoms of computing</em>, they are presented in an opcode table. An example of that is <a href="http://sparksandflames.com/files/x86InstructionChart.html">Intel x86 opcode table</a>.</p>
 <h3><a class="header" href="#assembly-language" id="assembly-language">Assembly Language</a></h3>
-<p>Assembly language is a symbolic version (mnemonics) of the machine language where opcodes consist of symbolic names. From our previous Machine Language example above, <strong>00110101</strong> meaning load the binary <strong>0101</strong>, then in an Assembly language, we can define the symbol <strong>LOAD</strong> referring to 0011 as a higher level abstraction so that 00110101 can be written as <strong>LOAD 0101</strong>.</p>
+<p>Since it's hard to remember the opcodes by their bit-patterns, we can assign <em>abstract</em> symbols to opcodes matching their operations by name. This way, we can create Assembly language from the Machine Language. In the previous Machine Language example above, <strong>00110101</strong> (means load the binary <strong>0101</strong>), we can define the symbol <strong>LOAD</strong> referring to <strong>0011</strong> as a higher level abstraction so that <strong>00110101</strong> can be written as <strong>LOAD 0101</strong>.</p>
 <p>The utility program that translates the Assembly language to Machine Language is called <strong>Assembler</strong>.</p>
 <h3><a class="header" href="#compiler" id="compiler">Compiler</a></h3>
 <p align="center">
 </br>
     <a href><img alt="compiler" src="./img/compiler.svg"> </a>
 </p>
-<p>Compiler is any program that translates (maps, encodes) a language A to language B. Each compiler has two major component</p>
+<p>Compiler is any program that translates (maps, encodes) a language A to language B. Each compiler has two major components</p>
 <ul>
-<li><strong>Frontend:</strong> deals with lexer, parser and a structured tree format called <strong>Abstract Syntax Tree (AST)</strong></li>
+<li><strong>Frontend:</strong> deals with mapping the source code string to a structured format called <strong>Abstract Syntax Tree (AST)</strong></li>
 <li><strong>Backend (code generator):</strong> translates the AST into the <a href="./crash_course.html#bytecode">Bytecode</a> / <a href="./crash_course.html#intermediate-representation-ir">IR</a> or Assembly</li>
 </ul>
-<p>Most often, when we talk about compiler backend, we mean <strong>Ahead-Of-Time (AOT)</strong> compiler where the translation (to Assembly, <a href="./crash_course.html#bytecode">Bytecode</a> or some <a href="./crash_course.html#intermediate-representation-ir">IR</a>) happens <em>before</em> execution. Another form of translation is <strong>Just-In-Time (JIT)</strong> compiler where translation happens right at the time of the execution.</p>
-<p>To distinguish between a program that translates Python to Assembly vs. Python to Java, the former is called compiler and the latter <strong>transpiler</strong>.</p>
-<h4><a class="header" href="#relativity-of-terms-and-definitions" id="relativity-of-terms-and-definitions"><em>Relativity of Terms and Definitions</em></a></h4>
-<p>There is a relativity notion in most of terms involved here. Assembly is a <em>high-level</em> language comparing to the Machine Language but is considered <em>low-level</em> when viewing it from C/C++/Rust. High-level and low-level are relative terms conveying the amount of <em>abstractions</em> involved.</p>
+<p>Most often, when we talk about compiler, we mean <strong>Ahead-Of-Time (AOT)</strong> compiler where the translation happens <em>before</em> execution. Another form of translation is <strong>Just-In-Time (JIT)</strong> compilation where translation happens right at the time of the execution.</p>
+<p>From the diagram above, to distinguish between a program that translates for example, Python to Assembly vs. Python to Java, the former is called compiler and the latter <strong>transpiler</strong>.</p>
+<h4><a class="header" href="#relativity-of-low-level-high-level" id="relativity-of-low-level-high-level"><em>Relativity of low-level, high-level</em></a></h4>
+<p>Assembly is a <em>high-level</em> language compared to the Machine Language but is considered <em>low-level</em> when viewing it from C/C++/Rust. High-level and low-level are relative terms conveying the amount of <em>abstractions</em> involved.</p>
 <h3><a class="header" href="#virtual-machine-vm" id="virtual-machine-vm">Virtual Machine (VM)</a></h3>
-<p>Instruction Set Architecture is hardware and vendor specific. That is, an Intel CPU instructions are different from AMD CPU ones. A <strong>(process) VM</strong> abstracts away details of the underlying hardware or operating system so that programs translated/compiled into the VM language to become platform agnostic. A famous example is the <strong>Java Virtual Machine (JVM)</strong>
-which translates/compiles Java programs into JVM language aka Java <strong>Bytecode</strong>. Therefore, if you have a valid Java Bytecode and <em>Java Runtime Environment (JRE)</em> in your system, you can execute the Bytecode, regardless on what platform it was compiled.</p>
+<p><a href="./crash_course.html#instructions-and-the-machine-language">Instructions</a> are hardware and vendor specific. That is, an Intel CPU instructions are different from AMD CPU. A <strong>VM</strong> abstracts away details of the underlying hardware or operating system so that programs translated/compiled into the VM language becomes platform agnostic. A famous example is the <strong>Java Virtual Machine (JVM)</strong>
+which translates/compiles Java programs to JVM language aka Java <strong>Bytecode</strong>. Therefore, if you have a valid Java Bytecode and <em>Java Runtime Environment (JRE)</em> in your system, you can execute the Bytecode, regardless on what platform it was compiled on.</p>
 <h4><a class="header" href="#bytecode" id="bytecode">Bytecode</a></h4>
-<p>Another technique to translate a Source Code to Machine Code, is emulating the Instruction Set with a new (human friendly) encoding (perhaps easier than assembly). Bytecode is such as (human-readable) <em>intermediate language / representation</em> which is lower-level than the actual program language that has been translated from and higher-level that Assembly language.</p>
+<p>Another technique to translate a source code to Machine Code, is emulating the Instruction Set with a new (human friendly) encoding (perhaps easier than assembly). Bytecode is such an <em>intermediate language/representation</em> which is lower-level than the actual programming language that has been translated from and higher-level than Assembly language.</p>
 <h4><a class="header" href="#stack-machine" id="stack-machine">Stack Machine</a></h4>
 <p>Stack Machine is a simple model for a computing machine with two main components</p>
 <ul>
-<li>a memory (stack) array keeping the Bytecode instructions that we can <code>push</code> and <code>pop</code> instructions</li>
-<li>an instruction pointer (IP) and stack pointer (SP) guiding which instruction was executed and which instruction is next.</li>
+<li>a memory (stack) array keeping the Bytecode instructions that supports <code>push</code>ing and <code>pop</code>ing instructions</li>
+<li>an instruction pointer (IP) and stack pointer (SP) guiding which instruction was executed and what is next.</li>
 </ul>
 <h3><a class="header" href="#intermediate-representation-ir" id="intermediate-representation-ir">Intermediate Representation (IR)</a></h3>
-<p>Any representation that's between Source Code and (usually) Assembly language is considered and intermediate representation. Mainstream languages usually have more one one such representation and go from one IR to another IR is called lowering.</p>
+<p>Any representation that's between source code and (usually) Assembly language is considered an intermediate representation. Mainstream languages usually have more than one such representations and going from one IR to another IR is called <em>lowering</em>.</p>
 <h3><a class="header" href="#code-generation" id="code-generation">Code Generation</a></h3>
-<p>Code generation for a compiler is when the compiler <em>converts an IR to some Machine Code</em>. But it has a wider semantic too for example when using Rust declarative macros via <code>macro_rules!</code> to automate some repetitive implementations, you're essentially generating codes as well as expanding the syntax.</p>
+<p>Code generation for a compiler is when the compiler <em>converts an IR to some Machine Code</em>. But it has a wider semantic too for example, when using Rust declarative macro via <code>macro_rules!</code> to automate some repetitive implementations, you're essentially generating codes (as well as expanding the syntax).</p>
 <h2><a class="header" href="#conclusion" id="conclusion">Conclusion</a></h2>
-<p>In conclusion, we want to settle one of the most frequently asked questions:</p>
+<p>In conclusion, we want to settle one of the most frequently asked questions</p>
 <h2><a class="header" href="#span-stylecolorblueis-python-or-a-language-x-compiled-or-interpretedspan" id="span-stylecolorblueis-python-or-a-language-x-compiled-or-interpretedspan"><span style="color:blue">Is Python (or a language X) Compiled or Interpreted?</span></a></h2>
 <p>This is in fact the <span style="color:red">WRONG</span> question to ask!</p>
-<p>Being AOT compiled, JIT compiled or interpreted is <strong>implementation-dependent</strong>. For example, the standard Python is <a href="https://www.python.org/"><strong>CPython</strong></a> which compiles a Python source code (in CPython VM) to CPython Bytecode (content of <code>.pyc</code>) and <strong>interprets</strong> the Bytecode. However, another implementation of Python is <a href="https://www.pypy.org/"><strong>PyPy</strong></a> which (more or less) compiles a Python source code (in PyPy VM) to PyPy Bytecode and <strong>JIT</strong> compiles the PyPy Bytecode to the Machine Code (is usually faster than CPython interpreter).</p>
+<p>Being AOT compiled, JIT compiled or interpreted is <strong>implementation-dependent</strong>. For example, the standard Python <em>implementation</em> is <a href="https://www.python.org/"><strong>CPython</strong></a> which compiles a Python source code (in CPython VM) to CPython Bytecode (contents of <code>.pyc</code>) and <strong>interprets</strong> the Bytecode. However, another implementation of Python is <a href="https://www.pypy.org/"><strong>PyPy</strong></a> which (more or less) compiles a Python source code (in PyPy VM) to PyPy Bytecode and <strong>JIT</strong> compiles the PyPy Bytecode to the Machine Code (and is usually faster than CPython interpreter).</p>
 <h1><a class="header" href="#calculator" id="calculator">Calculator</a></h1>
 <p>Our first programming language is a simple calculator supporting addition and subtraction. This is perhaps the <em>simplest language</em> that helps us introducing the major topics from grammar to compilation and virtual machine.</p>
 <p>If you haven't cloned the <a href="https://github.com/ehsanmok/create-your-own-lang-with-rust">GitHub</a> repo already, please do and navigate to the <code>calculator</code> subdirectory.</p>
 <p>To start, we have <code>1 + 1;</code> in <a href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/calculator/examples/simple.calc">examples/simple.calc</a> where you can compile with</p>
-<pre><code class="language-text">cargo build --bin main // create the CLI executable for Calc
+<pre><code class="language-text">cargo build --bin main // create a simple executable for Calc
 ../target/debug/main examples/simple.calc
 </code></pre>
 <p>or simply</p>
@@ -265,10 +269,10 @@ which translates/compiles Java programs into JVM language aka Java <strong>Bytec
 </br>
     <a href><img alt="grammar, lexer, parser" src="01_calculator/../img/grammar_lexer_parser.svg"> </a>
 </p>
-<p>Every language needs a (formal) grammar to describe its syntax and semantics. Once a program adheres to the rules of the grammar in <em>Source Code</em> (for example as input string or file format), it is <em>tokenized</em> and then <em>lexer</em> adds some metadata to each token, for example where each token starts and finishes in the original source code. Lastly, parsing (reshaping or restructuring) of the lexed outputs into our <a href="01_calculator/./ast.html">Abstract Syntax Tree (AST)</a> occurs for later stages of compilation (compiler backend).</p>
+<p>Every language needs a (formal) grammar to describe its syntax and semantics. Once a program adheres to the rules of the grammar in <em>Source Code</em> (for example as input string or file format), it is <em>tokenized</em> and then <em>lexer</em> adds some metadata to each token for example, where each token starts and finishes in the original source code. Lastly, parsing (reshaping or restructuring) of the lexed outputs to <a href="01_calculator/./ast.html">Abstract Syntax Tree</a>.</p>
 <h2><a class="header" href="#grammar" id="grammar">Grammar</a></h2>
 <p>While there are varieties of ways to define the grammar, in this book we will use the <a href="https://en.wikipedia.org/wiki/Parsing_expression_grammar">Parsing Expression Grammar (PEG)</a>.</p>
-<p>Here is how our simple calculator language <code>Calc</code> (supporting addition and subtraction) looks like in PEG</p>
+<p>Here is how our simple calculator language <code>Calc</code> (supporting addition and subtraction) grammar looks like in PEG</p>
 <pre><code class="language-text">Program = _{ SOI ~ Expr ~ EOF }
 
 Expr = { UnaryExpr | BinaryExpr }
@@ -295,7 +299,7 @@ EOF = _{ EOI | &quot;;&quot; }
 <li>unary or binary expressions are made of <code>Term</code> and <code>Operator</code> (<code>&quot;+&quot;</code> and <code>&quot;-&quot;</code>)</li>
 <li>the only <em>atom</em> is integer <code>Int</code></li>
 </ul>
-<p>Given a PEG grammar, luckily we can use <a href="https://pest.rs/">pest</a> which is a powerful <em>parser generator</em> for the PEG grammars. (For more details on pest, checkout the <a href="https://pest.rs/book/">pest book</a>)</p>
+<p>Given our grammar, we will use <a href="https://pest.rs/">pest</a> which is a powerful <em>parser generator</em> of PEG grammars. (For more details on pest, checkout the <a href="https://pest.rs/book/">pest book</a>)</p>
 <p><code>pest</code> <em>derives</em> the parser <code>CalcParser::parse</code> from our grammar</p>
 <pre><code class="language-rust ignore">#[derive(pest_derive::Parser)]
 #[grammar = &quot;grammar.pest&quot;]
@@ -385,11 +389,11 @@ pub fn parse(source: &amp;str) -&gt; std::result::Result&lt;Vec&lt;Node&gt;, pes
     Ok(ast)
 }
 </code></pre>
-<p>Checkout <a href="01_calculator/../../../calculator/src/parser.rs">calculator/src/parser.rs</a>.</p>
+<p>Checkout <a href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/calculator/src/parser.rs">calculator/src/parser.rs</a>.</p>
 <p>Note that <code>CalcParser::parse</code> takes care of the AST traversal and correctly maps it to <code>Vec&lt;Node&gt;</code> for easier access
 in later stages of compilation.</p>
 <h2><a class="header" href="#interpreter" id="interpreter">Interpreter</a></h2>
-<p>CPU is the <em>ultimate interpreter</em>. That is, it executes opcodes as it goes. To do that, after we have changed the representation (aka <em>lowered</em> the representation) of our source code <code>&amp;str</code> to AST <code>Node</code>, a basic interpreter looks and each node of the AST (via any <a href="https://en.wikipedia.org/wiki/Tree_traversal">tree traversal methods</a>) and simply <strong>evaluates</strong> it <em>recursively</em></p>
+<p>CPU is the <em>ultimate interpreter</em>. That is, it executes opcodes as it goes. To do that, after we have changed the representation (aka <em>lowered</em> the representation) of our source code <code>&amp;str</code> to AST <code>Node</code>, a basic interpreter looks at each node of the AST (via any <a href="https://en.wikipedia.org/wiki/Tree_traversal">tree traversal methods</a>) and simply <strong>evaluates</strong> it <em>recursively</em></p>
 <pre><code class="language-rust ignore">    pub fn eval(&amp;self, node: &amp;Node) -&gt; i32 {
         match node {
             Node::Int(n) =&gt; *n,
@@ -412,7 +416,7 @@ in later stages of compilation.</p>
         }
     }
 </code></pre>
-<p>To sum up, we define a <code>Compile</code> trait</p>
+<p>To sum up, we define a <code>Compile</code> trait that we will use throughout this chapter</p>
 <pre><code class="language-rust ignore">pub trait Compile {
     type Output;
 
@@ -426,7 +430,7 @@ in later stages of compilation.</p>
     }
 }
 </code></pre>
-<p>and implement our interpreter</p>
+<p>and we can now implement our interpreter</p>
 <pre><code class="language-rust ignore">pub struct Interpreter;
 
 impl Compile for Interpreter {
@@ -443,6 +447,12 @@ impl Compile for Interpreter {
 }
 </code></pre>
 <p><span class="filename">Filename: calculator/src/compiler/interpreter.rs</span></p>
+<p>and test</p>
+<pre><code class="language-rust ignore">assert_eq!(Interpreter::from_source(&quot;1 + 2&quot;).unwrap(), 3);
+</code></pre>
+<p>Run such tests locally with</p>
+<pre><code class="language-text">cargo test interpreter --tests
+</code></pre>
 <h2><a class="header" href="#just-in-time-jit-compiler-with-llvm" id="just-in-time-jit-compiler-with-llvm">Just-In-Time (JIT) Compiler with LLVM</a></h2>
 <p>JIT compilation is a combination of Ahead-Of-Time (AOT) compilation and interpretation. As we saw previously, our <code>Calc</code> interpreter evaluates AST to values (actual integer <code>i32</code> values) but a JIT compiler differs from an interpreter in what it outputs. Intuitively, JIT outputs are like AOT outputs but generated at runtime when traversing the AST.</p>
 <h3><a class="header" href="#llvm" id="llvm">LLVM</a></h3>
@@ -460,7 +470,7 @@ impl Compile for Interpreter {
 <p>We want to define an add function like</p>
 <pre><code>add(x: i32, x: i32) -&gt; i32 { x + y }
 </code></pre>
-<p>but using the <strong>LLVM language</strong> and JIT it. Since LLVM is also a VM, it has its own Bytecodes and IR. The point is we need to define <em>every</em> bit of what makes up a function through LLVM basic constructs such as context, module, function signature setups, argument types, basic block, etc.</p>
+<p>but using the <strong>LLVM language</strong> and JIT it. For that, we need to define <em>every</em> bit of what makes up a function through LLVM basic constructs such as context, module, function signature setups, argument types, basic block, etc.</p>
 <p>Here is how to <em>stitch</em> our add function in LLVM</p>
 <ol>
 <li>We start by creating a <code>context</code>, adding the <code>addition</code> module and setting up the data type we want to use <code>i32_type</code> of type <a href="https://thedan64.github.io/inkwell/inkwell/types/struct.IntType.html"><code>IntType</code></a></li>
@@ -481,7 +491,7 @@ impl Compile for Interpreter {
     builder.position_at_end(entry_basic_block);
 </code></pre>
 <ol start="3">
-<li>We create the arguments <code>x</code> and <code>y</code> and add them to the <code>builder</code> and make up the return instruction</li>
+<li>We create the arguments <code>x</code> and <code>y</code> and add them to the <code>builder</code> to make up the return instruction</li>
 </ol>
 <pre><code class="language-rust ignore">    let x = fn_val.get_nth_param(0).unwrap().into_int_value();
     let y = fn_val.get_nth_param(1).unwrap().into_int_value();
@@ -621,7 +631,11 @@ impl Compile for Jit {
 <p>Finally, we can test it</p>
 <pre><code class="language-rust ignore">assert_eq!(Jit::from_source(&quot;1 + 2&quot;).unwrap(), 3)
 </code></pre>
+<p>Run such tests locally with</p>
+<pre><code class="language-text">cargo test jit --tests
+</code></pre>
 <h2><a class="header" href="#exercise" id="exercise">Exercise</a></h2>
+<p>To get most out of this chapter, it is recommended to at least try the first exercise below</p>
 <ol>
 <li>Add support for multiplication and division to the calculator and allow computations on floating numbers <code>f32</code>. Can you include standard operator precedence?</li>
 <li>JIT with <a href="https://docs.rs/cranelift-simplejit/0.64.0/cranelift_simplejit/">cranelift-simplejit</a></li>
@@ -802,9 +816,17 @@ let mut vm = VM::new(byte_code);
 vm.run();
 println!(&quot;{}&quot;, vm.pop_last());
 </code></pre>
-<p>Checkout the <a href="01_calculator/./repl.html">next section</a> on how to create a REPL for our <code>Calc</code> and see some samples of computations.</p>
+<p>Run tests locally for our VM with</p>
+<pre><code class="language-text">cargo test vm --tests
+</code></pre>
+<p>Checkout the <a href="01_calculator/./repl.html">next section</a> on how to create a REPL for our <code>Calc</code> to compare different compilation paths.</p>
 <h2><a class="header" href="#read-eval-print-loop-repl" id="read-eval-print-loop-repl">Read-Eval-Print Loop (REPL)</a></h2>
-<p>REPL as its name implies, loops through every line of input and compile it. We use <a href="https://github.com/kkawakam/rustyline">rustyline crate</a> to create our REPL. We can optionally choose to interpret or JIT each line of input as follow</p>
+<p>REPL (as its name implies) loops through every line of the input and compiles it. We use <a href="https://github.com/kkawakam/rustyline">rustyline</a> crate to create our REPL. For each line of input, we can optionally choose to</p>
+<ul>
+<li>directly interpret the AST</li>
+<li>JIT the AST</li>
+<li>compile to our bytecode VM and interpret it</li>
+</ul>
 <pre><code class="language-rust no_run noplaypen">fn main() {
     let mut rl = Editor::&lt;()&gt;::new();
     println!(&quot;Calculator prompt. Expressions are line evaluated.&quot;);
@@ -844,18 +866,21 @@ println!(&quot;{}&quot;, vm.pop_last());
     }
 </code></pre>
 <p><span class="filename">Filename: calculator/src/bin/repl.rs</span></p>
-<p>We can either use interpreter, JIT compiler or VM interpreter in our <a href="01_calculator/../../../calculator">calculator</a> with passing them as flags. Go ahead and run them one by one</p>
+<p>Now, we can use run the REPL and choose different compilation path</p>
 <pre><code>cargo run --bin repl --features jit
 // OR
 cargo run --bin repl --features interpreter
 // OR
 cargo run --bin repl --features vm
 </code></pre>
-<p>In either of them, you should see the prompt like</p>
+<p>In any of them, you should see the prompt like</p>
 <pre><code class="language-text">Calculator prompt. Expressions are line evaluated.
 &gt;&gt;&gt;
 </code></pre>
-<p>waiting for your inputs. Test it our with <code>1 + 2</code> examples and <code>CTRL-C</code> with break out of the REPL. You can see the different paths of compilation in debug mode. For example with <code>--features jit</code>, you will see</p>
+<p>waiting for your inputs. Here are some sample outputs of different compilation paths in debug mode.</p>
+<ul>
+<li>with <code>--features jit</code></li>
+</ul>
 <pre><code class="language-text">Calculator prompt. Expressions are line evaluated.
 &gt;&gt; 1 + 2
 Compiling the source: 1 + 2
@@ -878,7 +903,9 @@ entry:
 &gt;&gt;
 CTRL-C
 </code></pre>
-<p>or with <code>--features vm</code></p>
+<ul>
+<li>with <code>--features vm</code></li>
+</ul>
 <pre><code class="language-text">Calculator prompt. Expressions are line evaluated.
 &gt;&gt; 1 + 2
 Compiling the source: 1 + 2

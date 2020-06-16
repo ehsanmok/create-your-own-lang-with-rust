@@ -228,11 +228,11 @@ pub fn parse(source: &amp;str) -&gt; std::result::Result&lt;Vec&lt;Node&gt;, pes
     Ok(ast)
 }
 </code></pre>
-<p>Checkout <a href="../../../calculator/src/parser.rs">calculator/src/parser.rs</a>.</p>
+<p>Checkout <a href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/calculator/src/parser.rs">calculator/src/parser.rs</a>.</p>
 <p>Note that <code>CalcParser::parse</code> takes care of the AST traversal and correctly maps it to <code>Vec&lt;Node&gt;</code> for easier access
 in later stages of compilation.</p>
 <h2><a class="header" href="#interpreter" id="interpreter">Interpreter</a></h2>
-<p>CPU is the <em>ultimate interpreter</em>. That is, it executes opcodes as it goes. To do that, after we have changed the representation (aka <em>lowered</em> the representation) of our source code <code>&amp;str</code> to AST <code>Node</code>, a basic interpreter looks and each node of the AST (via any <a href="https://en.wikipedia.org/wiki/Tree_traversal">tree traversal methods</a>) and simply <strong>evaluates</strong> it <em>recursively</em></p>
+<p>CPU is the <em>ultimate interpreter</em>. That is, it executes opcodes as it goes. To do that, after we have changed the representation (aka <em>lowered</em> the representation) of our source code <code>&amp;str</code> to AST <code>Node</code>, a basic interpreter looks at each node of the AST (via any <a href="https://en.wikipedia.org/wiki/Tree_traversal">tree traversal methods</a>) and simply <strong>evaluates</strong> it <em>recursively</em></p>
 <pre><code class="language-rust ignore">    pub fn eval(&amp;self, node: &amp;Node) -&gt; i32 {
         match node {
             Node::Int(n) =&gt; *n,
@@ -255,7 +255,7 @@ in later stages of compilation.</p>
         }
     }
 </code></pre>
-<p>To sum up, we define a <code>Compile</code> trait</p>
+<p>To sum up, we define a <code>Compile</code> trait that we will use throughout this chapter</p>
 <pre><code class="language-rust ignore">pub trait Compile {
     type Output;
 
@@ -269,7 +269,7 @@ in later stages of compilation.</p>
     }
 }
 </code></pre>
-<p>and implement our interpreter</p>
+<p>and we can now implement our interpreter</p>
 <pre><code class="language-rust ignore">pub struct Interpreter;
 
 impl Compile for Interpreter {
@@ -286,6 +286,12 @@ impl Compile for Interpreter {
 }
 </code></pre>
 <p><span class="filename">Filename: calculator/src/compiler/interpreter.rs</span></p>
+<p>and test</p>
+<pre><code class="language-rust ignore">assert_eq!(Interpreter::from_source(&quot;1 + 2&quot;).unwrap(), 3);
+</code></pre>
+<p>Run such tests locally with</p>
+<pre><code class="language-text">cargo test interpreter --tests
+</code></pre>
 
                     </main>
 

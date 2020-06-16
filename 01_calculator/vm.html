@@ -324,7 +324,10 @@ let mut vm = VM::new(byte_code);
 vm.run();
 println!(&quot;{}&quot;, vm.pop_last());
 </code></pre>
-<p>Checkout the <a href="./repl.html">next section</a> on how to create a REPL for our <code>Calc</code> and see some samples of computations.</p>
+<p>Run tests locally for our VM with</p>
+<pre><code class="language-text">cargo test vm --tests
+</code></pre>
+<p>Checkout the <a href="./repl.html">next section</a> on how to create a REPL for our <code>Calc</code> to compare different compilation paths.</p>
 
                     </main>
 

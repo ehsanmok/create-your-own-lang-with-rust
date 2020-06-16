@@ -150,7 +150,12 @@
                 <div id="content" class="content">
                     <main>
                         <h2><a class="header" href="#read-eval-print-loop-repl" id="read-eval-print-loop-repl">Read-Eval-Print Loop (REPL)</a></h2>
-<p>REPL as its name implies, loops through every line of input and compile it. We use <a href="https://github.com/kkawakam/rustyline">rustyline crate</a> to create our REPL. We can optionally choose to interpret or JIT each line of input as follow</p>
+<p>REPL (as its name implies) loops through every line of the input and compiles it. We use <a href="https://github.com/kkawakam/rustyline">rustyline</a> crate to create our REPL. For each line of input, we can optionally choose to</p>
+<ul>
+<li>directly interpret the AST</li>
+<li>JIT the AST</li>
+<li>compile to our bytecode VM and interpret it</li>
+</ul>
 <pre><code class="language-rust no_run noplaypen">fn main() {
     let mut rl = Editor::&lt;()&gt;::new();
     println!(&quot;Calculator prompt. Expressions are line evaluated.&quot;);
@@ -190,18 +195,21 @@
     }
 </code></pre>
 <p><span class="filename">Filename: calculator/src/bin/repl.rs</span></p>
-<p>We can either use interpreter, JIT compiler or VM interpreter in our <a href="../../../calculator">calculator</a> with passing them as flags. Go ahead and run them one by one</p>
+<p>Now, we can use run the REPL and choose different compilation path</p>
 <pre><code>cargo run --bin repl --features jit
 // OR
 cargo run --bin repl --features interpreter
 // OR
 cargo run --bin repl --features vm
 </code></pre>
-<p>In either of them, you should see the prompt like</p>
+<p>In any of them, you should see the prompt like</p>
 <pre><code class="language-text">Calculator prompt. Expressions are line evaluated.
 &gt;&gt;&gt;
 </code></pre>
-<p>waiting for your inputs. Test it our with <code>1 + 2</code> examples and <code>CTRL-C</code> with break out of the REPL. You can see the different paths of compilation in debug mode. For example with <code>--features jit</code>, you will see</p>
+<p>waiting for your inputs. Here are some sample outputs of different compilation paths in debug mode.</p>
+<ul>
+<li>with <code>--features jit</code></li>
+</ul>
 <pre><code class="language-text">Calculator prompt. Expressions are line evaluated.
 &gt;&gt; 1 + 2
 Compiling the source: 1 + 2
@@ -224,7 +232,9 @@ entry:
 &gt;&gt;
 CTRL-C
 </code></pre>
-<p>or with <code>--features vm</code></p>
+<ul>
+<li>with <code>--features vm</code></li>
+</ul>
 <pre><code class="language-text">Calculator prompt. Expressions are line evaluated.
 &gt;&gt; 1 + 2
 Compiling the source: 1 + 2
