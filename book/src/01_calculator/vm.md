@@ -101,5 +101,10 @@ let mut vm = VM::new(byte_code);
 vm.run();
 println!("{}", vm.pop_last());
 ```
+Run tests locally for our VM with
 
-Checkout the [next section](./repl.md) on how to create a REPL for our `Calc` and see some samples of computations.
+```text
+cargo test vm --tests
+```
+
+Checkout the [next section](./repl.md) on how to create a REPL for our `Calc` to compare different compilation paths.

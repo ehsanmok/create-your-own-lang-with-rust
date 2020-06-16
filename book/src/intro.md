@@ -14,7 +14,10 @@ The accompanying codes and materials for this book are available in [GitHub](htt
     git clone https://github.com/ehsanmok/create-your-own-lang-with-rust
     cd create-your-own-lang-with-rust
     ```
-* LLVM v10.0 installed ([Debina/Ubuntu](https://apt.llvm.org/) or [macOS](https://formulae.brew.sh/formula/llvm)) to run and test locally `cargo test --tests`
+
+* LLVM installed to run and test locally `cargo test --tests`
+  * Easiest option is LLVM v10.0 ([Debina/Ubuntu](https://apt.llvm.org/) or [macOS](https://formulae.brew.sh/formula/llvm))
+  * Otherwise, in `Cargo.toml` you'd need to change the `inkwell = { ..., branch = "your-llvm-version" }` with LLVM version on your system (output of `llvm-config --version`)
 
 ## Motivations and Goals
 
@@ -22,7 +25,7 @@ This book arises from my frustration of not finding modern, clear and concise te
 
 The following are my guidelines
 
-> "If you don't know how *compilers* work, then you don't know how computers work" <sup>[1]((http://steve-yegge.blogspot.com/2007/06/rich-programmer-food.html?))</sup>
+> "If you don't know how *compilers* work, then you don't know how computers work" <sup>[1](http://steve-yegge.blogspot.com/2007/06/rich-programmer-food.html?)</sup>
 
 
 > "If you can’t explain something in simple terms, you don’t understand it" <sup>[2](https://skeptics.stackexchange.com/questions/8742/did-einstein-say-if-you-cant-explain-it-simply-you-dont-understand-it-well-en)</sup>
@@ -32,7 +35,7 @@ The following are my guidelines
 Here is the outline of the contents
 
 * [Crash Course on Computing](./crash_course.md) which we briefly set up the definitions and foundations
-* We create our first programming language `Calc` that supports simple integer addition and subtraction. The simplicity allows us to cover a lot of important topics concisely. We will use [pest](https://pest.rs) to define our grammar and generate our `CalcParser`, explain what AST is and interpreting the AST means. Next, we will introduce JIT compilation and use [inkwell: Safe Rust wrapper around LLVM](https://github.com/TheDan64/inkwell) to JIT compile our `Calc` language. We will continue by creating a REPL for our `Calc` language and finally we will create a Virtual Machine and runtime environment and discuss its features.
+* We create our first programming language `Calc` that supports simple integer addition and subtraction. The simplicity allows us to touch a lot of important topics. We will use [PEG](https://en.wikipedia.org/wiki/Parsing_expression_grammar) to define our grammar, [pest](https://pest.rs) to generate our `CalcParser` and explain what AST is and interpreting the AST means. Next, we will introduce JIT compilation and use [inkwell](https://github.com/TheDan64/inkwell) to JIT compile our `Calc` language from its AST. To show an alternative compilation approach, we will create a Virtual Machine and a Runtime environment and discuss its features. Finally, we will write a simple REPL for our `Calc` language and test out different execution paths.
 * TODO: We will introduce `Jeslang` (a statically typed language) and gradually work our way up from `Calc` language to create `Jeslang` together
 * TODO: Object system and object oriented programming
 * TODO: Functional language
@@ -45,5 +48,5 @@ Here is the outline of the contents
 If you have found this book useful, please consider donating to any of the organizations below
 
 * [Child Foundation](https://www.childfoundation.org/page/donate)
-* [Black Lives Matters](https://blacklivesmatter.com/)
+* [Black Lives Matter](https://blacklivesmatter.com/)
 * [Food Bank of Canada](https://www.foodbankscanada.ca/)

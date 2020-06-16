@@ -64,7 +64,7 @@ Now, we can use the `pest` generated `CalcParser::parse` to map the Rules of our
 
 {{#include ../../../calculator/src/parser.rs:parse_source}}
 ```
-Checkout [calculator/src/parser.rs](../../../calculator/src/parser.rs).
+Checkout [calculator/src/parser.rs](https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/calculator/src/parser.rs).
 
 
 Note that `CalcParser::parse` takes care of the AST traversal and correctly maps it to `Vec<Node>` for easier access
@@ -73,21 +73,33 @@ in later stages of compilation.
 
 ## Interpreter
 
-CPU is the *ultimate interpreter*. That is, it executes opcodes as it goes. To do that, after we have changed the representation (aka *lowered* the representation) of our source code `&str` to AST `Node`, a basic interpreter looks and each node of the AST (via any [tree traversal methods](https://en.wikipedia.org/wiki/Tree_traversal)) and simply **evaluates** it *recursively*
+CPU is the *ultimate interpreter*. That is, it executes opcodes as it goes. To do that, after we have changed the representation (aka *lowered* the representation) of our source code `&str` to AST `Node`, a basic interpreter looks at each node of the AST (via any [tree traversal methods](https://en.wikipedia.org/wiki/Tree_traversal)) and simply **evaluates** it *recursively*
 
 ```rust,ignore
 {{#include ../../../calculator/src/compiler/interpreter.rs:interpreter_eval}}
 ```
 
-To sum up, we define a `Compile` trait
+To sum up, we define a `Compile` trait that we will use throughout this chapter
 
 ```rust,ignore
 {{#include ../../../calculator/src/lib.rs:compile_trait}}
 ```
 
-and implement our interpreter
+and we can now implement our interpreter
 
 ```rust,ignore
 {{#include ../../../calculator/src/compiler/interpreter.rs:interpreter}}
 ```
 <span class="filename">Filename: calculator/src/compiler/interpreter.rs</span>
+
+and test
+
+```rust,ignore
+assert_eq!(Interpreter::from_source("1 + 2").unwrap(), 3);
+```
+
+Run such tests locally with
+
+```text
+cargo test interpreter --tests
+```

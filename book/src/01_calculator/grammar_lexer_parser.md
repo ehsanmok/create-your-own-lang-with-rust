@@ -7,13 +7,13 @@ Here is a high-level view of a compiler *frontend* pipeline
     <a href><img alt="grammar, lexer, parser" src="../img/grammar_lexer_parser.svg"> </a>
 </p>
 
-Every language needs a (formal) grammar to describe its syntax and semantics. Once a program adheres to the rules of the grammar in *Source Code* (for example as input string or file format), it is *tokenized* and then *lexer* adds some metadata to each token, for example where each token starts and finishes in the original source code. Lastly, parsing (reshaping or restructuring) of the lexed outputs into our [Abstract Syntax Tree (AST)](./ast.md) occurs for later stages of compilation (compiler backend).
+Every language needs a (formal) grammar to describe its syntax and semantics. Once a program adheres to the rules of the grammar in *Source Code* (for example as input string or file format), it is *tokenized* and then *lexer* adds some metadata to each token for example, where each token starts and finishes in the original source code. Lastly, parsing (reshaping or restructuring) of the lexed outputs to [Abstract Syntax Tree](./ast.md).
 
 ## Grammar
 
 While there are varieties of ways to define the grammar, in this book we will use the [Parsing Expression Grammar (PEG)](https://en.wikipedia.org/wiki/Parsing_expression_grammar).
 
-Here is how our simple calculator language `Calc` (supporting addition and subtraction) looks like in PEG
+Here is how our simple calculator language `Calc` (supporting addition and subtraction) grammar looks like in PEG
 
 ```text
 {{ #include ../../../calculator/src/grammar.pest }}
@@ -27,7 +27,7 @@ This grammar basically defines the syntax and semantics where
 * unary or binary expressions are made of `Term` and `Operator` (`"+"` and `"-"`)
 * the only *atom* is integer `Int`
 
-Given a PEG grammar, luckily we can use [pest](https://pest.rs/) which is a powerful *parser generator* for the PEG grammars. (For more details on pest, checkout the [pest book](https://pest.rs/book/))
+Given our grammar, we will use [pest](https://pest.rs/) which is a powerful *parser generator* of PEG grammars. (For more details on pest, checkout the [pest book](https://pest.rs/book/))
 
 `pest` *derives* the parser `CalcParser::parse` from our grammar
 

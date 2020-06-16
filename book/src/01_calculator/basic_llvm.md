@@ -20,7 +20,7 @@ We want to define an add function like
 add(x: i32, x: i32) -> i32 { x + y }
 ```
 
-but using the **LLVM language** and JIT it. Since LLVM is also a VM, it has its own Bytecodes and IR. The point is we need to define *every* bit of what makes up a function through LLVM basic constructs such as context, module, function signature setups, argument types, basic block, etc.
+but using the **LLVM language** and JIT it. For that, we need to define *every* bit of what makes up a function through LLVM basic constructs such as context, module, function signature setups, argument types, basic block, etc.
 
 Here is how to *stitch* our add function in LLVM
 
@@ -37,7 +37,7 @@ Here is how to *stitch* our add function in LLVM
 {{#include ../../../calculator/examples/llvm/src/main.rs:second}}
 ```
 
-3. We create the arguments `x` and `y` and add them to the `builder` and make up the return instruction
+3. We create the arguments `x` and `y` and add them to the `builder` to make up the return instruction
 
 ```rust,ignore
 {{#include ../../../calculator/examples/llvm/src/main.rs:third}}

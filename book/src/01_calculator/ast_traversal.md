@@ -32,3 +32,9 @@ Finally, we can test it
 ```rust,ignore
 assert_eq!(Jit::from_source("1 + 2").unwrap(), 3)
 ```
+
+Run such tests locally with
+
+```text
+cargo test jit --tests
+```

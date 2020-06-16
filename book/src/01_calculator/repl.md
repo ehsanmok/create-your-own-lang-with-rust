@@ -1,13 +1,17 @@
 ## Read-Eval-Print Loop (REPL)
 
-REPL as its name implies, loops through every line of input and compile it. We use [rustyline crate](https://github.com/kkawakam/rustyline) to create our REPL. We can optionally choose to interpret or JIT each line of input as follow
+REPL (as its name implies) loops through every line of the input and compiles it. We use [rustyline](https://github.com/kkawakam/rustyline) crate to create our REPL. For each line of input, we can optionally choose to
+
+* directly interpret the AST
+* JIT the AST
+* compile to our bytecode VM and interpret it
 
 ```rust,no_run,noplaypen
 {{#include ../../../calculator/src/bin/repl.rs:repl}}
 ```
 <span class="filename">Filename: calculator/src/bin/repl.rs</span>
 
-We can either use interpreter, JIT compiler or VM interpreter in our [calculator](../../../calculator) with passing them as flags. Go ahead and run them one by one
+Now, we can use run the REPL and choose different compilation path
 
 ```
 cargo run --bin repl --features jit
@@ -17,14 +21,16 @@ cargo run --bin repl --features interpreter
 cargo run --bin repl --features vm
 ```
 
-In either of them, you should see the prompt like
+In any of them, you should see the prompt like
 
 ```text
 Calculator prompt. Expressions are line evaluated.
 >>>
 ```
 
-waiting for your inputs. Test it our with `1 + 2` examples and `CTRL-C` with break out of the REPL. You can see the different paths of compilation in debug mode. For example with `--features jit`, you will see
+waiting for your inputs. Here are some sample outputs of different compilation paths in debug mode.
+
+*  with `--features jit`
 
 ```text
 Calculator prompt. Expressions are line evaluated.
@@ -50,7 +56,7 @@ entry:
 CTRL-C
 ```
 
-or with `--features vm`
+* with `--features vm`
 
 ```text
 Calculator prompt. Expressions are line evaluated.
