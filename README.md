@@ -20,40 +20,23 @@ The following are my guidelines
 
 Make sure you have
 
-1. [Rust installed](https://www.rust-lang.org/tools/install)
+1. [Rust toolchain installed](https://www.rust-lang.org/tools/install)
 2. Cloned this repository (follow the instructions in each chapter)
-3. LLVM v10.0 installed ([Debina/Ubuntu](https://apt.llvm.org/) or [macOS](https://formulae.brew.sh/formula/llvm)) to run and test locally `cargo test --tests`
+3. LLVM installed to run and test locally `cargo test --tests`
+    * Easiest option is LLVM v10.0 ([Debina/Ubuntu](https://apt.llvm.org/) or [macOS](https://formulae.brew.sh/formula/llvm))
+    * Otherwise, in `Cargo.toml` you'd need to change the `inkwell = { ..., branch = "your-llvm-version" }` with LLVM version on your system (output of `llvm-config --version`)
 
 
 To build the book locally, navigate to the `book` subdirectory and follow the instructions in [mdbook](https://github.com/rust-lang/mdBook).
 
-## Content outline
+## Roadmap
 
-- [x] Introduction
-- [x] Crash course on Computing
-- [x] Calculator language
-  - [x] Grammar, lexer and parser
-  - [x] AST and interpreter
-  - [x] JIT with LLVM
-    - [x] Basic `add` function example
-    - [x] AST traversal patterns
-  - [x] Exercises
-  - [x] VM, bytecode and interpreter
-  - [x] REPL
-- [ ] Jeslang
-  - [ ] Static typing
-  - [ ] Type inference
-  - [ ] ...
-- [ ] Object system and OOP
-- [ ] Functional lang
-- [ ] (TENTATIVE) Module system and packaging
-- [ ] (TENTATIVE) Mini-standard library
-- [ ] Content resources
+Checkout the [roadmap to the 1st edition](https://github.com/ehsanmok/create-your-own-lang-with-rust/projects).
 
 ## Donation
 
 If you have found this project useful, please consider donating to any of the organizations below
 
 * [Child Foundation](https://www.childfoundation.org/page/donate)
-* [Black Lives Matters](https://blacklivesmatter.com/)
+* [Black Lives Matter](https://blacklivesmatter.com/)
 * [Food Bank of Canada](https://www.foodbankscanada.ca/)
