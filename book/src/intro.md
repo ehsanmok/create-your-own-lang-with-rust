@@ -16,7 +16,7 @@ The accompanying codes and materials for this book are available in [GitHub](htt
     ```
 
 * LLVM installed to run and test locally `cargo test --tests`
-  * Easiest option is LLVM v10.0 ([Debina/Ubuntu](https://apt.llvm.org/) or [macOS](https://formulae.brew.sh/formula/llvm))
+  * Easiest option is LLVM v10.0 ([Debian/Ubuntu](https://apt.llvm.org/) or [macOS](https://formulae.brew.sh/formula/llvm))
   * Otherwise, in `Cargo.toml` you'd need to change the `inkwell = { ..., branch = "your-llvm-version" }` with LLVM version on your system (output of `llvm-config --version`)
 
 ## Motivations and Goals
