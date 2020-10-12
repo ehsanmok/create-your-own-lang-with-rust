@@ -27,7 +27,7 @@ impl Compile for Jit {
         let fn_type = i32_type.fn_type(&[], false);
 
         let function = module.add_function("jit", fn_type, None);
-        let basic_block = context.append_basic_block(function.clone(), "entry");
+        let basic_block = context.append_basic_block(function, "entry");
 
         builder.position_at_end(basic_block);
 
