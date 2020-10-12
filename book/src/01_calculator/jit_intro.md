@@ -10,4 +10,4 @@ We will use [inkwell](https://github.com/TheDan64/inkwell) which provides a safe
 
 ### Alternatives
 
-Other code generators that you can use (see the [exercises](./exercise.md)) in this book (not at mature as LLVM) are [cratelift-simpljit](https://docs.rs/cranelift-simplejit/0.64.0/cranelift_simplejit/index.html) and [gcc-jit](http://swgillespie.me/gccjit.rs/gccjit/).
+Other code generators that you can use (see the [exercises](./exercise.md)) in this book (not at mature as LLVM) are [cratelift-simpljit](https://docs.rs/cranelift-simplejit/0.64.0/cranelift_simplejit/index.html) and [gcc-jit](https://github.com/swgillespie/gccjit.rs).

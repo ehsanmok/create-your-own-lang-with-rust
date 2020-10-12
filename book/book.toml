@@ -9,6 +9,7 @@ version = "0.1"
 [output.html]
 google-analytics = "UA-168768722-1"
 additional-css = ["theme/custom.css"]
+preferred-dark-theme = "Rust"
 
 [output.html.search]
 enable = true
