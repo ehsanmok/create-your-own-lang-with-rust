@@ -5,13 +5,24 @@
         <meta charset="UTF-8">
         <title>Grammar, Lexer and Parser - Create Your Own Programming Language with Rust</title>
         
+        
+
+
+        <!-- Custom HTML head -->
+        
+
 
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff" />
 
+        
+        <link rel="icon" href="../favicon.svg">
+        
+        
         <link rel="shortcut icon" href="../favicon.png">
+        
         <link rel="stylesheet" href="../css/variables.css">
         <link rel="stylesheet" href="../css/general.css">
         <link rel="stylesheet" href="../css/chrome.css">
@@ -19,8 +30,9 @@
 
         <!-- Fonts -->
         <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
-        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
-        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
+        
+        <link rel="stylesheet" href="../fonts/fonts.css">
+        
 
         <!-- Highlight.js Stylesheets -->
         <link rel="stylesheet" href="../highlight.css">
@@ -38,7 +50,7 @@
         <!-- Provide site root to javascript -->
         <script type="text/javascript">
             var path_to_root = "../";
-            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "light" : "light";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "rust" : "light";
         </script>
 
         <!-- Work around some values being stored in localStorage wrapped in quotes -->
@@ -185,7 +197,7 @@ EOF = _{ EOI | &quot;;&quot; }
 <li>unary or binary expressions are made of <code>Term</code> and <code>Operator</code> (<code>&quot;+&quot;</code> and <code>&quot;-&quot;</code>)</li>
 <li>the only <em>atom</em> is integer <code>Int</code></li>
 </ul>
-<p>Given our grammar, we will use <a href="https://pest.rs/">pest</a> which is a powerful <em>parser generator</em> of PEG grammars. (For more details on pest, checkout the <a href="https://pest.rs/book/">pest book</a>)</p>
+<p>Given our grammar, we will use <a href="https://bitbegin.github.io/pest-rs/">pest</a> which is a powerful <em>parser generator</em> of PEG grammars. (For more details on pest, checkout the <a href="https://bitbegin.github.io/pest-rs/book/">pest book</a></p>
 <p><code>pest</code> <em>derives</em> the parser <code>CalcParser::parse</code> from our grammar</p>
 <pre><code class="language-rust ignore">#[derive(pest_derive::Parser)]
 #[grammar = &quot;grammar.pest&quot;]
@@ -256,10 +268,10 @@ struct CalcParser;
         
 
         
-        
+
         
         <script type="text/javascript">
-            window.playpen_copyable = true;
+            window.playground_copyable = true;
         </script>
         
 
