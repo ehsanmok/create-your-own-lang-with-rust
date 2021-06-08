@@ -64,15 +64,15 @@ impl<'a> RecursiveBuilder<'a> {
         match ast {
             Node::Int(n) => self.i32_type.const_int(*n as u64, true),
             Node::UnaryExpr { op, child } => {
-                let child = self.build(&child);
+                let child = self.build(child);
                 match op {
                     Operator::Minus => child.const_neg(),
                     Operator::Plus => child,
                 }
             }
             Node::BinaryExpr { op, lhs, rhs } => {
-                let left = self.build(&lhs);
-                let right = self.build(&rhs);
+                let left = self.build(lhs);
+                let right = self.build(rhs);
 
                 match op {
                     Operator::Plus => self.builder.build_int_add(left, right, "plus_temp"),

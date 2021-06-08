@@ -29,15 +29,15 @@ impl Eval {
         match node {
             Node::Int(n) => *n,
             Node::UnaryExpr { op, child } => {
-                let child = self.eval(&child);
+                let child = self.eval(child);
                 match op {
                     Operator::Plus => child,
                     Operator::Minus => -child,
                 }
             }
             Node::BinaryExpr { op, lhs, rhs } => {
-                let lhs_ret = self.eval(&lhs);
-                let rhs_ret = self.eval(&rhs);
+                let lhs_ret = self.eval(lhs);
+                let rhs_ret = self.eval(rhs);
 
                 match op {
                     Operator::Plus => lhs_ret + rhs_ret,

@@ -1,3 +1,5 @@
+#![allow(clippy::upper_case_acronyms)]
+
 use pest::{self, Parser};
 
 use crate::ast::{Node, Operator};
@@ -50,7 +52,7 @@ fn build_ast_from_term(pair: pest::iterators::Pair<Rule>) -> Node {
             let istr = pair.as_str();
             let (sign, istr) = match &istr[..1] {
                 "-" => (-1, &istr[1..]),
-                _ => (1, &istr[..]),
+                _ => (1, istr),
             };
             let int: i32 = istr.parse().unwrap();
             Node::Int(sign * int)

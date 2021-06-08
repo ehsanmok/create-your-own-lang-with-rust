@@ -13,7 +13,7 @@ cfg_if! {
 fn main() {
     let args: Vec<String> = std::env::args().collect();
     if args.len() < 2 {
-        eprintln!("Not input file was provided");
+        eprintln!("No input file was provided");
         std::process::exit(-1);
     }
     println!(
