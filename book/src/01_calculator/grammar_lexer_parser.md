@@ -1,4 +1,4 @@
-## Grammar-Lexer-Praser Pipeline
+## Grammar-Lexer-Parser Pipeline
 
 Here is a high-level view of a compiler *frontend* pipeline
 
