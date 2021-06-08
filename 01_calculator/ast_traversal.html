@@ -26,7 +26,9 @@
         <link rel="stylesheet" href="../css/variables.css">
         <link rel="stylesheet" href="../css/general.css">
         <link rel="stylesheet" href="../css/chrome.css">
+        
         <link rel="stylesheet" href="../css/print.css" media="print">
+        
 
         <!-- Fonts -->
         <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
@@ -130,17 +132,21 @@
                     <h1 class="menu-title">Create Your Own Programming Language with Rust</h1>
 
                     <div class="right-buttons">
+                        
                         <a href="../print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
                         </a>
                         
+                        
+                        
+
                     </div>
                 </div>
 
                 
                 <div id="search-wrapper" class="hidden">
                     <form id="searchbar-outer" class="searchbar-outer">
-                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
                     </form>
                     <div id="searchresults-outer" class="searchresults-outer hidden">
                         <div id="searchresults-header" class="searchresults-header"></div>
@@ -161,13 +167,13 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h2><a class="header" href="#ast-traversal-patterns" id="ast-traversal-patterns">AST Traversal Patterns</a></h2>
+                        <h2 id="ast-traversal-patterns"><a class="header" href="#ast-traversal-patterns">AST Traversal Patterns</a></h2>
 <p>Recall from the previous section that JITing our <a href="./basic_llvm.html">add function</a> was very detailed and cumbersome to write. Fortunately, there are some useful patterns for traversing complicated ASTs (and IRs)</p>
 <ul>
 <li><strong>Builder pattern</strong></li>
 <li><strong>Visitor pattern</strong> (Will be introduced in chapter 4)</li>
 </ul>
-<h3><a class="header" href="#builder-pattern" id="builder-pattern">Builder Pattern</a></h3>
+<h3 id="builder-pattern"><a class="header" href="#builder-pattern">Builder Pattern</a></h3>
 <p>Recall how we have interpreted our AST by traversing recursively and evaluating the nodes</p>
 <pre><code class="language-rust no_run noplaypen">struct Eval;
 
@@ -179,15 +185,15 @@ impl Eval {
         match node {
             Node::Int(n) =&gt; *n,
             Node::UnaryExpr { op, child } =&gt; {
-                let child = self.eval(&amp;child);
+                let child = self.eval(child);
                 match op {
                     Operator::Plus =&gt; child,
                     Operator::Minus =&gt; -child,
                 }
             }
             Node::BinaryExpr { op, lhs, rhs } =&gt; {
-                let lhs_ret = self.eval(&amp;lhs);
-                let rhs_ret = self.eval(&amp;rhs);
+                let lhs_ret = self.eval(lhs);
+                let rhs_ret = self.eval(rhs);
 
                 match op {
                     Operator::Plus =&gt; lhs_ret + rhs_ret,
@@ -213,15 +219,15 @@ impl&lt;'a&gt; RecursiveBuilder&lt;'a&gt; {
         match ast {
             Node::Int(n) =&gt; self.i32_type.const_int(*n as u64, true),
             Node::UnaryExpr { op, child } =&gt; {
-                let child = self.build(&amp;child);
+                let child = self.build(child);
                 match op {
                     Operator::Minus =&gt; child.const_neg(),
                     Operator::Plus =&gt; child,
                 }
             }
             Node::BinaryExpr { op, lhs, rhs } =&gt; {
-                let left = self.build(&amp;lhs);
-                let right = self.build(&amp;rhs);
+                let left = self.build(lhs);
+                let right = self.build(rhs);
 
                 match op {
                     Operator::Plus =&gt; self.builder.build_int_add(left, right, &quot;plus_temp&quot;),

@@ -26,7 +26,9 @@
         <link rel="stylesheet" href="css/variables.css">
         <link rel="stylesheet" href="css/general.css">
         <link rel="stylesheet" href="css/chrome.css">
+        
         <link rel="stylesheet" href="css/print.css" media="print">
+        
 
         <!-- Fonts -->
         <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
@@ -130,17 +132,21 @@
                     <h1 class="menu-title">Create Your Own Programming Language with Rust</h1>
 
                     <div class="right-buttons">
+                        
                         <a href="print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
                         </a>
                         
+                        
+                        
+
                     </div>
                 </div>
 
                 
                 <div id="search-wrapper" class="hidden">
                     <form id="searchbar-outer" class="searchbar-outer">
-                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
                     </form>
                     <div id="searchresults-outer" class="searchresults-outer hidden">
                         <div id="searchresults-header" class="searchresults-header"></div>
@@ -167,15 +173,15 @@
     <a href><img alt="compiler" src="./img/code_compiler_executor.svg"> </a>
 </p>
 <p>All these three components are intertwined together and learning their connections is crucial in understanding what makes <em>Computing</em> possible. Informally, a <em>language</em> is a structured text with syntax and semantics. A <em>Source Code</em> written in a programming language needs a translator/compiler of <em>some sort</em>, to translate it to <em>another</em> language/format. Then an executor of <em>some sort</em>, to execute/run the translated commands with the goal of matching the syntax (and semantics) to <em>some form</em> of output.</p>
-<h2><a class="header" href="#elements-of-computing" id="elements-of-computing">Elements of Computing</a></h2>
-<h3><a class="header" href="#instructions-and-the-machine-language" id="instructions-and-the-machine-language">Instructions and the Machine Language</a></h3>
+<h2 id="elements-of-computing"><a class="header" href="#elements-of-computing">Elements of Computing</a></h2>
+<h3 id="instructions-and-the-machine-language"><a class="header" href="#instructions-and-the-machine-language">Instructions and the Machine Language</a></h3>
 <p>If you want to create a &quot;computer&quot; from scratch, you need to start by defining an <em>abstract model</em> for your computer. This abstract model is also referred to as <strong>Instruction Set Architecture (ISA)</strong> (instruction set or simply <em>instructions</em>). A CPU is an <em>implementation</em> of such ISA. A standard ISA defines its basic elements such as <em>data types</em>, <em>register</em> values, various hardware supports, I/O etc. and they all make up the  <em>lowest-level language</em> of computing which is the <strong>Machine Language Instructions.</strong></p>
 <p>Instructions are comprised of <em>instruction code</em> (aka <em>operation code</em>, in short <strong>opcode</strong> or p-code) which are directly executed by CPU. An opcode can either have operand(s) or no operand. For example, in an 8-bits machine where instructions are 8-bits an opcode <em>load</em> might be defined by the 4-bits <strong>0011</strong> following by the second 4-bits as operand with <strong>0101</strong> that makes up the instruction <strong>00110101</strong> in the Machine Language while the opcode for <em>incrementing by 1</em> of the previously loaded value could be defined by <strong>1000</strong> with no operand.</p>
 <p>Since <em>opcodes are like atoms of computing</em>, they are presented in an opcode table. An example of that is <a href="http://sparksandflames.com/files/x86InstructionChart.html">Intel x86 opcode table</a>.</p>
-<h3><a class="header" href="#assembly-language" id="assembly-language">Assembly Language</a></h3>
+<h3 id="assembly-language"><a class="header" href="#assembly-language">Assembly Language</a></h3>
 <p>Since it's hard to remember the opcodes by their bit-patterns, we can assign <em>abstract</em> symbols to opcodes matching their operations by name. This way, we can create Assembly language from the Machine Language. In the previous Machine Language example above, <strong>00110101</strong> (means load the binary <strong>0101</strong>), we can define the symbol <strong>LOAD</strong> referring to <strong>0011</strong> as a higher level abstraction so that <strong>00110101</strong> can be written as <strong>LOAD 0101</strong>.</p>
 <p>The utility program that translates the Assembly language to Machine Language is called <strong>Assembler</strong>.</p>
-<h3><a class="header" href="#compiler" id="compiler">Compiler</a></h3>
+<h3 id="compiler"><a class="header" href="#compiler">Compiler</a></h3>
 <p align="center">
 </br>
     <a href><img alt="compiler" src="./img/compiler.svg"> </a>
@@ -187,26 +193,26 @@
 </ul>
 <p>Most often, when we talk about compiler, we mean <strong>Ahead-Of-Time (AOT)</strong> compiler where the translation happens <em>before</em> execution. Another form of translation is <strong>Just-In-Time (JIT)</strong> compilation where translation happens right at the time of the execution.</p>
 <p>From the diagram above, to distinguish between a program that translates for example, Python to Assembly vs. Python to Java, the former is called compiler and the latter <strong>transpiler</strong>.</p>
-<h4><a class="header" href="#relativity-of-low-level-high-level" id="relativity-of-low-level-high-level"><em>Relativity of low-level, high-level</em></a></h4>
+<h4 id="relativity-of-low-level-high-level"><a class="header" href="#relativity-of-low-level-high-level"><em>Relativity of low-level, high-level</em></a></h4>
 <p>Assembly is a <em>high-level</em> language compared to the Machine Language but is considered <em>low-level</em> when viewing it from C/C++/Rust. High-level and low-level are relative terms conveying the amount of <em>abstractions</em> involved.</p>
-<h3><a class="header" href="#virtual-machine-vm" id="virtual-machine-vm">Virtual Machine (VM)</a></h3>
+<h3 id="virtual-machine-vm"><a class="header" href="#virtual-machine-vm">Virtual Machine (VM)</a></h3>
 <p><a href="./crash_course.html#instructions-and-the-machine-language">Instructions</a> are hardware and vendor specific. That is, an Intel CPU instructions are different from AMD CPU. A <strong>VM</strong> abstracts away details of the underlying hardware or operating system so that programs translated/compiled into the VM language becomes platform agnostic. A famous example is the <strong>Java Virtual Machine (JVM)</strong>
 which translates/compiles Java programs to JVM language aka Java <strong>Bytecode</strong>. Therefore, if you have a valid Java Bytecode and <em>Java Runtime Environment (JRE)</em> in your system, you can execute the Bytecode, regardless on what platform it was compiled on.</p>
-<h4><a class="header" href="#bytecode" id="bytecode">Bytecode</a></h4>
+<h4 id="bytecode"><a class="header" href="#bytecode">Bytecode</a></h4>
 <p>Another technique to translate a source code to Machine Code, is emulating the Instruction Set with a new (human friendly) encoding (perhaps easier than assembly). Bytecode is such an <em>intermediate language/representation</em> which is lower-level than the actual programming language that has been translated from and higher-level than Assembly language.</p>
-<h4><a class="header" href="#stack-machine" id="stack-machine">Stack Machine</a></h4>
+<h4 id="stack-machine"><a class="header" href="#stack-machine">Stack Machine</a></h4>
 <p>Stack Machine is a simple model for a computing machine with two main components</p>
 <ul>
 <li>a memory (stack) array keeping the Bytecode instructions that supports <code>push</code>ing and <code>pop</code>ing instructions</li>
 <li>an instruction pointer (IP) and stack pointer (SP) guiding which instruction was executed and what is next.</li>
 </ul>
-<h3><a class="header" href="#intermediate-representation-ir" id="intermediate-representation-ir">Intermediate Representation (IR)</a></h3>
+<h3 id="intermediate-representation-ir"><a class="header" href="#intermediate-representation-ir">Intermediate Representation (IR)</a></h3>
 <p>Any representation that's between source code and (usually) Assembly language is considered an intermediate representation. Mainstream languages usually have more than one such representations and going from one IR to another IR is called <em>lowering</em>.</p>
-<h3><a class="header" href="#code-generation" id="code-generation">Code Generation</a></h3>
+<h3 id="code-generation"><a class="header" href="#code-generation">Code Generation</a></h3>
 <p>Code generation for a compiler is when the compiler <em>converts an IR to some Machine Code</em>. But it has a wider semantic too for example, when using Rust declarative macro via <code>macro_rules!</code> to automate some repetitive implementations, you're essentially generating codes (as well as expanding the syntax).</p>
-<h2><a class="header" href="#conclusion" id="conclusion">Conclusion</a></h2>
+<h2 id="conclusion"><a class="header" href="#conclusion">Conclusion</a></h2>
 <p>In conclusion, we want to settle one of the most frequently asked questions</p>
-<h2><a class="header" href="#span-stylecolorblueis-python-or-a-language-x-compiled-or-interpretedspan" id="span-stylecolorblueis-python-or-a-language-x-compiled-or-interpretedspan"><span style="color:blue">Is Python (or a language X) Compiled or Interpreted?</span></a></h2>
+<h2 id="span-stylecolorblueis-python-or-a-language-x-compiled-or-interpretedspan"><a class="header" href="#span-stylecolorblueis-python-or-a-language-x-compiled-or-interpretedspan"><span style="color:blue">Is Python (or a language X) Compiled or Interpreted?</span></a></h2>
 <p>This is in fact the <span style="color:red">WRONG</span> question to ask!</p>
 <p>Being AOT compiled, JIT compiled or interpreted is <strong>implementation-dependent</strong>. For example, the standard Python <em>implementation</em> is <a href="https://www.python.org/"><strong>CPython</strong></a> which compiles a Python source code (in CPython VM) to CPython Bytecode (contents of <code>.pyc</code>) and <strong>interprets</strong> the Bytecode. However, another implementation of Python is <a href="https://www.pypy.org/"><strong>PyPy</strong></a> which (more or less) compiles a Python source code (in PyPy VM) to PyPy Bytecode and <strong>JIT</strong> compiles the PyPy Bytecode to the Machine Code (and is usually faster than CPython interpreter).</p>
 

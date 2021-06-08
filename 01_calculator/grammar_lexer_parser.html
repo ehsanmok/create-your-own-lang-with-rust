@@ -26,7 +26,9 @@
         <link rel="stylesheet" href="../css/variables.css">
         <link rel="stylesheet" href="../css/general.css">
         <link rel="stylesheet" href="../css/chrome.css">
+        
         <link rel="stylesheet" href="../css/print.css" media="print">
+        
 
         <!-- Fonts -->
         <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
@@ -130,17 +132,21 @@
                     <h1 class="menu-title">Create Your Own Programming Language with Rust</h1>
 
                     <div class="right-buttons">
+                        
                         <a href="../print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
                         </a>
                         
+                        
+                        
+
                     </div>
                 </div>
 
                 
                 <div id="search-wrapper" class="hidden">
                     <form id="searchbar-outer" class="searchbar-outer">
-                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
                     </form>
                     <div id="searchresults-outer" class="searchresults-outer hidden">
                         <div id="searchresults-header" class="searchresults-header"></div>
@@ -161,14 +167,14 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h2><a class="header" href="#grammar-lexer-praser-pipeline" id="grammar-lexer-praser-pipeline">Grammar-Lexer-Praser Pipeline</a></h2>
+                        <h2 id="grammar-lexer-praser-pipeline"><a class="header" href="#grammar-lexer-praser-pipeline">Grammar-Lexer-Praser Pipeline</a></h2>
 <p>Here is a high-level view of a compiler <em>frontend</em> pipeline</p>
 <p align="center">
 </br>
     <a href><img alt="grammar, lexer, parser" src="../img/grammar_lexer_parser.svg"> </a>
 </p>
 <p>Every language needs a (formal) grammar to describe its syntax and semantics. Once a program adheres to the rules of the grammar in <em>Source Code</em> (for example as input string or file format), it is <em>tokenized</em> and then <em>lexer</em> adds some metadata to each token for example, where each token starts and finishes in the original source code. Lastly, parsing (reshaping or restructuring) of the lexed outputs to <a href="./ast.html">Abstract Syntax Tree</a>.</p>
-<h2><a class="header" href="#grammar" id="grammar">Grammar</a></h2>
+<h2 id="grammar"><a class="header" href="#grammar">Grammar</a></h2>
 <p>While there are varieties of ways to define the grammar, in this book we will use the <a href="https://en.wikipedia.org/wiki/Parsing_expression_grammar">Parsing Expression Grammar (PEG)</a>.</p>
 <p>Here is how our simple calculator language <code>Calc</code> (supporting addition and subtraction) grammar looks like in PEG</p>
 <pre><code class="language-text">Program = _{ SOI ~ Expr ~ EOF }
@@ -197,7 +203,7 @@ EOF = _{ EOI | &quot;;&quot; }
 <li>unary or binary expressions are made of <code>Term</code> and <code>Operator</code> (<code>&quot;+&quot;</code> and <code>&quot;-&quot;</code>)</li>
 <li>the only <em>atom</em> is integer <code>Int</code></li>
 </ul>
-<p>Given our grammar, we will use <a href="https://bitbegin.github.io/pest-rs/">pest</a> which is a powerful <em>parser generator</em> of PEG grammars. (For more details on pest, checkout the <a href="https://bitbegin.github.io/pest-rs/book/">pest book</a></p>
+<p>Given our grammar, we will use <a href="https://pest.rs/">pest</a> which is a powerful <em>parser generator</em> of PEG grammars. (For more details on pest, checkout the <a href="https://pest.rs/book/">pest book</a></p>
 <p><code>pest</code> <em>derives</em> the parser <code>CalcParser::parse</code> from our grammar</p>
 <pre><code class="language-rust ignore">#[derive(pest_derive::Parser)]
 #[grammar = &quot;grammar.pest&quot;]
