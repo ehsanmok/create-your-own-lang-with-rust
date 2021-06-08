@@ -15,6 +15,7 @@ preferred-dark-theme = "Rust"
 enable = true
 
 [output.linkcheck]
+optional = true
 follow-web-links = true
 exclude = ['blacklivesmatter\.com']
 warning-policy = "error"

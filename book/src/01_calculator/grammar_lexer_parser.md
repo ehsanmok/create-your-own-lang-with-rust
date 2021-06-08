@@ -27,7 +27,7 @@ This grammar basically defines the syntax and semantics where
 * unary or binary expressions are made of `Term` and `Operator` (`"+"` and `"-"`)
 * the only *atom* is integer `Int`
 
-Given our grammar, we will use [pest](https://bitbegin.github.io/pest-rs/) which is a powerful *parser generator* of PEG grammars. (For more details on pest, checkout the [pest book](https://bitbegin.github.io/pest-rs/book/)
+Given our grammar, we will use [pest](https://pest.rs/) which is a powerful *parser generator* of PEG grammars. (For more details on pest, checkout the [pest book](https://pest.rs/book/)
 
 `pest` *derives* the parser `CalcParser::parse` from our grammar
 

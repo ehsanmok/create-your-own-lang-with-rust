@@ -14,15 +14,13 @@ jobs:
         uses: peaceiris/actions-mdbook@v1
         with:
           mdbook-version: 'latest'
-          
-      - name: Link check
-        run: |
-          curl -LSfs https://japaric.github.io/trust/install.sh | \
-          sh -s -- --git Michael-F-Bryan/mdbook-linkcheck
-      
+
+      # - name: Link check
+      #   run: cargo install mdbook-linkcheck
+
       - name: Build
         run: cd book && mdbook build
-      
+
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
