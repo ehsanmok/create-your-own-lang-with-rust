@@ -17,7 +17,7 @@ Go to [`calculator/examples/llvm`](https://github.com/ehsanmok/create-your-own-l
 We want to define an add function like
 
 ```
-add(x: i32, x: i32) -> i32 { x + y }
+add(x: i32, y: i32) -> i32 { x + y }
 ```
 
 but using the **LLVM language** and JIT it. For that, we need to define *every* bit of what makes up a function through LLVM basic constructs such as context, module, function signature setups, argument types, basic block, etc.
