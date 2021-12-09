@@ -36,11 +36,23 @@ fn build_ast_from_expr(pair: pest::iterators::Pair<Rule>) -> Node {
         Rule::BinaryExpr => {
             let mut pair = pair.into_inner();
             let lhspair = pair.next().unwrap();
-            let lhs = build_ast_from_term(lhspair);
-            let op = pair.next().unwrap();
+            let mut lhs = build_ast_from_term(lhspair);
+            let mut op = pair.next().unwrap();
             let rhspair = pair.next().unwrap();
-            let rhs = build_ast_from_term(rhspair);
-            parse_binary_expr(op, lhs, rhs)
+            let mut rhs = build_ast_from_term(rhspair);
+            let mut retval = parse_binary_expr(op, lhs, rhs);
+            loop {
+                let pair_buf = pair.next();
+                if pair_buf != None {
+                    op = pair_buf.unwrap();
+                    lhs = retval;
+                    rhs = build_ast_from_term(pair.next().unwrap());
+                    retval = parse_binary_expr(op, lhs, rhs);
+                }
+                else {
+                    return retval;
+                }
+            }
         }
         unknown => panic!("Unknown expr: {:?}", unknown),
     }
