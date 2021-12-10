@@ -179,15 +179,16 @@ mod tests {
     #[test]
     fn multiple_operators() {
         assert_eq!(
-            parse("1+2"),
+            parse("1+2+3").unwrap(),
             vec![Node::BinaryExpr {
                 op: Operator::Plus,
-                lhs: Node::BinaryExpr {
-                    op: Operator::Plus,
-                    lhs: Node::Int(2),
-                    rhs: Node::Int(2),
-                },
-                rhs: Node::Int(3),
+                lhs: Box::new(
+                    Node::BinaryExpr {
+                        op: Operator::Plus,
+                        lhs: Box::new(Node::Int(1)),
+                        rhs: Box::new(Node::Int(2)),}
+                        ),
+                rhs: Box::new(Node::Int(3)),
             }]
         )
     }
