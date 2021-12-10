@@ -175,4 +175,20 @@ mod tests {
         test_expr("1 + 2 + 3 + 4", "1 + (2 + (3 + 4))");
         test_expr("1 + 2 + 3 - 4", "(1 + 2) + (3 - 4)");
     }
+    
+    #[test]
+    fn multiple_operators() {
+        assert_eq!(
+            parse("1+2"),
+            vec![Node::BinaryExpr {
+                op: Operator::Plus,
+                lhs: Node::BinaryExpr {
+                    op: Operator::Plus,
+                    lhs: Node::Int(2),
+                    rhs: Node::Int(2),
+                },
+                rhs: Node::Int(3),
+            }]
+        )
+    }
 }
