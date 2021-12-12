@@ -182,12 +182,11 @@ mod tests {
             parse("1+2+3").unwrap(),
             vec![Node::BinaryExpr {
                 op: Operator::Plus,
-                lhs: Box::new(
-                    Node::BinaryExpr {
-                        op: Operator::Plus,
-                        lhs: Box::new(Node::Int(1)),
-                        rhs: Box::new(Node::Int(2)),}
-                        ),
+                lhs: Box::new(Node::BinaryExpr {
+                    op: Operator::Plus,
+                    lhs: Box::new(Node::Int(1)),
+                    rhs: Box::new(Node::Int(2)),
+                }),
                 rhs: Box::new(Node::Int(3)),
             }]
         )
