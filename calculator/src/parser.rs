@@ -48,8 +48,7 @@ fn build_ast_from_expr(pair: pest::iterators::Pair<Rule>) -> Node {
                     lhs = retval;
                     rhs = build_ast_from_term(pair.next().unwrap());
                     retval = parse_binary_expr(op, lhs, rhs);
-                }
-                else {
+                } else {
                     return retval;
                 }
             }
@@ -175,7 +174,7 @@ mod tests {
         test_expr("1 + 2 + 3 + 4", "1 + (2 + (3 + 4))");
         test_expr("1 + 2 + 3 - 4", "(1 + 2) + (3 - 4)");
     }
-    
+
     #[test]
     fn multiple_operators() {
         assert_eq!(
