@@ -3,10 +3,10 @@
 
 ### Setup
 
-The code is available in [`calculator/examples/llvm/src/main.rs`](https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/calculator/examples/llvm/src/main.rs). Because my `llvm-config --version` shows `10.0.0` so I'm using `branch = "llvm=10-0"` in inkwell
+The code is available in [`calculator/examples/llvm/src/main.rs`](https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/calculator/examples/llvm/src/main.rs). Because my `llvm-config --version` shows `10.0.0` so I'm using `features = ["llvm10-0"]` in inkwell
 
 ```text
-inkwell = { git = "https://github.com/TheDan64/inkwell", branch = "llvm10-0" }
+inkwell = { git = "https://github.com/TheDan64/inkwell", branch = "master", features = ["llvm10-0"] }
 ```
 
 Go to [`calculator/examples/llvm`](https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/calculator/examples/llvm/) sub-crate and `cargo run`.
