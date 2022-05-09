@@ -1,12 +1,12 @@
 Program = _{ SOI ~ Expr ~ EOF }
 
-Expr = { UnaryExpr | BinaryExpr }
+Expr = { UnaryExpr | BinaryExpr | Term }
 
 Term = _{Int | "(" ~ Expr ~ ")" }
 
 UnaryExpr = { Operator ~ Term }
 
-BinaryExpr = { Term ~ (Operator ~ Term)* }
+BinaryExpr = { Term ~ (Operator ~ Term)+ }
 
 Operator = { "+" | "-" }
 
