@@ -147,13 +147,13 @@
 <p>Here is how our simple calculator language <code>Calc</code> (supporting addition and subtraction) grammar looks like in PEG</p>
 <pre><code class="language-text">Program = _{ SOI ~ Expr ~ EOF }
 
-Expr = { UnaryExpr | BinaryExpr }
+Expr = { UnaryExpr | BinaryExpr | Term }
 
 Term = _{Int | &quot;(&quot; ~ Expr ~ &quot;)&quot; }
 
 UnaryExpr = { Operator ~ Term }
 
-BinaryExpr = { Term ~ (Operator ~ Term)* }
+BinaryExpr = { Term ~ (Operator ~ Term)+ }
 
 Operator = { &quot;+&quot; | &quot;-&quot; }
 
