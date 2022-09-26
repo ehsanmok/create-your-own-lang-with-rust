@@ -158,7 +158,7 @@ cd create-your-own-lang-with-rust
 <p>LLVM installed to run and test locally <code>cargo test --tests</code></p>
 <ul>
 <li>Easiest option is LLVM v10.0 (<a href="https://apt.llvm.org/">Debian/Ubuntu</a> or <a href="https://formulae.brew.sh/formula/llvm">macOS</a>)</li>
-<li>Otherwise, in <code>Cargo.toml</code> you'd need to change the <code>inkwell = { ..., branch = &quot;your-llvm-version&quot; }</code> with LLVM version on your system (output of <code>llvm-config --version</code>)</li>
+<li>Otherwise, in <code>Cargo.toml</code> you'd need to change the <code>inkwell = { ..., branch = &quot;master&quot;, features = [&quot;your-llvm-version&quot;] }</code> with LLVM version on your system (output of <code>llvm-config --version</code>)</li>
 </ul>
 </li>
 </ul>
@@ -438,13 +438,13 @@ impl Compile for Interpreter {
 <p>JIT compilation is a combination of Ahead-Of-Time (AOT) compilation and interpretation. As we saw previously, our <code>Calc</code> interpreter evaluates AST to values (actual integer <code>i32</code> values) but a JIT compiler differs from an interpreter in what it outputs. Intuitively, JIT outputs are like AOT outputs but generated at runtime when traversing the AST.</p>
 <h3 id="llvm"><a class="header" href="#llvm">LLVM</a></h3>
 <p><a href="https://en.wikipedia.org/wiki/LLVM">LLVM</a> (which is <em>not</em> an acronym) is a mature compiler backend (code generator) infrastructure powering many languages such as <a href="https://clang.llvm.org/">Clang</a>, <a href="https://www.rust-lang.org/">Rust</a>, <a href="https://swift.org/">Swift</a>, etc. It has its own IR and Virtual Machine Bytecode abstracting away the underlying platform-specific differences.</p>
-<p>We will use <a href="https://github.com/TheDan64/inkwell">inkwell</a> which provides a safe Rust wrapper around LLVM. Remember to use the branch according to your installed <code>llvm-config --version</code>.</p>
+<p>We will use <a href="https://github.com/TheDan64/inkwell">inkwell</a> which provides a safe Rust wrapper around LLVM.</p>
 <h3 id="alternatives"><a class="header" href="#alternatives">Alternatives</a></h3>
 <p>Other code generators that you can use (see the <a href="01_calculator/./exercise.html">exercises</a>) in this book (not at mature as LLVM) are <a href="https://docs.rs/cranelift-simplejit/0.64.0/cranelift_simplejit/index.html">cratelift-simpljit</a> and <a href="https://github.com/swgillespie/gccjit.rs">gcc-jit</a>.</p>
 <div style="break-before: page; page-break-before: always;"></div><h2 id="addition"><a class="header" href="#addition">Addition</a></h2>
 <h3 id="setup"><a class="header" href="#setup">Setup</a></h3>
-<p>The code is available in <a href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/calculator/examples/llvm/src/main.rs"><code>calculator/examples/llvm/src/main.rs</code></a>. Because my <code>llvm-config --version</code> shows <code>10.0.0</code> so I'm using <code>features = [&quot;llvm10-0&quot;]</code> in inkwell</p>
-<pre><code class="language-text">inkwell = { git = &quot;https://github.com/TheDan64/inkwell&quot;, branch = &quot;master&quot;, features = [&quot;llvm10-0&quot;] }
+<p>The code is available in <a href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/calculator/examples/llvm/src/main.rs"><code>calculator/examples/llvm/src/main.rs</code></a>. Because my <code>llvm-config --version</code> shows <code>14.0.6</code> so I'm using <code>features = [&quot;llvm14-0&quot;]</code> in inkwell</p>
+<pre><code class="language-text">inkwell = { git = &quot;https://github.com/TheDan64/inkwell&quot;, branch = &quot;master&quot;, features = [&quot;llvm14-0&quot;] }
 </code></pre>
 <p>Go to <a href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/calculator/examples/llvm/"><code>calculator/examples/llvm</code></a> sub-crate and <code>cargo run</code>.</p>
 <h3 id="add-function"><a class="header" href="#add-function">Add Function</a></h3>

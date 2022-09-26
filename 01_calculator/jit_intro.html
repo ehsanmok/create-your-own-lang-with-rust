@@ -139,7 +139,7 @@
 <p>JIT compilation is a combination of Ahead-Of-Time (AOT) compilation and interpretation. As we saw previously, our <code>Calc</code> interpreter evaluates AST to values (actual integer <code>i32</code> values) but a JIT compiler differs from an interpreter in what it outputs. Intuitively, JIT outputs are like AOT outputs but generated at runtime when traversing the AST.</p>
 <h3 id="llvm"><a class="header" href="#llvm">LLVM</a></h3>
 <p><a href="https://en.wikipedia.org/wiki/LLVM">LLVM</a> (which is <em>not</em> an acronym) is a mature compiler backend (code generator) infrastructure powering many languages such as <a href="https://clang.llvm.org/">Clang</a>, <a href="https://www.rust-lang.org/">Rust</a>, <a href="https://swift.org/">Swift</a>, etc. It has its own IR and Virtual Machine Bytecode abstracting away the underlying platform-specific differences.</p>
-<p>We will use <a href="https://github.com/TheDan64/inkwell">inkwell</a> which provides a safe Rust wrapper around LLVM. Remember to use the branch according to your installed <code>llvm-config --version</code>.</p>
+<p>We will use <a href="https://github.com/TheDan64/inkwell">inkwell</a> which provides a safe Rust wrapper around LLVM.</p>
 <h3 id="alternatives"><a class="header" href="#alternatives">Alternatives</a></h3>
 <p>Other code generators that you can use (see the <a href="./exercise.html">exercises</a>) in this book (not at mature as LLVM) are <a href="https://docs.rs/cranelift-simplejit/0.64.0/cranelift_simplejit/index.html">cratelift-simpljit</a> and <a href="https://github.com/swgillespie/gccjit.rs">gcc-jit</a>.</p>
 
