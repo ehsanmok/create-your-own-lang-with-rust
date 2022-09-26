@@ -157,7 +157,7 @@ cd create-your-own-lang-with-rust
 <li>
 <p>LLVM installed to run and test locally <code>cargo test --tests</code></p>
 <ul>
-<li>Easiest option is LLVM v10.0 (<a href="https://apt.llvm.org/">Debian/Ubuntu</a> or <a href="https://formulae.brew.sh/formula/llvm">macOS</a>)</li>
+<li>Easiest option is LLVM v14.0 (<a href="https://apt.llvm.org/">Debian/Ubuntu</a> or <a href="https://formulae.brew.sh/formula/llvm">macOS</a>)</li>
 <li>Otherwise, in <code>Cargo.toml</code> you'd need to change the <code>inkwell = { ..., branch = &quot;master&quot;, features = [&quot;your-llvm-version&quot;] }</code> with LLVM version on your system (output of <code>llvm-config --version</code>)</li>
 </ul>
 </li>
