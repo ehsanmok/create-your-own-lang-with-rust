@@ -16,14 +16,12 @@
 
 ## TODO
 
-- [Jeslang]()
+- [Firstlang]()
   - [Static Typing and Type Inference]()
 - [Object System and Object Oriented Language]()
-- [Functional Language]()
 
 ## Tentative
 
-- [TENTATIVE: Module System and Packaging]()
 - [TENTATIVE: Mini Standard Library]()
 
 ## Resources

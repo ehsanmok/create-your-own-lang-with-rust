@@ -94,4 +94,4 @@ This concludes our [Calculator](./calc_intro.md) chapter. We took advantage of t
 
 Thanks for following along and reading up this far!
 
-Stay tuned for the next chapter where we gradually work our way up to create a statically typed language named *Jeslang*.
+Stay tuned for the next chapter where we gradually work our way up to create a statically typed language named creatively as **Firstlang** :D
