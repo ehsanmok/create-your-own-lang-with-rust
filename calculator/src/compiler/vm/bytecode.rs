@@ -1,7 +1,7 @@
 use crate::compiler::vm::{make_op, OpCode};
 use crate::{Compile, Node, Operator};
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 // ANCHOR: bytecode
 pub struct Bytecode {
     pub instructions: Vec<u8>,

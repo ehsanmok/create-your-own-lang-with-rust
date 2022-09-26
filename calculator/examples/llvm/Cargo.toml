@@ -5,4 +5,4 @@ authors = ["ehsanmok <ehsanmo1367@gmail.com>"]
 edition = "2018"
 
 [dependencies]
-inkwell = { git = "https://github.com/TheDan64/inkwell", branch = "llvm10-0" }
+inkwell = { git = "https://github.com/TheDan64/inkwell", branch = "master", features = ["llvm14-0"] }

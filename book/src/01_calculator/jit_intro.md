@@ -6,7 +6,7 @@ JIT compilation is a combination of Ahead-Of-Time (AOT) compilation and interpre
 
 [LLVM](https://en.wikipedia.org/wiki/LLVM) (which is *not* an acronym) is a mature compiler backend (code generator) infrastructure powering many languages such as [Clang](https://clang.llvm.org/), [Rust](https://www.rust-lang.org/), [Swift](https://swift.org/), etc. It has its own IR and Virtual Machine Bytecode abstracting away the underlying platform-specific differences.
 
-We will use [inkwell](https://github.com/TheDan64/inkwell) which provides a safe Rust wrapper around LLVM. Remember to use the branch according to your installed `llvm-config --version`.
+We will use [inkwell](https://github.com/TheDan64/inkwell) which provides a safe Rust wrapper around LLVM.
 
 ### Alternatives
 

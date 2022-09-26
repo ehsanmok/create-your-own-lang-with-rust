@@ -8,7 +8,7 @@ edition = "2018"
 pest = "2.1"
 pest_derive = "2.1"
 anyhow = "1.0"
-inkwell = { git = "https://github.com/TheDan64/inkwell", branch = "master", features = ["llvm10-0"] }  # use correct feature according to your llvm version
+inkwell = { git = "https://github.com/TheDan64/inkwell", branch = "master", features = ["llvm14-0"] }  # use correct feature according to your llvm version
 rustyline = "6.2"
 cfg-if = "0.1"
 

@@ -23,8 +23,8 @@ Make sure you have
 1. [Rust toolchain installed](https://www.rust-lang.org/tools/install)
 2. Cloned this repository (follow the instructions in each chapter)
 3. LLVM installed to run and test locally `cargo test --tests`
-    * Easiest option is LLVM v10.0 ([Debian/Ubuntu](https://apt.llvm.org/) or [macOS](https://formulae.brew.sh/formula/llvm))
-    * Otherwise, in `Cargo.toml` you'd need to change the `inkwell = { ..., features = ["your-llvm-version"] }` with LLVM version on your system (output of `llvm-config --version`)
+    * Easiest option is LLVM v14.0 ([Debian/Ubuntu](https://apt.llvm.org/) or [macOS](https://formulae.brew.sh/formula/llvm))
+    * Otherwise, in `Cargo.toml` you'd need to change the `inkwell = { ..., branch = "master", features = ["your-llvm-version"] }` with LLVM version on your system (output of `llvm-config --version`)
 
 
 To build the book locally, navigate to the `book` subdirectory and follow the instructions in [mdbook](https://github.com/rust-lang/mdBook).
