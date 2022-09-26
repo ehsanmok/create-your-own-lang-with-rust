@@ -77,7 +77,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="intro.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="crash_course.html"><strong aria-hidden="true">2.</strong> Crash Course on Computing</a></li><li class="chapter-item expanded "><a href="01_calculator/calc_intro.html"><strong aria-hidden="true">3.</strong> Calculator</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="01_calculator/grammar_lexer_parser.html"><strong aria-hidden="true">3.1.</strong> Grammar, Lexer and Parser</a></li><li class="chapter-item expanded "><a href="01_calculator/ast.html"><strong aria-hidden="true">3.2.</strong> Abstract Syntax Tree (AST) and Interpreter</a></li><li class="chapter-item expanded "><a href="01_calculator/jit_intro.html"><strong aria-hidden="true">3.3.</strong> Just-In-Time (JIT) Compiler with LLVM</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="01_calculator/basic_llvm.html"><strong aria-hidden="true">3.3.1.</strong> Basic Example</a></li><li class="chapter-item expanded "><a href="01_calculator/ast_traversal.html"><strong aria-hidden="true">3.3.2.</strong> AST Traversal Patterns</a></li></ol></li><li class="chapter-item expanded "><a href="01_calculator/exercise.html"><strong aria-hidden="true">3.4.</strong> Exercises</a></li><li class="chapter-item expanded "><a href="01_calculator/vm.html"><strong aria-hidden="true">3.5.</strong> Virtual Machine (VM), Bytecode and Interpreter</a></li><li class="chapter-item expanded "><a href="01_calculator/repl.html"><strong aria-hidden="true">3.6.</strong> Read-Eval-Print Loop (REPL)</a></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">4.</strong> Jeslang</div></li><li><ol class="section"><li class="chapter-item expanded "><div><strong aria-hidden="true">4.1.</strong> Static Typing and Type Inference</div></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">5.</strong> Object System and Object Oriented Language</div></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.</strong> Functional Language</div></li><li class="chapter-item expanded "><div><strong aria-hidden="true">7.</strong> TENTATIVE: Module System and Packaging</div></li><li class="chapter-item expanded "><div><strong aria-hidden="true">8.</strong> TENTATIVE: Mini Standard Library</div></li><li class="chapter-item expanded "><div><strong aria-hidden="true">9.</strong> Resources</div></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="intro.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="crash_course.html"><strong aria-hidden="true">2.</strong> Crash Course on Computing</a></li><li class="chapter-item expanded "><a href="01_calculator/calc_intro.html"><strong aria-hidden="true">3.</strong> Calculator</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="01_calculator/grammar_lexer_parser.html"><strong aria-hidden="true">3.1.</strong> Grammar, Lexer and Parser</a></li><li class="chapter-item expanded "><a href="01_calculator/ast.html"><strong aria-hidden="true">3.2.</strong> Abstract Syntax Tree (AST) and Interpreter</a></li><li class="chapter-item expanded "><a href="01_calculator/jit_intro.html"><strong aria-hidden="true">3.3.</strong> Just-In-Time (JIT) Compiler with LLVM</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="01_calculator/basic_llvm.html"><strong aria-hidden="true">3.3.1.</strong> Basic Example</a></li><li class="chapter-item expanded "><a href="01_calculator/ast_traversal.html"><strong aria-hidden="true">3.3.2.</strong> AST Traversal Patterns</a></li></ol></li><li class="chapter-item expanded "><a href="01_calculator/exercise.html"><strong aria-hidden="true">3.4.</strong> Exercises</a></li><li class="chapter-item expanded "><a href="01_calculator/vm.html"><strong aria-hidden="true">3.5.</strong> Virtual Machine (VM), Bytecode and Interpreter</a></li><li class="chapter-item expanded "><a href="01_calculator/repl.html"><strong aria-hidden="true">3.6.</strong> Read-Eval-Print Loop (REPL)</a></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">4.</strong> Firstlang</div></li><li><ol class="section"><li class="chapter-item expanded "><div><strong aria-hidden="true">4.1.</strong> Static Typing and Type Inference</div></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">5.</strong> Object System and Object Oriented Language</div></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.</strong> TENTATIVE: Mini Standard Library</div></li><li class="chapter-item expanded "><div><strong aria-hidden="true">7.</strong> Resources</div></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -176,10 +176,8 @@ cd create-your-own-lang-with-rust
 <ul>
 <li><a href="./crash_course.html">Crash Course on Computing</a> which we briefly set up the definitions and foundations</li>
 <li>We create our first programming language <code>Calc</code> that supports simple integer addition and subtraction. The simplicity allows us to touch a lot of important topics. We will use <a href="https://en.wikipedia.org/wiki/Parsing_expression_grammar">PEG</a> to define our grammar, <a href="https://bitbegin.github.io/pest-rs/">pest</a> to generate our <code>CalcParser</code> and explain what AST is and interpreting the AST means. Next, we will introduce JIT compilation and use <a href="https://github.com/TheDan64/inkwell">inkwell</a> to JIT compile our <code>Calc</code> language from its AST. To show an alternative compilation approach, we will create a Virtual Machine and a Runtime environment and discuss its features. Finally, we will write a simple REPL for our <code>Calc</code> language and test out different execution paths.</li>
-<li>TODO: We will introduce <code>Jeslang</code> (a statically typed language) and gradually work our way up from <code>Calc</code> language to create <code>Jeslang</code> together</li>
-<li>TODO: Object system and object oriented programming</li>
-<li>TODO: Functional language</li>
-<li>TENTATIVE: Module system and packaging</li>
+<li>TODO: We will create <code>Firstlang</code>, a statically typed language, by gradually working our way up from our <code>Calc</code></li>
+<li>TODO: Object system and minimal object oriented programming support</li>
 <li>TENTATIVE: Create a mini standard library</li>
 <li>TODO: Resources</li>
 </ul>
@@ -307,8 +305,7 @@ struct CalcParser;
     <a href><img  alt="ast" src="01_calculator/../img/ast_typed.svg"> </a>
 </p>
 <p>so we define our AST nodes as</p>
-<pre><pre class="playground"><code class="language-rust">
-<span class="boring">#![allow(unused)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>pub enum Operator {
     Plus,
@@ -338,8 +335,7 @@ pub enum Node {
 </p>
 <p>To include those into our AST to make it an actual <a href="https://en.wikipedia.org/wiki/Binary_tree">tree data structure</a>,
 we complete our AST definition as follows</p>
-<pre><pre class="playground"><code class="language-rust">
-<span class="boring">#![allow(unused)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>pub enum Operator {
     Plus,
@@ -441,7 +437,7 @@ impl Compile for Interpreter {
 <div style="break-before: page; page-break-before: always;"></div><h2 id="just-in-time-jit-compiler-with-llvm"><a class="header" href="#just-in-time-jit-compiler-with-llvm">Just-In-Time (JIT) Compiler with LLVM</a></h2>
 <p>JIT compilation is a combination of Ahead-Of-Time (AOT) compilation and interpretation. As we saw previously, our <code>Calc</code> interpreter evaluates AST to values (actual integer <code>i32</code> values) but a JIT compiler differs from an interpreter in what it outputs. Intuitively, JIT outputs are like AOT outputs but generated at runtime when traversing the AST.</p>
 <h3 id="llvm"><a class="header" href="#llvm">LLVM</a></h3>
-<p><a href="https://en.wikipedia.org/wiki/LLVM">LLVM</a> which stands for <strong>Low-Level-Virtual-Machine</strong>, is a mature compiler backend (code generator) infrastructure powering many languages such as <a href="https://clang.llvm.org/">Clang</a>, <a href="https://www.rust-lang.org/">Rust</a>, <a href="https://swift.org/">Swift</a>, etc. It has its own IR and Virtual Machine Bytecode abstracting away the underlying platform-specific differences.</p>
+<p><a href="https://en.wikipedia.org/wiki/LLVM">LLVM</a> (which is <em>not</em> an acronym) is a mature compiler backend (code generator) infrastructure powering many languages such as <a href="https://clang.llvm.org/">Clang</a>, <a href="https://www.rust-lang.org/">Rust</a>, <a href="https://swift.org/">Swift</a>, etc. It has its own IR and Virtual Machine Bytecode abstracting away the underlying platform-specific differences.</p>
 <p>We will use <a href="https://github.com/TheDan64/inkwell">inkwell</a> which provides a safe Rust wrapper around LLVM. Remember to use the branch according to your installed <code>llvm-config --version</code>.</p>
 <h3 id="alternatives"><a class="header" href="#alternatives">Alternatives</a></h3>
 <p>Other code generators that you can use (see the <a href="01_calculator/./exercise.html">exercises</a>) in this book (not at mature as LLVM) are <a href="https://docs.rs/cranelift-simplejit/0.64.0/cranelift_simplejit/index.html">cratelift-simpljit</a> and <a href="https://github.com/swgillespie/gccjit.rs">gcc-jit</a>.</p>
@@ -922,7 +918,7 @@ CTRL-C
 <h2 id="conclusion-1"><a class="header" href="#conclusion-1">Conclusion</a></h2>
 <p>This concludes our <a href="01_calculator/./calc_intro.html">Calculator</a> chapter. We took advantage of the simplicity of our <code>Calc</code> language to touch on a lot of topics.</p>
 <p>Thanks for following along and reading up this far!</p>
-<p>Stay tuned for the next chapter where we gradually work our way up to create a statically typed language named <em>Jeslang</em>.</p>
+<p>Stay tuned for the next chapter where we gradually work our way up to create a statically typed language named creatively as <strong>Firstlang</strong> :D</p>
 
                     </main>
 
