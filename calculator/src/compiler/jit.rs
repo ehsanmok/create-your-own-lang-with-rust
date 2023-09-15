@@ -34,7 +34,7 @@ impl Compile for Jit {
         for node in ast {
             let recursive_builder = RecursiveBuilder::new(i32_type, &builder);
             let return_value = recursive_builder.build(&node);
-            builder.build_return(Some(&return_value));
+            let _ = builder.build_return(Some(&return_value));
         }
         println!(
             "Generated LLVM IR: {}",
@@ -75,8 +75,14 @@ impl<'a> RecursiveBuilder<'a> {
                 let right = self.build(rhs);
 
                 match op {
-                    Operator::Plus => self.builder.build_int_add(left, right, "plus_temp"),
-                    Operator::Minus => self.builder.build_int_sub(left, right, "minus_temp"),
+                    Operator::Plus => self
+                        .builder
+                        .build_int_add(left, right, "plus_temp")
+                        .unwrap(),
+                    Operator::Minus => self
+                        .builder
+                        .build_int_sub(left, right, "minus_temp")
+                        .unwrap(),
                 }
             }
         }

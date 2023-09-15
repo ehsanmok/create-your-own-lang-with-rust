@@ -20,8 +20,8 @@ fn main() {
     let x = fn_val.get_nth_param(0).unwrap().into_int_value();
     let y = fn_val.get_nth_param(1).unwrap().into_int_value();
 
-    let ret = builder.build_int_add(x, y, "add");
-    let return_instruction = builder.build_return(Some(&ret));
+    let ret = builder.build_int_add(x, y, "add").unwrap();
+    let return_instruction = builder.build_return(Some(&ret)).unwrap();
     // ANCHOR_END: third
     dbg!("module: {:?}", module.clone());
     dbg!("builder: {:?}", builder);
