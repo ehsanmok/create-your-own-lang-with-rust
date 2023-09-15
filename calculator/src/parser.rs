@@ -1,4 +1,4 @@
-#![allow(clippy::upper_case_acronyms)]
+#![allow(clippy::upper_case_acronyms, clippy::result_large_err)]
 
 use pest::{self, Parser};
 
@@ -37,14 +37,13 @@ fn build_ast_from_expr(pair: pest::iterators::Pair<Rule>) -> Node {
             let mut pair = pair.into_inner();
             let lhspair = pair.next().unwrap();
             let mut lhs = build_ast_from_term(lhspair);
-            let mut op = pair.next().unwrap();
+            let op = pair.next().unwrap();
             let rhspair = pair.next().unwrap();
             let mut rhs = build_ast_from_term(rhspair);
             let mut retval = parse_binary_expr(op, lhs, rhs);
             loop {
                 let pair_buf = pair.next();
-                if pair_buf != None {
-                    op = pair_buf.unwrap();
+                if let Some(op) = pair_buf {
                     lhs = retval;
                     rhs = build_ast_from_term(pair.next().unwrap());
                     retval = parse_binary_expr(op, lhs, rhs);

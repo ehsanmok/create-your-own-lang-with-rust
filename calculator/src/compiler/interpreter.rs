@@ -1,3 +1,4 @@
+#![allow(clippy::only_used_in_recursion)]
 use crate::{Compile, Node, Operator, Result};
 
 // ANCHOR: interpreter
