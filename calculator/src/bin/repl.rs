@@ -1,7 +1,7 @@
 #![allow(unused_imports, unused_variables)]
 
 use rustyline::error::ReadlineError;
-use rustyline::Editor;
+use rustyline::{DefaultEditor, Result};
 
 use cfg_if::cfg_if;
 
@@ -20,8 +20,8 @@ cfg_if! {
 }
 
 // ANCHOR: repl
-fn main() {
-    let mut rl = Editor::<()>::new();
+fn main() -> Result<()> {
+    let mut rl = DefaultEditor::new()?;
     println!("Calculator prompt. Expressions are line evaluated.");
     loop {
         let readline = rl.readline(">> ");
@@ -57,5 +57,6 @@ fn main() {
             }
         }
     }
+    Ok(())
     // ANCHOR_END: repl
 }
