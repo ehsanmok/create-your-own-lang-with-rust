@@ -1,0 +1,42 @@
+WHITESPACE = _{ " " | "\t" | NEWLINE }
+KEYWORD = @{ "def" | "if" | "else" | "while" | "true" | "false" | "return" }
+Identifier = @{ !KEYWORD ~ (ASCII_ALPHA | "_") ~ ASCII_ALPHANUMERIC* }
+
+File = _{ SOI ~ Exprs ~ EOI }
+
+Exprs = _{ (Expr ~ NEWLINE*)+ }
+
+Expr = { Function | Call | Loop | Conditional | Assignment | Return | BinaryExpr  | UnaryExpr }
+
+Function = { "def" ~ Identifier ~ "(" ~ Parameter* ~ ")" ~ "{" ~ Exprs ~ "}" }
+    Parameter = { Identifier ~ ","? }
+
+Call = { Identifier ~ "(" ~ Arg* ~ ")" }
+    Arg = _{ Expr ~ ","? }
+
+Loop = { "while" ~ "(" ~ Expr ~ ")" ~ "{" ~ Exprs ~ "}" }
+
+Conditional = { "if" ~ "(" ~ Expr ~")" ~ "{" ~ Exprs ~ "}" ~ "else" ~ "{" ~ Exprs ~ "}" }
+
+Assignment = { Identifier ~ "=" ~ Expr }
+
+Return = { "return" ~ Expr }
+
+UnaryExpr = { UnaryOp? ~ Term }
+    UnaryOp = _{ Plus | Minus }
+        Plus = { "+" }
+        Minus = { "-" }
+
+Term = _{ Call | Literal | Identifier | "(" ~ Expr ~ ")" }
+    Literal = { Int | Bool }
+        Int = @{ UnaryOp? ~ ASCII_DIGIT+ }
+        Bool = @{ "true" | "false" }
+
+BinaryExpr = { Term ~ (BinaryOp ~ Term)+ }
+    BinaryOp = _{ Add | Sub | LessThan }
+        Add = { "+" }
+        Sub = { "-" }
+        LessThan = { "<" }
+
+
+

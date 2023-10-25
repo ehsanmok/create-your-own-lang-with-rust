@@ -1,0 +1,10 @@
+[package]
+name = "firstlang"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = "1.0"
+derive-new = "0.5.9"
+pest = "2.1"
+pest_derive = "2.1"

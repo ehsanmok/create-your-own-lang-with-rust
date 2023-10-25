@@ -1,5 +1,3 @@
 [workspace]
-members = [
-    "calculator",
-    "calculator/examples/llvm"
-]
+members = ["calculator", "calculator/examples/llvm", "firstlang"]
+resolver = "2"
