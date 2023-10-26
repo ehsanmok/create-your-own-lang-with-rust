@@ -8,8 +8,16 @@ Exprs = _{ (Expr ~ NEWLINE*)+ }
 
 Expr = { Function | Call | Loop | Conditional | Assignment | Return | BinaryExpr  | UnaryExpr }
 
-Function = { "def" ~ Identifier ~ "(" ~ Parameter* ~ ")" ~ "{" ~ Exprs ~ "}" }
-    Parameter = { Identifier ~ ","? }
+Function = { "def" ~ Identifier ~ "(" ~ Parameter* ~ ")" ~ ReturnType ~ "{" ~ Exprs ~ "}" }
+    Parameter = { Identifier ~ ":" ~ BuiltinTypes ~ ","? }
+
+Type = { BuiltinTypes | ReturnType }
+    BuiltinTypes = { IntType | BoolType }
+        IntType = @{ "int" }
+        BoolType = @{ "bool" }
+
+    ReturnType = { Arrow ~ BuiltinTypes }
+        Arrow = _{ "->" }
 
 Call = { Identifier ~ "(" ~ Arg* ~ ")" }
     Arg = _{ Expr ~ ","? }
@@ -18,7 +26,7 @@ Loop = { "while" ~ "(" ~ Expr ~ ")" ~ "{" ~ Exprs ~ "}" }
 
 Conditional = { "if" ~ "(" ~ Expr ~")" ~ "{" ~ Exprs ~ "}" ~ "else" ~ "{" ~ Exprs ~ "}" }
 
-Assignment = { Identifier ~ "=" ~ Expr }
+Assignment = { Identifier ~ ":" ~ BuiltinTypes ~ "=" ~ Expr }
 
 Return = { "return" ~ Expr }
 
