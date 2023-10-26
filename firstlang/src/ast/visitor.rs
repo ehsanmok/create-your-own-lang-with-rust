@@ -4,6 +4,7 @@ pub trait Visitor<T> {
     fn visit_expr(&mut self, expr: &Expr) -> T;
     fn visit_function(&mut self, function: &Function) -> T;
     fn visit_call(&mut self, call: &Call) -> T;
+    fn visit_block(&mut self, block: &Vec<Expr>) -> T;
     fn visit_conditional(&mut self, conditional: &Conditional) -> T;
     fn visit_loop(&mut self, loop_: &Loop) -> T;
     fn visit_assignment(&mut self, assignment: &Assignment) -> T;

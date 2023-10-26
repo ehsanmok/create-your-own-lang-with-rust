@@ -33,10 +33,12 @@ Term = _{ Call | Literal | Identifier | "(" ~ Expr ~ ")" }
         Bool = @{ "true" | "false" }
 
 BinaryExpr = { Term ~ (BinaryOp ~ Term)+ }
-    BinaryOp = _{ Add | Sub | LessThan }
+    BinaryOp = _{ Mul | Add | Sub | LessThan | GreaterThan }
         Add = { "+" }
         Sub = { "-" }
+        Mul = { "*" }
         LessThan = { "<" }
+        GreaterThan = { ">" }
 
 
 

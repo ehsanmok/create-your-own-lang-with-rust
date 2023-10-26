@@ -26,6 +26,7 @@ pub enum ExprKind {
     Loop(Loop),
     Function(Function),
     Call(Call),
+    Block(Vec<Expr>),
 }
 
 impl fmt::Display for ExprKind {
@@ -41,6 +42,14 @@ impl fmt::Display for ExprKind {
             ExprKind::Loop(e) => e.fmt(f),
             ExprKind::Function(e) => e.fmt(f),
             ExprKind::Call(e) => e.fmt(f),
+            ExprKind::Block(e) => write!(
+                f,
+                "{{ {} }}",
+                e.iter()
+                    .map(|p| format!("{}", p))
+                    .collect::<Vec<String>>()
+                    .join(", "),
+            ),
         }
     }
 }
@@ -115,13 +124,15 @@ impl fmt::Display for BinaryExpr {
 pub enum BinaryOp {
     Add,
     Sub,
+    Mul,
     LessThan,
+    GreaterThan,
 }
 
 impl BinaryOp {
     pub fn is_comparison(&self) -> bool {
         match self {
-            BinaryOp::LessThan => true,
+            BinaryOp::LessThan | BinaryOp::GreaterThan => true,
             _ => false,
         }
     }
@@ -132,7 +143,9 @@ impl fmt::Display for BinaryOp {
         match &self {
             BinaryOp::Add => write!(f, "+"),
             BinaryOp::Sub => write!(f, "-"),
+            BinaryOp::Mul => write!(f, "*"),
             BinaryOp::LessThan => write!(f, "<"),
+            BinaryOp::GreaterThan => write!(f, ">"),
         }
     }
 }
@@ -180,12 +193,21 @@ impl fmt::Display for Conditional {
 #[derive(Debug, Clone, PartialEq, Eq, new, Hash)]
 pub struct Loop {
     pub cond: Box<Expr>,
-    pub body: Box<Expr>,
+    pub body: Box<Vec<Expr>>,
 }
 
 impl fmt::Display for Loop {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
-        write!(f, "while ({}) {{ {} }}", self.cond, self.body)
+        write!(
+            f,
+            "while ({}) {{ {} }}",
+            self.cond,
+            self.body
+                .iter()
+                .map(|p| format!("{}", p))
+                .collect::<Vec<String>>()
+                .join(", ")
+        )
     }
 }
 
@@ -214,7 +236,9 @@ impl fmt::Display for Call {
 pub struct Function {
     pub ident: Identifier,
     pub params: Vec<Parameter>,
-    pub body: Box<Expr>,
+    // This only supports single expression bodies
+    // pub body: Box<Expr>,
+    pub body: Box<Vec<Expr>>, // i.e. a block
 }
 
 impl fmt::Display for Function {
@@ -229,6 +253,10 @@ impl fmt::Display for Function {
                 .collect::<Vec<String>>()
                 .join(", "),
             self.body
+                .iter()
+                .map(|p| format!("{}", p))
+                .collect::<Vec<String>>()
+                .join(", "),
         )
     }
 }

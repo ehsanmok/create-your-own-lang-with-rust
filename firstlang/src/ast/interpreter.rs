@@ -54,6 +54,7 @@ impl Visitor<Option<Value>> for Interpreter {
             ExprKind::Conditional(cond) => self.visit_conditional(cond),
             ExprKind::Function(func) => self.visit_function(func),
             ExprKind::Call(call) => self.visit_call(call),
+            ExprKind::Block(block) => self.visit_block(block),
             ExprKind::Identifier(ident) => self.visit_identifier(ident),
             ExprKind::Return(return_) => self.visit_return(return_),
             ExprKind::Assignment(assignment) => self.visit_assignment(assignment),
@@ -91,9 +92,17 @@ impl Visitor<Option<Value>> for Interpreter {
                 (Some(Value::Int(l)), Some(Value::Int(r))) => Some(Value::Int(l - r)),
                 _ => panic!("Subtraction applied to non-integer values"),
             },
+            BinaryOp::Mul => match (left, right) {
+                (Some(Value::Int(l)), Some(Value::Int(r))) => Some(Value::Int(l * r)),
+                _ => panic!("Multiplication applied to non-integer values"),
+            },
             BinaryOp::LessThan => match (left, right) {
                 (Some(Value::Int(l)), Some(Value::Int(r))) => Some(Value::Bool(l < r)),
                 _ => panic!("Less-than applied to non-integer values"),
+            },
+            BinaryOp::GreaterThan => match (left, right) {
+                (Some(Value::Int(l)), Some(Value::Int(r))) => Some(Value::Bool(l > r)),
+                _ => panic!("Greater-than applied to non-integer values"),
             },
         }
     }
@@ -112,9 +121,17 @@ impl Visitor<Option<Value>> for Interpreter {
         }
     }
 
-    fn visit_function(&mut self, function: &Function) -> Option<Value> {
-        let fname = function.ident.name.clone();
-        self.env.insert(fname, Value::Function(function.clone()));
+    fn visit_block(&mut self, block: &Vec<Expr>) -> Option<Value> {
+        let mut last_value = None;
+        for expr in block {
+            last_value = self.visit_expr(expr);
+        }
+        last_value
+    }
+
+    fn visit_function(&mut self, func: &Function) -> Option<Value> {
+        self.env
+            .insert(func.ident.name.clone(), Value::Function(func.clone()));
         None
     }
 
@@ -134,7 +151,12 @@ impl Visitor<Option<Value>> for Interpreter {
         }
 
         // Execute the function's body.
-        let return_value = self.visit_expr(&func_body);
+        // This is for a single expression body.
+        // let return_value = self.visit_expr(&func_body);
+        // return_value
+        // Now support a block
+        // Execute the function's body.
+        let return_value = self.visit_block(&func_body);
         return_value
     }
 
@@ -162,7 +184,7 @@ impl Visitor<Option<Value>> for Interpreter {
         let mut cond = self.visit_expr(&loop_.cond);
         while let Some(Value::Bool(b)) = cond {
             if b {
-                self.visit_expr(&loop_.body);
+                self.visit_block(&loop_.body);
                 cond = self.visit_expr(&loop_.cond);
             } else {
                 break;
@@ -257,6 +279,16 @@ mod tests {
         let _ = interpreter.visit_expr(&ast[0]);
         let result = interpreter.visit_expr(&ast[1]);
         assert_eq!(result, Some(Value::Int(42)));
+        let source = "
+        n = 1
+        n = n + 1
+        n
+        ";
+        let ast = parse(source).unwrap();
+        let _ = interpreter.visit_expr(&ast[0]);
+        let _ = interpreter.visit_expr(&ast[1]);
+        let result = interpreter.visit_expr(&ast[2]);
+        assert_eq!(result, Some(Value::Int(2)));
     }
 
     #[test]
@@ -274,5 +306,26 @@ mod tests {
         let _ = interpreter.visit_expr(&ast[1]);
         let result = interpreter.visit_expr(&ast[2]);
         assert_eq!(result, Some(Value::Int(10)));
+    }
+
+    #[test]
+    fn test_fib() {
+        let mut interpreter = Interpreter::new();
+        let source = "
+    def factorial(n) {
+        result = 1
+        while (n > 1) {
+            result = result * n
+            n = n - 1
+        }
+        return result
+    }
+    factorial(5)
+    ";
+        let ast = parse(source).unwrap();
+        dbg!("{:#?}", ast.clone());
+        let _ = interpreter.visit_expr(&ast[0]);
+        let result = interpreter.visit_expr(&ast[1]);
+        assert_eq!(result, Some(Value::Int(120)));
     }
 }

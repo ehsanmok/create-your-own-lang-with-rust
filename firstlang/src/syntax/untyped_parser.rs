@@ -48,29 +48,36 @@ fn build_ast_from_expr(pair: Pair<Rule>) -> StdResult<ast::Expr, Error<Rule>> {
 
 fn parse_function(pair: Pair<Rule>) -> StdResult<ast::Expr, Error<Rule>> {
     let mut pair = pair.into_inner();
-    let fn_ident = build_ast_from_expr(pair.next().unwrap())?; // function name Identifier
+    let fn_ident = build_ast_from_expr(pair.next().unwrap())?;
     let mut params = vec![];
-    let mut prev = pair.clone();
-    let mut next = pair;
+    let mut body_exprs = vec![];
+
+    // Extract parameters
     loop {
-        let next = next.next().unwrap();
-        if let Rule::Parameter = next.as_rule() {
-            params.push(build_ast_from_expr(next)?);
-            prev.next().unwrap();
+        let param_pair = pair.next().unwrap();
+        if let Rule::Parameter = param_pair.as_rule() {
+            params.push(build_ast_from_expr(param_pair)?);
         } else {
+            // If we encounter something that's not a parameter, we break and assume the rest is the function body
+            body_exprs.push(build_ast_from_expr(param_pair)?);
             break;
         }
+    }
+
+    // Extract the body expressions
+    for expr_pair in pair {
+        body_exprs.push(build_ast_from_expr(expr_pair)?);
     }
 
     let params: Vec<ast::Parameter> = params
         .into_iter()
         .map(|e| e.to_parameter().unwrap())
         .collect();
-    let body = build_ast_from_expr(prev.next().unwrap())?;
+
     Ok(ast::Expr::new(ast::ExprKind::Function(ast::Function::new(
         fn_ident.to_identifier().unwrap(),
         params,
-        Box::new(body),
+        Box::new(body_exprs),
     ))))
 }
 
@@ -94,7 +101,10 @@ fn parse_call(pair: Pair<Rule>) -> StdResult<ast::Expr, Error<Rule>> {
 fn parse_loop(pair: Pair<Rule>) -> StdResult<ast::Expr, Error<Rule>> {
     let mut pair = pair.into_inner();
     let cond = build_ast_from_expr(pair.next().unwrap())?;
-    let body = build_ast_from_expr(pair.next().unwrap())?;
+    let mut body = Vec::new();
+    for expr_pair in pair {
+        body.push(build_ast_from_expr(expr_pair)?);
+    }
     Ok(ast::Expr::new(ast::ExprKind::Loop(ast::Loop::new(
         Box::new(cond),
         Box::new(body),
@@ -195,7 +205,9 @@ fn parse_binary_expr_inner(pair: Pair<Rule>, lhs: ast::Expr, rhs: ast::Expr) -> 
     let op = match pair.as_str() {
         "+" => ast::BinaryOp::Add,
         "-" => ast::BinaryOp::Sub,
+        "*" => ast::BinaryOp::Mul,
         "<" => ast::BinaryOp::LessThan,
+        ">" => ast::BinaryOp::GreaterThan,
         _ => unreachable!(),
     };
     ast::Expr::new(ast::ExprKind::BinaryExpr(ast::BinaryExpr::new(
@@ -286,6 +298,16 @@ mod tests {
                 Box::new(Expr::new(ExprKind::Literal(LiteralKind::Int(5))))
             )))
         );
+        let source = "3 * 5";
+        let result = parse(source).unwrap();
+        assert_eq!(
+            result[0],
+            Expr::new(ExprKind::BinaryExpr(BinaryExpr::new(
+                BinaryOp::Mul,
+                Box::new(Expr::new(ExprKind::Literal(LiteralKind::Int(3)))),
+                Box::new(Expr::new(ExprKind::Literal(LiteralKind::Int(5))))
+            )))
+        );
     }
 
     #[test]
@@ -298,9 +320,9 @@ mod tests {
                 Parameter::new(Identifier::new(String::from("param1"))),
                 Parameter::new(Identifier::new(String::from("param2"))),
             ],
-            Box::new(Expr::new(ExprKind::Return(Return::new(Box::new(
+            Box::new(vec![Expr::new(ExprKind::Return(Return::new(Box::new(
                 Expr::new(ExprKind::Literal(LiteralKind::Int(42))),
-            ))))),
+            ))))]),
         )));
         assert_eq!(result[0], expected);
     }
@@ -325,9 +347,9 @@ mod tests {
         let result = parse(source).unwrap();
         let expected = Expr::new(ExprKind::Loop(Loop::new(
             Box::new(Expr::new(ExprKind::Literal(LiteralKind::Bool(true)))),
-            Box::new(Expr::new(ExprKind::Return(Return::new(Box::new(
+            Box::new(vec![Expr::new(ExprKind::Return(Return::new(Box::new(
                 Expr::new(ExprKind::Literal(LiteralKind::Int(42))),
-            ))))),
+            ))))]),
         )));
         assert_eq!(result[0], expected);
     }
