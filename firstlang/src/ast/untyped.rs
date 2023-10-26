@@ -191,7 +191,7 @@ impl fmt::Display for Loop {
 
 #[derive(Debug, Clone, PartialEq, Eq, new, Hash)]
 pub struct Call {
-    pub name: Identifier,
+    pub ident: Identifier,
     pub args: Vec<Expr>,
 }
 
@@ -200,7 +200,7 @@ impl fmt::Display for Call {
         write!(
             f,
             "{}({})",
-            self.name,
+            self.ident,
             self.args
                 .iter()
                 .map(|p| format!("{}", p))
@@ -212,7 +212,7 @@ impl fmt::Display for Call {
 
 #[derive(Debug, Clone, PartialEq, Eq, new, Hash)]
 pub struct Function {
-    pub name: Identifier,
+    pub ident: Identifier,
     pub params: Vec<Parameter>,
     pub body: Box<Expr>,
 }
@@ -222,7 +222,7 @@ impl fmt::Display for Function {
         write!(
             f,
             "def {}({}) {{ {} }}",
-            self.name,
+            self.ident,
             self.params
                 .iter()
                 .map(|p| format!("{}", p))
