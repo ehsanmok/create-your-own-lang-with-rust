@@ -1,4 +1,4 @@
-use crate::ast::untyped::*;
+use crate::ast::untyped::{self, *};
 use crate::ast::visitor::Visitor;
 
 use derive_new::new;
@@ -45,97 +45,128 @@ impl Interpreter {
     }
 }
 
-impl Visitor<Option<Value>> for Interpreter {
+impl Visitor<untyped::Expr> for Interpreter {
+    type Output = Option<Value>;
     fn visit_expr(&mut self, expr: &Expr) -> Option<Value> {
         match &expr.kind {
-            ExprKind::Literal(lk) => self.visit_literal(lk),
-            ExprKind::UnaryExpr(ue) => self.visit_unary_expr(ue),
-            ExprKind::BinaryExpr(be) => self.visit_binary_expr(be),
-            ExprKind::Conditional(cond) => self.visit_conditional(cond),
-            ExprKind::Function(func) => self.visit_function(func),
-            ExprKind::Call(call) => self.visit_call(call),
-            ExprKind::Block(block) => self.visit_block(block),
-            ExprKind::Identifier(ident) => self.visit_identifier(ident),
-            ExprKind::Return(return_) => self.visit_return(return_),
-            ExprKind::Assignment(assignment) => self.visit_assignment(assignment),
-            ExprKind::Loop(loop_) => self.visit_loop(loop_),
+            ExprKind::Literal(_) => self.visit_literal(expr),
+            ExprKind::UnaryExpr(_) => self.visit_unary_expr(expr),
+            ExprKind::BinaryExpr(_) => self.visit_binary_expr(expr),
+            ExprKind::Conditional(_) => self.visit_conditional(expr),
+            ExprKind::Function(_) => self.visit_function(expr),
+            ExprKind::Call(_) => self.visit_call(expr),
+            ExprKind::Block(_) => self.visit_block(expr),
+            ExprKind::Identifier(_) => self.visit_identifier(expr),
+            ExprKind::Return(_) => self.visit_return(expr),
+            ExprKind::Assignment(_) => self.visit_assignment(expr),
+            ExprKind::Loop(_) => self.visit_loop(expr),
         }
     }
 
-    fn visit_literal(&mut self, literal: &LiteralKind) -> Option<Value> {
-        match literal {
-            LiteralKind::Int(i) => Some(Value::Int(*i)),
-            LiteralKind::Bool(b) => Some(Value::Bool(*b)),
-        }
-    }
-
-    fn visit_unary_expr(&mut self, unary_expr: &UnaryExpr) -> Option<Value> {
-        let operand = self.visit_expr(&unary_expr.child);
-        match unary_expr.op {
-            UnaryOp::Plus => operand,
-            UnaryOp::Minus => match operand {
-                Some(Value::Int(i)) => Some(Value::Int(-i)),
-                _ => panic!("Unary minus applied to non-integer value"),
-            },
-        }
-    }
-
-    fn visit_binary_expr(&mut self, binary_expr: &BinaryExpr) -> Option<Value> {
-        let left = self.visit_expr(&binary_expr.lhs);
-        let right = self.visit_expr(&binary_expr.rhs);
-        match binary_expr.op {
-            BinaryOp::Add => match (left, right) {
-                (Some(Value::Int(l)), Some(Value::Int(r))) => Some(Value::Int(l + r)),
-                _ => panic!("Addition applied to non-integer values"),
-            },
-            BinaryOp::Sub => match (left, right) {
-                (Some(Value::Int(l)), Some(Value::Int(r))) => Some(Value::Int(l - r)),
-                _ => panic!("Subtraction applied to non-integer values"),
-            },
-            BinaryOp::Mul => match (left, right) {
-                (Some(Value::Int(l)), Some(Value::Int(r))) => Some(Value::Int(l * r)),
-                _ => panic!("Multiplication applied to non-integer values"),
-            },
-            BinaryOp::LessThan => match (left, right) {
-                (Some(Value::Int(l)), Some(Value::Int(r))) => Some(Value::Bool(l < r)),
-                _ => panic!("Less-than applied to non-integer values"),
-            },
-            BinaryOp::GreaterThan => match (left, right) {
-                (Some(Value::Int(l)), Some(Value::Int(r))) => Some(Value::Bool(l > r)),
-                _ => panic!("Greater-than applied to non-integer values"),
-            },
-        }
-    }
-
-    fn visit_conditional(&mut self, conditional: &Conditional) -> Option<Value> {
-        let cond = self.visit_expr(&conditional.cond);
-        match cond {
-            Some(Value::Bool(b)) => {
-                if b {
-                    self.visit_expr(&conditional.on_true)
-                } else {
-                    self.visit_expr(&conditional.on_false)
-                }
+    fn visit_literal(&mut self, literal: &untyped::Expr) -> Option<Value> {
+        if let untyped::ExprKind::Literal(lk) = &literal.kind {
+            match lk {
+                LiteralKind::Int(i) => Some(Value::Int(*i)),
+                LiteralKind::Bool(b) => Some(Value::Bool(*b)),
             }
-            _ => panic!("Conditional applied to non-boolean value"),
+        } else {
+            panic!("Expected LiteralKind, found something else");
         }
     }
 
-    fn visit_block(&mut self, block: &Vec<Expr>) -> Option<Value> {
-        let mut last_value = None;
-        for expr in block {
-            last_value = self.visit_expr(expr);
+    fn visit_unary_expr(&mut self, unary_expr: &untyped::Expr) -> Option<Value> {
+        if let untyped::ExprKind::UnaryExpr(ue) = &unary_expr.kind {
+            let operand = self.visit_expr(&ue.child);
+            match ue.op {
+                UnaryOp::Plus => operand,
+                UnaryOp::Minus => match operand {
+                    Some(Value::Int(i)) => Some(Value::Int(-i)),
+                    _ => panic!("Unary minus applied to non-integer value"),
+                },
+            }
+        } else {
+            panic!("Expected UnaryExpr, found something else");
         }
-        last_value
     }
 
-    fn visit_function(&mut self, func: &Function) -> Option<Value> {
-        self.env
-            .insert(func.ident.name.clone(), Value::Function(func.clone()));
-        None
+    fn visit_binary_expr(&mut self, binary_expr: &untyped::Expr) -> Option<Value> {
+        if let untyped::ExprKind::BinaryExpr(be) = &binary_expr.kind {
+            let left = self.visit_expr(&be.lhs);
+            let right = self.visit_expr(&be.rhs);
+            match be.op {
+                BinaryOp::Add => match (left, right) {
+                    (Some(Value::Int(l)), Some(Value::Int(r))) => Some(Value::Int(l + r)),
+                    _ => panic!("Addition applied to non-integer values"),
+                },
+                BinaryOp::Sub => match (left, right) {
+                    (Some(Value::Int(l)), Some(Value::Int(r))) => Some(Value::Int(l - r)),
+                    _ => panic!("Subtraction applied to non-integer values"),
+                },
+                BinaryOp::Mul => match (left, right) {
+                    (Some(Value::Int(l)), Some(Value::Int(r))) => Some(Value::Int(l * r)),
+                    _ => panic!("Multiplication applied to non-integer values"),
+                },
+                BinaryOp::LessThan => match (left, right) {
+                    (Some(Value::Int(l)), Some(Value::Int(r))) => Some(Value::Bool(l < r)),
+                    _ => panic!("Less-than applied to non-integer values"),
+                },
+                BinaryOp::GreaterThan => match (left, right) {
+                    (Some(Value::Int(l)), Some(Value::Int(r))) => Some(Value::Bool(l > r)),
+                    _ => panic!("Greater-than applied to non-integer values"),
+                },
+            }
+        } else {
+            panic!("Expected BinaryExpr, found something else");
+        }
     }
 
-    fn visit_call(&mut self, call: &Call) -> Option<Value> {
+    fn visit_conditional(&mut self, conditional: &untyped::Expr) -> Option<Value> {
+        if let untyped::ExprKind::Conditional(conditional) = &conditional.kind {
+            let cond = self.visit_expr(&conditional.cond);
+            match cond {
+                Some(Value::Bool(b)) => {
+                    if b {
+                        self.visit_expr(&conditional.on_true)
+                    } else {
+                        self.visit_expr(&conditional.on_false)
+                    }
+                }
+                _ => panic!("Conditional applied to non-boolean value"),
+            }
+        } else {
+            panic!("Expected Conditional, found something else");
+        }
+    }
+
+    fn visit_block(&mut self, block: &untyped::Expr) -> Option<Value> {
+        let block = if let untyped::ExprKind::Block(block) = &block.kind {
+            block
+        } else {
+            panic!("Expected Block, found something else");
+        };
+        let mut return_value = None;
+        for expr in block.exprs.iter() {
+            return_value = self.visit_expr(expr);
+        }
+        return_value
+    }
+
+    fn visit_function(&mut self, func: &untyped::Expr) -> Option<Value> {
+        let func = if let untyped::ExprKind::Function(func) = &func.kind {
+            self.env
+                .insert(func.ident.name.clone(), Value::Function(func.clone()));
+            return None;
+        } else {
+            panic!("Expected Function, found something else");
+        };
+    }
+
+    fn visit_call(&mut self, call: &untyped::Expr) -> Option<Value> {
+        let call = if let untyped::ExprKind::Call(call) = &call.kind {
+            call
+        } else {
+            panic!("Expected Call, found something else");
+        };
         let (func_params, func_body) =
             if let Some(Value::Function(func)) = self.env.get(&call.ident.name) {
                 (func.params.clone(), func.body.clone())
@@ -156,11 +187,18 @@ impl Visitor<Option<Value>> for Interpreter {
         // return_value
         // Now support a block
         // Execute the function's body.
+        // need to wrap the block in an Expr
+        let func_body = untyped::Expr::new(untyped::ExprKind::Block(Block::new(*func_body)));
         let return_value = self.visit_block(&func_body);
         return_value
     }
 
-    fn visit_identifier(&mut self, identifier: &Identifier) -> Option<Value> {
+    fn visit_identifier(&mut self, identifier: &untyped::Expr) -> Option<Value> {
+        let identifier = if let untyped::ExprKind::Identifier(ident) = &identifier.kind {
+            ident
+        } else {
+            panic!("Expected Identifier, found something else");
+        };
         let ident = identifier.name.clone();
         let val = self.env.get(&ident);
         match val {
@@ -169,22 +207,39 @@ impl Visitor<Option<Value>> for Interpreter {
         }
     }
 
-    fn visit_return(&mut self, return_: &Return) -> Option<Value> {
+    fn visit_return(&mut self, return_: &untyped::Expr) -> Option<Value> {
+        let return_ = if let untyped::ExprKind::Return(return_) = &return_.kind {
+            return_
+        } else {
+            panic!("Expected Return, found something else");
+        };
         let val = self.visit_expr(&return_.value);
         val
     }
 
-    fn visit_assignment(&mut self, assignment: &Assignment) -> Option<Value> {
+    fn visit_assignment(&mut self, assignment: &untyped::Expr) -> Option<Value> {
+        let assignment = if let untyped::ExprKind::Assignment(assignment) = &assignment.kind {
+            assignment
+        } else {
+            panic!("Expected Assignment, found something else");
+        };
         let val = self.visit_expr(&assignment.value);
         self.env.insert(assignment.ident.name.clone(), val.unwrap());
         None
     }
 
-    fn visit_loop(&mut self, loop_: &Loop) -> Option<Value> {
+    fn visit_loop(&mut self, loop_: &untyped::Expr) -> Option<Value> {
+        let loop_ = if let untyped::ExprKind::Loop(loop_) = &loop_.kind {
+            loop_
+        } else {
+            panic!("Expected Loop, found something else");
+        };
         let mut cond = self.visit_expr(&loop_.cond);
         while let Some(Value::Bool(b)) = cond {
             if b {
-                self.visit_block(&loop_.body);
+                let loop_body =
+                    untyped::Expr::new(untyped::ExprKind::Block(Block::new(*loop_.body.clone())));
+                self.visit_block(&loop_body);
                 cond = self.visit_expr(&loop_.cond);
             } else {
                 break;
@@ -193,7 +248,7 @@ impl Visitor<Option<Value>> for Interpreter {
         None
     }
 
-    fn visit_parameter(&mut self, parameter: &Parameter) -> Option<Value> {
+    fn visit_parameter(&mut self, parameter: &untyped::Expr) -> Option<Value> {
         None
     }
 }

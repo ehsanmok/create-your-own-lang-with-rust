@@ -26,7 +26,7 @@ pub enum ExprKind {
     Loop(Loop),
     Function(Function),
     Call(Call),
-    Block(Vec<Expr>),
+    Block(Block),
 }
 
 impl fmt::Display for ExprKind {
@@ -42,15 +42,27 @@ impl fmt::Display for ExprKind {
             ExprKind::Loop(e) => e.fmt(f),
             ExprKind::Function(e) => e.fmt(f),
             ExprKind::Call(e) => e.fmt(f),
-            ExprKind::Block(e) => write!(
-                f,
-                "{{ {} }}",
-                e.iter()
-                    .map(|p| format!("{}", p))
-                    .collect::<Vec<String>>()
-                    .join(", "),
-            ),
+            ExprKind::Block(e) => e.fmt(f),
         }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash, new)]
+pub struct Block {
+    pub exprs: Vec<Expr>,
+}
+
+impl fmt::Display for Block {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
+        write!(
+            f,
+            "{{ {} }}",
+            self.exprs
+                .iter()
+                .map(|p| format!("{}", p))
+                .collect::<Vec<String>>()
+                .join(", "),
+        )
     }
 }
 
