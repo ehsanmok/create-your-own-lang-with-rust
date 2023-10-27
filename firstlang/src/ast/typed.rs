@@ -25,7 +25,7 @@ impl fmt::Display for Type {
                     .join(", "),
                 ret,
             ),
-            Type::Unit => write!(f, ""),
+            Type::Unit => write!(f, "unit"),
             Type::Unknown => write!(f, "unknown"),
         }
     }
@@ -81,7 +81,7 @@ pub enum ExprKind {
     Loop(Loop),
     Function(Function),
     Call(Call),
-    Block(Vec<Expr>),
+    Block(Block),
 }
 
 impl fmt::Display for ExprKind {
@@ -97,15 +97,27 @@ impl fmt::Display for ExprKind {
             ExprKind::Loop(e) => e.fmt(f),
             ExprKind::Function(e) => e.fmt(f),
             ExprKind::Call(e) => e.fmt(f),
-            ExprKind::Block(e) => write!(
-                f,
-                "{{ {} }}",
-                e.iter()
-                    .map(|p| format!("{}", p))
-                    .collect::<Vec<String>>()
-                    .join(", "),
-            ),
+            ExprKind::Block(e) => e.fmt(f),
         }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct Block {
+    pub exprs: Vec<Expr>,
+}
+
+impl fmt::Display for Block {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
+        write!(
+            f,
+            "{{ {} }}",
+            self.exprs
+                .iter()
+                .map(|p| format!("{}", p))
+                .collect::<Vec<String>>()
+                .join(", "),
+        )
     }
 }
 
@@ -343,6 +355,85 @@ impl Expr {
             Ok(Parameter::new(ident, ty))
         } else {
             bail!("Cannot transform Expr to Parameter")
+        }
+    }
+
+    pub fn children(&self) -> Vec<&Expr> {
+        match &self.kind {
+            ExprKind::Identifier(_) | ExprKind::Literal(_) => vec![],
+            ExprKind::UnaryExpr(UnaryExpr { child, .. }) => vec![&**child],
+            ExprKind::BinaryExpr(BinaryExpr { lhs, rhs, .. }) => vec![&**lhs, &**rhs],
+            ExprKind::Return(Return { value }) => vec![&**value],
+            ExprKind::Assignment(Assignment { value, .. }) => vec![&**value],
+            ExprKind::Conditional(Conditional {
+                cond,
+                on_true,
+                on_false,
+            }) => {
+                let mut children = vec![];
+                children.append(&mut cond.children());
+                children.append(&mut on_true.children());
+                children.append(&mut on_false.children());
+                children
+            }
+            ExprKind::Loop(Loop { cond, body }) => {
+                let mut children = vec![&**cond];
+                children.extend(body.iter());
+                children
+            }
+            ExprKind::Function(Function { body, .. }) => body.iter().collect(),
+            ExprKind::Call(Call { args, .. }) => args.iter().collect(),
+            ExprKind::Block(Block { exprs }) => exprs.iter().collect(),
+        }
+    }
+
+    pub fn childern_mut(&mut self) -> Vec<&mut Expr> {
+        match &mut self.kind {
+            ExprKind::Identifier(_) | ExprKind::Literal(_) => vec![],
+            ExprKind::UnaryExpr(UnaryExpr { child, .. }) => vec![&mut **child],
+            ExprKind::BinaryExpr(BinaryExpr { lhs, rhs, .. }) => vec![&mut **lhs, &mut **rhs],
+            ExprKind::Return(Return { value }) => vec![&mut **value],
+            ExprKind::Assignment(Assignment { value, .. }) => vec![&mut **value],
+            ExprKind::Conditional(Conditional {
+                cond,
+                on_true,
+                on_false,
+            }) => {
+                let mut children = vec![];
+                children.append(&mut cond.childern_mut());
+                children.append(&mut on_true.childern_mut());
+                children.append(&mut on_false.childern_mut());
+                children
+            }
+            ExprKind::Loop(Loop { cond, body }) => {
+                let mut children = vec![&mut **cond];
+                children.extend(body.iter_mut());
+                children
+            }
+            ExprKind::Function(Function { body, .. }) => body.iter_mut().collect(),
+            ExprKind::Call(Call { args, .. }) => args.iter_mut().collect(),
+            ExprKind::Block(Block { exprs }) => exprs.iter_mut().collect(),
+        }
+    }
+
+    pub fn traverse(&self, f: &mut impl FnMut(&Expr)) {
+        f(self);
+        for child in self.children() {
+            child.traverse(f);
+        }
+    }
+
+    pub fn traverse_mut(&mut self, f: &mut impl FnMut(&mut Expr)) {
+        f(self);
+        for child in self.childern_mut() {
+            child.traverse_mut(f);
+        }
+    }
+
+    pub fn partially_typed(&self) -> bool {
+        match &self.ty {
+            Type::Unknown => true,
+            _ => self.children().iter().any(|c| c.partially_typed()),
         }
     }
 }
