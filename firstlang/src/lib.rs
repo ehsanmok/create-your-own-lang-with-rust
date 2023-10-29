@@ -6,6 +6,7 @@ extern crate pest;
 extern crate pest_derive;
 
 pub mod ast;
+pub mod ir;
 pub mod syntax;
 
 pub use ast::typed;
