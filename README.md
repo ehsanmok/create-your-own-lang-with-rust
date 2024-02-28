@@ -37,6 +37,6 @@ Checkout the [roadmap to the 1st edition](https://github.com/ehsanmok/create-you
 
 If you have found this project useful, please consider donating to any of the organizations below
 
-* [Child Foundation](https://www.childfoundation.org/page/donate)
+* [Child Foundation](https://mycf.childfoundation.org/s/donate)
 * [Black Lives Matter](https://blacklivesmatter.com/)
 * [Food Bank of Canada](https://www.foodbankscanada.ca/)
