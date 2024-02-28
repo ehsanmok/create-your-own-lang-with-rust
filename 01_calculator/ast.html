@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html lang="en" class="sidebar-visible no-js light">
+<html lang="en" class="light" dir="ltr">
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
@@ -10,7 +10,7 @@
         
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="theme-color" content="#ffffff" />
+        <meta name="theme-color" content="#ffffff">
 
         <link rel="icon" href="../favicon.svg">
         <link rel="shortcut icon" href="../favicon.png">
@@ -32,7 +32,7 @@
         <link rel="stylesheet" href="../theme/custom.css">
 
     </head>
-    <body>
+    <body class="sidebar-visible no-js">
     <div id="body-container">
         <!-- Provide site root to javascript -->
         <script>
@@ -62,31 +62,38 @@
             try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
             if (theme === null || theme === undefined) { theme = default_theme; }
             var html = document.querySelector('html');
-            html.classList.remove('no-js')
             html.classList.remove('light')
             html.classList.add(theme);
-            html.classList.add('js');
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
         </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
 
         <!-- Hide / unhide sidebar before it is displayed -->
         <script>
-            var html = document.querySelector('html');
+            var body = document.querySelector('body');
             var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
             if (document.body.clientWidth >= 1080) {
                 try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
                 sidebar = sidebar || 'visible';
             } else {
                 sidebar = 'hidden';
             }
-            html.classList.remove('sidebar-visible');
-            html.classList.add("sidebar-" + sidebar);
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
                 <ol class="chapter"><li class="chapter-item expanded "><a href="../intro.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="../crash_course.html"><strong aria-hidden="true">2.</strong> Crash Course on Computing</a></li><li class="chapter-item expanded "><a href="../01_calculator/calc_intro.html"><strong aria-hidden="true">3.</strong> Calculator</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../01_calculator/grammar_lexer_parser.html"><strong aria-hidden="true">3.1.</strong> Grammar, Lexer and Parser</a></li><li class="chapter-item expanded "><a href="../01_calculator/ast.html" class="active"><strong aria-hidden="true">3.2.</strong> Abstract Syntax Tree (AST) and Interpreter</a></li><li class="chapter-item expanded "><a href="../01_calculator/jit_intro.html"><strong aria-hidden="true">3.3.</strong> Just-In-Time (JIT) Compiler with LLVM</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../01_calculator/basic_llvm.html"><strong aria-hidden="true">3.3.1.</strong> Basic Example</a></li><li class="chapter-item expanded "><a href="../01_calculator/ast_traversal.html"><strong aria-hidden="true">3.3.2.</strong> AST Traversal Patterns</a></li></ol></li><li class="chapter-item expanded "><a href="../01_calculator/exercise.html"><strong aria-hidden="true">3.4.</strong> Exercises</a></li><li class="chapter-item expanded "><a href="../01_calculator/vm.html"><strong aria-hidden="true">3.5.</strong> Virtual Machine (VM), Bytecode and Interpreter</a></li><li class="chapter-item expanded "><a href="../01_calculator/repl.html"><strong aria-hidden="true">3.6.</strong> Read-Eval-Print Loop (REPL)</a></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">4.</strong> Firstlang</div></li><li><ol class="section"><li class="chapter-item expanded "><div><strong aria-hidden="true">4.1.</strong> Static Typing and Type Inference</div></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">5.</strong> Object System and Object Oriented Language</div></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.</strong> TENTATIVE: Mini Standard Library</div></li><li class="chapter-item expanded "><div><strong aria-hidden="true">7.</strong> Resources</div></li></ol>
             </div>
-            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
         </nav>
 
         <!-- Track and set sidebar scroll position -->
@@ -117,9 +124,9 @@
                                 <div id="menu-bar-hover-placeholder"></div>
                 <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
-                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
-                        </button>
+                        </label>
                         <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
                             <i class="fa fa-paint-brush"></i>
                         </button>
@@ -168,7 +175,7 @@
                 <div id="content" class="content">
                     <main>
                         <h2 id="abstract-syntax-tree-ast"><a class="header" href="#abstract-syntax-tree-ast">Abstract Syntax Tree (AST)</a></h2>
-<p>AST comes into picture when we want to go from the string representation of our program like <code>&quot;-1&quot;</code> or <code>&quot;1 + 2&quot;</code> to something more manageable and easier to work with. Since our program is not a random string (the grammar is for), we can use the structure within the expressions <code>&quot;-1&quot;</code> and <code>&quot;1 + 2&quot;</code> to our own advantage and come up with a <em>new representation</em> like a <a href="https://en.wikipedia.org/wiki/Tree_structure">tree</a></p>
+<p>AST comes into picture when we want to go from the string representation of our program like <code>"-1"</code> or <code>"1 + 2"</code> to something more manageable and easier to work with. Since our program is not a random string (the grammar is for), we can use the structure within the expressions <code>"-1"</code> and <code>"1 + 2"</code> to our own advantage and come up with a <em>new representation</em> like a <a href="https://en.wikipedia.org/wiki/Tree_structure">tree</a></p>
 <p align="center">
   </br>
     <a href><img  alt="ast" src="../img/ast.svg"> </a>
@@ -201,7 +208,7 @@ pub enum Node {
 </code></pre>
 </li>
 </ul>
-<p>So for example, the expression <code>&quot;-1 + (2 + 3)&quot;</code> has this recursive structure</p>
+<p>So for example, the expression <code>"-1 + (2 + 3)"</code> has this recursive structure</p>
 <p align="center">
 </br>
     <a href><img alt="compiler" src="../img/ast_recursive.svg"> </a>
@@ -274,9 +281,9 @@ in later stages of compilation.</p>
     fn from_ast(ast: Vec&lt;Node&gt;) -&gt; Self::Output;
 
     fn from_source(source: &amp;str) -&gt; Self::Output {
-        println!(&quot;Compiling the source: {}&quot;, source);
+        println!("Compiling the source: {}", source);
         let ast: Vec&lt;Node&gt; = parser::parse(source).unwrap();
-        println!(&quot;{:?}&quot;, ast);
+        println!("{:?}", ast);
         Self::from_ast(ast)
     }
 }</code></pre>
@@ -297,7 +304,7 @@ impl Compile for Interpreter {
 }</code></pre>
 <p><span class="filename">Filename: calculator/src/compiler/interpreter.rs</span></p>
 <p>and test</p>
-<pre><code class="language-rust ignore">assert_eq!(Interpreter::from_source(&quot;1 + 2&quot;).unwrap(), 3);</code></pre>
+<pre><code class="language-rust ignore">assert_eq!(Interpreter::from_source("1 + 2").unwrap(), 3);</code></pre>
 <p>Run such tests locally with</p>
 <pre><code class="language-text">cargo test interpreter --tests
 </code></pre>
@@ -310,7 +317,7 @@ impl Compile for Interpreter {
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next" href="../01_calculator/jit_intro.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../01_calculator/jit_intro.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -324,7 +331,7 @@ impl Compile for Interpreter {
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next" href="../01_calculator/jit_intro.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../01_calculator/jit_intro.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>

@@ -1,17 +1,17 @@
 <!DOCTYPE HTML>
-<html lang="en" class="sidebar-visible no-js light">
+<html lang="en" class="light" dir="ltr">
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
         <title>Create Your Own Programming Language with Rust</title>
-        <meta name="robots" content="noindex" />
+        <meta name="robots" content="noindex">
 
 
         <!-- Custom HTML head -->
         
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="theme-color" content="#ffffff" />
+        <meta name="theme-color" content="#ffffff">
 
         <link rel="icon" href="favicon.svg">
         <link rel="shortcut icon" href="favicon.png">
@@ -33,7 +33,7 @@
         <link rel="stylesheet" href="theme/custom.css">
 
     </head>
-    <body>
+    <body class="sidebar-visible no-js">
     <div id="body-container">
         <!-- Provide site root to javascript -->
         <script>
@@ -63,31 +63,38 @@
             try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
             if (theme === null || theme === undefined) { theme = default_theme; }
             var html = document.querySelector('html');
-            html.classList.remove('no-js')
             html.classList.remove('light')
             html.classList.add(theme);
-            html.classList.add('js');
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
         </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
 
         <!-- Hide / unhide sidebar before it is displayed -->
         <script>
-            var html = document.querySelector('html');
+            var body = document.querySelector('body');
             var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
             if (document.body.clientWidth >= 1080) {
                 try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
                 sidebar = sidebar || 'visible';
             } else {
                 sidebar = 'hidden';
             }
-            html.classList.remove('sidebar-visible');
-            html.classList.add("sidebar-" + sidebar);
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
                 <ol class="chapter"><li class="chapter-item expanded "><a href="intro.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="crash_course.html"><strong aria-hidden="true">2.</strong> Crash Course on Computing</a></li><li class="chapter-item expanded "><a href="01_calculator/calc_intro.html"><strong aria-hidden="true">3.</strong> Calculator</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="01_calculator/grammar_lexer_parser.html"><strong aria-hidden="true">3.1.</strong> Grammar, Lexer and Parser</a></li><li class="chapter-item expanded "><a href="01_calculator/ast.html"><strong aria-hidden="true">3.2.</strong> Abstract Syntax Tree (AST) and Interpreter</a></li><li class="chapter-item expanded "><a href="01_calculator/jit_intro.html"><strong aria-hidden="true">3.3.</strong> Just-In-Time (JIT) Compiler with LLVM</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="01_calculator/basic_llvm.html"><strong aria-hidden="true">3.3.1.</strong> Basic Example</a></li><li class="chapter-item expanded "><a href="01_calculator/ast_traversal.html"><strong aria-hidden="true">3.3.2.</strong> AST Traversal Patterns</a></li></ol></li><li class="chapter-item expanded "><a href="01_calculator/exercise.html"><strong aria-hidden="true">3.4.</strong> Exercises</a></li><li class="chapter-item expanded "><a href="01_calculator/vm.html"><strong aria-hidden="true">3.5.</strong> Virtual Machine (VM), Bytecode and Interpreter</a></li><li class="chapter-item expanded "><a href="01_calculator/repl.html"><strong aria-hidden="true">3.6.</strong> Read-Eval-Print Loop (REPL)</a></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">4.</strong> Firstlang</div></li><li><ol class="section"><li class="chapter-item expanded "><div><strong aria-hidden="true">4.1.</strong> Static Typing and Type Inference</div></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">5.</strong> Object System and Object Oriented Language</div></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.</strong> TENTATIVE: Mini Standard Library</div></li><li class="chapter-item expanded "><div><strong aria-hidden="true">7.</strong> Resources</div></li></ol>
             </div>
-            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
         </nav>
 
         <!-- Track and set sidebar scroll position -->
@@ -118,9 +125,9 @@
                                 <div id="menu-bar-hover-placeholder"></div>
                 <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
-                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
-                        </button>
+                        </label>
                         <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
                             <i class="fa fa-paint-brush"></i>
                         </button>
@@ -190,7 +197,7 @@ cd create-your-own-lang-with-rust
 <p>LLVM installed to run and test locally <code>cargo test --tests</code></p>
 <ul>
 <li>Easiest option is LLVM v14.0 (<a href="https://apt.llvm.org/">Debian/Ubuntu</a> or <a href="https://formulae.brew.sh/formula/llvm">macOS</a>)</li>
-<li>Otherwise, in <code>Cargo.toml</code> you'd need to change the <code>inkwell = { ..., branch = &quot;master&quot;, features = [&quot;your-llvm-version&quot;] }</code> with LLVM version on your system (output of <code>llvm-config --version</code>)</li>
+<li>Otherwise, in <code>Cargo.toml</code> you'd need to change the <code>inkwell = { ..., branch = "master", features = ["your-llvm-version"] }</code> with LLVM version on your system (output of <code>llvm-config --version</code>)</li>
 </ul>
 </li>
 </ul>
@@ -198,10 +205,10 @@ cd create-your-own-lang-with-rust
 <p>This book arises from my frustration of not finding modern, clear and concise teaching materials that are readily accessible to beginners like me who wants to learn a bit on how to create their own programming language.</p>
 <p>The following are my guidelines</p>
 <blockquote>
-<p>&quot;If you don't know how <em>compilers</em> work, then you don't know how computers work&quot; <sup><a href="http://steve-yegge.blogspot.com/2007/06/rich-programmer-food.html?">1</a></sup></p>
+<p>"If you don't know how <em>compilers</em> work, then you don't know how computers work" <sup><a href="http://steve-yegge.blogspot.com/2007/06/rich-programmer-food.html?">1</a></sup></p>
 </blockquote>
 <blockquote>
-<p>&quot;If you can’t explain something in simple terms, you don’t understand it&quot; <sup><a href="https://skeptics.stackexchange.com/questions/8742/did-einstein-say-if-you-cant-explain-it-simply-you-dont-understand-it-well-en">2</a></sup></p>
+<p>"If you can’t explain something in simple terms, you don’t understand it" <sup><a href="https://skeptics.stackexchange.com/questions/8742/did-einstein-say-if-you-cant-explain-it-simply-you-dont-understand-it-well-en">2</a></sup></p>
 </blockquote>
 <p><span style="font-family:Trebuchet MS"> Pedagogically, one of the most effective methods of teaching is co-creating interactively. Introducing the core aspects around the <em>simplest example</em> (here, our calculator language) helps a lot to build knowledge and confidence. For that, we will use mature technologies instead of spending tone of time on partially reinventing-the-wheel and bore the reader.</span></p>
 <p>Here is the outline of the contents</p>
@@ -228,7 +235,7 @@ cd create-your-own-lang-with-rust
 <p>All these three components are intertwined together and learning their connections is crucial in understanding what makes <em>Computing</em> possible. Informally, a <em>language</em> is a structured text with syntax and semantics. A <em>Source Code</em> written in a programming language needs a translator/compiler of <em>some sort</em>, to translate it to <em>another</em> language/format. Then an executor of <em>some sort</em>, to execute/run the translated commands with the goal of matching the syntax (and semantics) to <em>some form</em> of output.</p>
 <h2 id="elements-of-computing"><a class="header" href="#elements-of-computing">Elements of Computing</a></h2>
 <h3 id="instructions-and-the-machine-language"><a class="header" href="#instructions-and-the-machine-language">Instructions and the Machine Language</a></h3>
-<p>If you want to create a &quot;computer&quot; from scratch, you need to start by defining an <em>abstract model</em> for your computer. This abstract model is also referred to as <strong>Instruction Set Architecture (ISA)</strong> (instruction set or simply <em>instructions</em>). A CPU is an <em>implementation</em> of such ISA. A standard ISA defines its basic elements such as <em>data types</em>, <em>register</em> values, various hardware supports, I/O etc. and they all make up the  <em>lowest-level language</em> of computing which is the <strong>Machine Language Instructions.</strong></p>
+<p>If you want to create a "computer" from scratch, you need to start by defining an <em>abstract model</em> for your computer. This abstract model is also referred to as <strong>Instruction Set Architecture (ISA)</strong> (instruction set or simply <em>instructions</em>). A CPU is an <em>implementation</em> of such ISA. A standard ISA defines its basic elements such as <em>data types</em>, <em>register</em> values, various hardware supports, I/O etc. and they all make up the  <em>lowest-level language</em> of computing which is the <strong>Machine Language Instructions.</strong></p>
 <p>Instructions are comprised of <em>instruction code</em> (aka <em>operation code</em>, in short <strong>opcode</strong> or p-code) which are directly executed by CPU. An opcode can either have operand(s) or no operand. For example, in an 8-bits machine where instructions are 8-bits an opcode <em>load</em> might be defined by the 4-bits <strong>0011</strong> following by the second 4-bits as operand with <strong>0101</strong> that makes up the instruction <strong>00110101</strong> in the Machine Language while the opcode for <em>incrementing by 1</em> of the previously loaded value could be defined by <strong>1000</strong> with no operand.</p>
 <p>Since <em>opcodes are like atoms of computing</em>, they are presented in an opcode table. An example of that is <a href="http://sparksandflames.com/files/x86InstructionChart.html">Intel x86 opcode table</a>.</p>
 <h3 id="assembly-language"><a class="header" href="#assembly-language">Assembly Language</a></h3>
@@ -292,39 +299,39 @@ which translates/compiles Java programs to JVM language aka Java <strong>Bytecod
 
 Expr = { UnaryExpr | BinaryExpr | Term }
 
-Term = _{Int | &quot;(&quot; ~ Expr ~ &quot;)&quot; }
+Term = _{Int | "(" ~ Expr ~ ")" }
 
 UnaryExpr = { Operator ~ Term }
 
 BinaryExpr = { Term ~ (Operator ~ Term)+ }
 
-Operator = { &quot;+&quot; | &quot;-&quot; }
+Operator = { "+" | "-" }
 
 Int = @{ Operator? ~ ASCII_DIGIT+ }
 
-WHITESPACE = _{ &quot; &quot; | &quot;\t&quot; }
+WHITESPACE = _{ " " | "\t" }
 
-EOF = _{ EOI | &quot;;&quot; }
+EOF = _{ EOI | ";" }
 </code></pre>
 <p><span class="filename">Filename: calculator/src/grammar.pest</span></p>
 <p>This grammar basically defines the syntax and semantics where</p>
 <ul>
 <li>each <code>Program</code> consists of expressions (<code>Expr</code>)</li>
 <li>expressions are either unary (<code>-1</code>) or binary (<code>1 + 2</code>)</li>
-<li>unary or binary expressions are made of <code>Term</code> and <code>Operator</code> (<code>&quot;+&quot;</code> and <code>&quot;-&quot;</code>)</li>
+<li>unary or binary expressions are made of <code>Term</code> and <code>Operator</code> (<code>"+"</code> and <code>"-"</code>)</li>
 <li>the only <em>atom</em> is integer <code>Int</code></li>
 </ul>
 <p>Given our grammar, we will use <a href="https://pest.rs/">pest</a> which is a powerful <em>parser generator</em> of PEG grammars. (For more details on pest, checkout the <a href="https://pest.rs/book/">pest book</a></p>
 <p><code>pest</code> <em>derives</em> the parser <code>CalcParser::parse</code> from our grammar</p>
 <pre><code class="language-rust ignore">#[derive(pest_derive::Parser)]
-#[grammar = &quot;grammar.pest&quot;]
+#[grammar = "grammar.pest"]
 struct CalcParser;</code></pre>
 <p><span class="filename">Filename: calculator/src/parser.rs</span></p>
 <p>and does all the steps of the frontend pipeline that we mentioned so that we can start parsing any <code>Calc</code> source code (<code>source: &amp;str</code>) via the <code>Rule</code>s of our grammar</p>
 <pre><code class="language-rust ignore">CalcParser::parse(Rule::Program, source)</code></pre>
 <p>Before doing that, we need to define our Abstract Syntax Tree (AST) in the <a href="01_calculator/./ast.html">next section</a>.</p>
 <div style="break-before: page; page-break-before: always;"></div><h2 id="abstract-syntax-tree-ast"><a class="header" href="#abstract-syntax-tree-ast">Abstract Syntax Tree (AST)</a></h2>
-<p>AST comes into picture when we want to go from the string representation of our program like <code>&quot;-1&quot;</code> or <code>&quot;1 + 2&quot;</code> to something more manageable and easier to work with. Since our program is not a random string (the grammar is for), we can use the structure within the expressions <code>&quot;-1&quot;</code> and <code>&quot;1 + 2&quot;</code> to our own advantage and come up with a <em>new representation</em> like a <a href="https://en.wikipedia.org/wiki/Tree_structure">tree</a></p>
+<p>AST comes into picture when we want to go from the string representation of our program like <code>"-1"</code> or <code>"1 + 2"</code> to something more manageable and easier to work with. Since our program is not a random string (the grammar is for), we can use the structure within the expressions <code>"-1"</code> and <code>"1 + 2"</code> to our own advantage and come up with a <em>new representation</em> like a <a href="https://en.wikipedia.org/wiki/Tree_structure">tree</a></p>
 <p align="center">
   </br>
     <a href><img  alt="ast" src="01_calculator/../img/ast.svg"> </a>
@@ -357,7 +364,7 @@ pub enum Node {
 </code></pre>
 </li>
 </ul>
-<p>So for example, the expression <code>&quot;-1 + (2 + 3)&quot;</code> has this recursive structure</p>
+<p>So for example, the expression <code>"-1 + (2 + 3)"</code> has this recursive structure</p>
 <p align="center">
 </br>
     <a href><img alt="compiler" src="01_calculator/../img/ast_recursive.svg"> </a>
@@ -430,9 +437,9 @@ in later stages of compilation.</p>
     fn from_ast(ast: Vec&lt;Node&gt;) -&gt; Self::Output;
 
     fn from_source(source: &amp;str) -&gt; Self::Output {
-        println!(&quot;Compiling the source: {}&quot;, source);
+        println!("Compiling the source: {}", source);
         let ast: Vec&lt;Node&gt; = parser::parse(source).unwrap();
-        println!(&quot;{:?}&quot;, ast);
+        println!("{:?}", ast);
         Self::from_ast(ast)
     }
 }</code></pre>
@@ -453,7 +460,7 @@ impl Compile for Interpreter {
 }</code></pre>
 <p><span class="filename">Filename: calculator/src/compiler/interpreter.rs</span></p>
 <p>and test</p>
-<pre><code class="language-rust ignore">assert_eq!(Interpreter::from_source(&quot;1 + 2&quot;).unwrap(), 3);</code></pre>
+<pre><code class="language-rust ignore">assert_eq!(Interpreter::from_source("1 + 2").unwrap(), 3);</code></pre>
 <p>Run such tests locally with</p>
 <pre><code class="language-text">cargo test interpreter --tests
 </code></pre>
@@ -466,8 +473,8 @@ impl Compile for Interpreter {
 <p>Other code generators that you can use (see the <a href="01_calculator/./exercise.html">exercises</a>) in this book (not at mature as LLVM) are <a href="https://docs.rs/cranelift-simplejit/0.64.0/cranelift_simplejit/index.html">cratelift-simpljit</a> and <a href="https://github.com/swgillespie/gccjit.rs">gcc-jit</a>.</p>
 <div style="break-before: page; page-break-before: always;"></div><h2 id="addition"><a class="header" href="#addition">Addition</a></h2>
 <h3 id="setup"><a class="header" href="#setup">Setup</a></h3>
-<p>The code is available in <a href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/calculator/examples/llvm/src/main.rs"><code>calculator/examples/llvm/src/main.rs</code></a>. Because my <code>llvm-config --version</code> shows <code>14.0.6</code> so I'm using <code>features = [&quot;llvm14-0&quot;]</code> in inkwell</p>
-<pre><code class="language-text">inkwell = { git = &quot;https://github.com/TheDan64/inkwell&quot;, branch = &quot;master&quot;, features = [&quot;llvm14-0&quot;] }
+<p>The code is available in <a href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/calculator/examples/llvm/src/main.rs"><code>calculator/examples/llvm/src/main.rs</code></a>. Because my <code>llvm-config --version</code> shows <code>14.0.6</code> so I'm using <code>features = ["llvm14-0"]</code> in inkwell</p>
+<pre><code class="language-text">inkwell = { git = "https://github.com/TheDan64/inkwell", branch = "master", features = ["llvm14-0"] }
 </code></pre>
 <p>Go to <a href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/calculator/examples/llvm/"><code>calculator/examples/llvm</code></a> sub-crate and <code>cargo run</code>.</p>
 <h3 id="add-function"><a class="header" href="#add-function">Add Function</a></h3>
@@ -480,15 +487,15 @@ impl Compile for Interpreter {
 <li>We start by creating a <code>context</code>, adding the <code>addition</code> module and setting up the data type we want to use <code>i32_type</code> of type <a href="https://thedan64.github.io/inkwell/inkwell/types/struct.IntType.html"><code>IntType</code></a></li>
 </ol>
 <pre><code class="language-rust ignore">    let context = Context::create();
-    let module = context.create_module(&quot;addition&quot;);
+    let module = context.create_module("addition");
     let i32_type = context.i32_type();</code></pre>
 <ol start="2">
 <li>We define the signature of <code>add(i32, i32) -&gt; i32</code>, add the function to our module, create a <a href="https://thedan64.github.io/inkwell/inkwell/basic_block/index.html">basic block</a> entry point and a builder to add later parts</li>
 </ol>
 <pre><code class="language-rust ignore">
     let fn_type = i32_type.fn_type(&amp;[i32_type.into(), i32_type.into()], false);
-    let fn_val = module.add_function(&quot;add&quot;, fn_type, None);
-    let entry_basic_block = context.append_basic_block(fn_val, &quot;entry&quot;);
+    let fn_val = module.add_function("add", fn_type, None);
+    let entry_basic_block = context.append_basic_block(fn_val, "entry");
 
     let builder = context.create_builder();
     builder.position_at_end(entry_basic_block);</code></pre>
@@ -498,7 +505,7 @@ impl Compile for Interpreter {
 <pre><code class="language-rust ignore">    let x = fn_val.get_nth_param(0).unwrap().into_int_value();
     let y = fn_val.get_nth_param(1).unwrap().into_int_value();
 
-    let ret = builder.build_int_add(x, y, &quot;add&quot;).unwrap();
+    let ret = builder.build_int_add(x, y, "add").unwrap();
     let return_instruction = builder.build_return(Some(&amp;ret)).unwrap();</code></pre>
 <ol start="4">
 <li>Finally, we create a JIT execution engine (with no optimization for now) and let LLVM handle rest of the work for us</li>
@@ -507,8 +514,8 @@ impl Compile for Interpreter {
         .create_jit_execution_engine(OptimizationLevel::None)
         .unwrap();
     unsafe {
-        type Addition = unsafe extern &quot;C&quot; fn(i32, i32) -&gt; i32;
-        let add: JitFunction&lt;Addition&gt; = execution_engine.get_function(&quot;add&quot;).unwrap();
+        type Addition = unsafe extern "C" fn(i32, i32) -&gt; i32;
+        let add: JitFunction&lt;Addition&gt; = execution_engine.get_function("add").unwrap();
         let x = 1;
         let y = 2;
         assert_eq!(add.call(x, y), x + y);
@@ -578,11 +585,11 @@ impl&lt;'a&gt; RecursiveBuilder&lt;'a&gt; {
                 match op {
                     Operator::Plus =&gt; self
                         .builder
-                        .build_int_add(left, right, &quot;plus_temp&quot;)
+                        .build_int_add(left, right, "plus_temp")
                         .unwrap(),
                     Operator::Minus =&gt; self
                         .builder
-                        .build_int_sub(left, right, &quot;minus_temp&quot;)
+                        .build_int_sub(left, right, "minus_temp")
                         .unwrap(),
                 }
             }
@@ -597,7 +604,7 @@ impl Compile for Jit {
 
     fn from_ast(ast: Vec&lt;Node&gt;) -&gt; Self::Output {
         let context = Context::create();
-        let module = context.create_module(&quot;calculator&quot;);
+        let module = context.create_module("calculator");
 
         let builder = context.create_builder();
 
@@ -608,8 +615,8 @@ impl Compile for Jit {
         let i32_type = context.i32_type();
         let fn_type = i32_type.fn_type(&amp;[], false);
 
-        let function = module.add_function(&quot;jit&quot;, fn_type, None);
-        let basic_block = context.append_basic_block(function, &quot;entry&quot;);
+        let function = module.add_function("jit", fn_type, None);
+        let basic_block = context.append_basic_block(function, "entry");
 
         builder.position_at_end(basic_block);
 
@@ -619,12 +626,12 @@ impl Compile for Jit {
             let _ = builder.build_return(Some(&amp;return_value));
         }
         println!(
-            &quot;Generated LLVM IR: {}&quot;,
+            "Generated LLVM IR: {}",
             function.print_to_string().to_string()
         );
 
         unsafe {
-            let jit_function: JitFunction&lt;JitFunc&gt; = execution_engine.get_function(&quot;jit&quot;).unwrap();
+            let jit_function: JitFunction&lt;JitFunc&gt; = execution_engine.get_function("jit").unwrap();
 
             Ok(jit_function.call())
         }
@@ -632,7 +639,7 @@ impl Compile for Jit {
 }</code></pre>
 <p><span class="filename">Filename: calculator/src/compiler/jit.rs</span></p>
 <p>Finally, we can test it</p>
-<pre><code class="language-rust ignore">assert_eq!(Jit::from_source(&quot;1 + 2&quot;).unwrap(), 3)</code></pre>
+<pre><code class="language-rust ignore">assert_eq!(Jit::from_source("1 + 2").unwrap(), 3)</code></pre>
 <p>Run such tests locally with</p>
 <pre><code class="language-text">cargo test jit --tests
 </code></pre>
@@ -675,7 +682,7 @@ impl Compile for Jit {
         OpCode::OpPlus =&gt; vec![0x0A], // decimal repr is 10
         OpCode::OpMinus =&gt; vec![0x0B], // decimal repr is 11</code></pre>
 <p>For easy of access, we store constant <code>Node::Int(i32)</code> nodes in a separate memory and <code>OpConstant(arg)</code> tracks these values.
-In a unary expression like <code>&quot;1&quot;</code>, we encode <code>Node::Int(1)</code> as the opcode <code>[1, 0, 0]</code> as the first constant. (<strong>0x01</strong> in decimal is <strong>1</strong>).</p>
+In a unary expression like <code>"1"</code>, we encode <code>Node::Int(1)</code> as the opcode <code>[1, 0, 0]</code> as the first constant. (<strong>0x01</strong> in decimal is <strong>1</strong>).</p>
 <h3 id="bytecode-1"><a class="header" href="#bytecode-1">Bytecode</a></h3>
 <p>We define</p>
 <pre><code class="language-rust ignore">pub struct Bytecode {
@@ -683,7 +690,7 @@ In a unary expression like <code>&quot;1&quot;</code>, we encode <code>Node::Int
     pub constants: Vec&lt;Node&gt;,
 }</code></pre>
 <p><span class="filename">Filename: calculator/src/compiler/vm/bytecode.rs</span></p>
-<p>and pictorially, here is how <code>&quot;1 + 2&quot;</code> AST to Bytecode conversion would look like</p>
+<p>and pictorially, here is how <code>"1 + 2"</code> AST to Bytecode conversion would look like</p>
 <p align="center">
 </br>
     <a href><img alt="ast bytecode" src="01_calculator/../img/ast_bytecode.svg"> </a>
@@ -706,7 +713,7 @@ impl Compile for Interpreter {
             bytecode: Bytecode::new(),
         };
         for node in ast {
-            println!(&quot;compiling node {:?}&quot;, node);
+            println!("compiling node {:?}", node);
             interpreter.interpret_node(node);
             // pop one element from the stack after
             // each expression statement to clean up
@@ -718,7 +725,7 @@ impl Compile for Interpreter {
 <p><span class="filename">Filename: calculator/src/compiler/vm/bytecode.rs</span></p>
 <h3 id="runtime"><a class="header" href="#runtime">Runtime</a></h3>
 <p>From previous example, our interpreter goes through the bytecode instructions and executes them.</p>
-<p>Continuing our <code>&quot;1 + 2&quot;</code> Bytecode example,</p>
+<p>Continuing our <code>"1 + 2"</code> Bytecode example,</p>
 <pre><code class="language-text">instructions: [1, 0, 0, 1, 0, 1,   3,   2],
               -------- --------    -    -
                  |         |       |    |
@@ -762,31 +769,31 @@ pub struct VM {
                     // OpAdd
                     match (self.pop(), self.pop()) {
                         (Node::Int(rhs), Node::Int(lhs)) =&gt; self.push(Node::Int(lhs + rhs)),
-                        _ =&gt; panic!(&quot;Unknown types to OpAdd&quot;),
+                        _ =&gt; panic!("Unknown types to OpAdd"),
                     }
                 }
                 0x04 =&gt; {
                     // OpSub
                     match (self.pop(), self.pop()) {
                         (Node::Int(rhs), Node::Int(lhs)) =&gt; self.push(Node::Int(lhs - rhs)),
-                        _ =&gt; panic!(&quot;Unknown types to OpSub&quot;),
+                        _ =&gt; panic!("Unknown types to OpSub"),
                     }
                 }
                 0x0A =&gt; {
                     // OpPlus
                     match self.pop() {
                         Node::Int(num) =&gt; self.push(Node::Int(num)),
-                        _ =&gt; panic!(&quot;Unknown arg type to OpPlus&quot;),
+                        _ =&gt; panic!("Unknown arg type to OpPlus"),
                     }
                 }
                 0x0B =&gt; {
                     // OpMinus
                     match self.pop() {
                         Node::Int(num) =&gt; self.push(Node::Int(-num)),
-                        _ =&gt; panic!(&quot;Unknown arg type to OpMinus&quot;),
+                        _ =&gt; panic!("Unknown arg type to OpMinus"),
                     }
                 }
-                _ =&gt; panic!(&quot;Unknown instruction&quot;),
+                _ =&gt; panic!("Unknown instruction"),
             }
         }
     }
@@ -806,10 +813,10 @@ pub struct VM {
 <p><span class="filename">Filename: calculator/src/compiler/vm/vm.rs</span></p>
 <p>To examine the generated Bytecodes and run our VM, we can do</p>
 <pre><code class="language-rust ignore">let byte_code = Interpreter::from_source(source);
-println!(&quot;byte code: {:?}&quot;, byte_code);
+println!("byte code: {:?}", byte_code);
 let mut vm = VM::new(byte_code);
 vm.run();
-println!(&quot;{}&quot;, vm.pop_last());</code></pre>
+println!("{}", vm.pop_last());</code></pre>
 <p>Run tests locally for our VM with</p>
 <pre><code class="language-text">cargo test vm --tests
 </code></pre>
@@ -823,37 +830,37 @@ println!(&quot;{}&quot;, vm.pop_last());</code></pre>
 </ul>
 <pre><code class="language-rust no_run noplaypen">fn main() -&gt; Result&lt;()&gt; {
     let mut rl = DefaultEditor::new()?;
-    println!(&quot;Calculator prompt. Expressions are line evaluated.&quot;);
+    println!("Calculator prompt. Expressions are line evaluated.");
     loop {
-        let readline = rl.readline(&quot;&gt;&gt; &quot;);
+        let readline = rl.readline("&gt;&gt; ");
         match readline {
             Ok(line) =&gt; {
                 cfg_if! {
-                    if #[cfg(any(feature = &quot;jit&quot;, feature = &quot;interpreter&quot;))] {
+                    if #[cfg(any(feature = "jit", feature = "interpreter"))] {
                         match Engine::from_source(&amp;line) {
-                            Ok(result) =&gt; println!(&quot;{}&quot;, result),
-                            Err(e) =&gt; eprintln!(&quot;{}&quot;, e),
+                            Ok(result) =&gt; println!("{}", result),
+                            Err(e) =&gt; eprintln!("{}", e),
                         };
                     }
-                    else if #[cfg(feature = &quot;vm&quot;)] {
+                    else if #[cfg(feature = "vm")] {
                         let byte_code = Engine::from_source(&amp;line);
-                        println!(&quot;byte code: {:?}&quot;, byte_code);
+                        println!("byte code: {:?}", byte_code);
                         let mut vm = VM::new(byte_code);
                         vm.run();
-                        println!(&quot;{}&quot;, vm.pop_last());
+                        println!("{}", vm.pop_last());
                     }
                 }
             }
             Err(ReadlineError::Interrupted) =&gt; {
-                println!(&quot;CTRL-C&quot;);
+                println!("CTRL-C");
                 break;
             }
             Err(ReadlineError::Eof) =&gt; {
-                println!(&quot;CTRL-D&quot;);
+                println!("CTRL-D");
                 break;
             }
             Err(err) =&gt; {
-                println!(&quot;Error: {:?}&quot;, err);
+                println!("Error: {:?}", err);
                 break;
             }
         }

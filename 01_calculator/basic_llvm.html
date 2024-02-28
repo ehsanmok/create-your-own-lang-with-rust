@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html lang="en" class="sidebar-visible no-js light">
+<html lang="en" class="light" dir="ltr">
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
@@ -10,7 +10,7 @@
         
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="theme-color" content="#ffffff" />
+        <meta name="theme-color" content="#ffffff">
 
         <link rel="icon" href="../favicon.svg">
         <link rel="shortcut icon" href="../favicon.png">
@@ -32,7 +32,7 @@
         <link rel="stylesheet" href="../theme/custom.css">
 
     </head>
-    <body>
+    <body class="sidebar-visible no-js">
     <div id="body-container">
         <!-- Provide site root to javascript -->
         <script>
@@ -62,31 +62,38 @@
             try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
             if (theme === null || theme === undefined) { theme = default_theme; }
             var html = document.querySelector('html');
-            html.classList.remove('no-js')
             html.classList.remove('light')
             html.classList.add(theme);
-            html.classList.add('js');
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
         </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
 
         <!-- Hide / unhide sidebar before it is displayed -->
         <script>
-            var html = document.querySelector('html');
+            var body = document.querySelector('body');
             var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
             if (document.body.clientWidth >= 1080) {
                 try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
                 sidebar = sidebar || 'visible';
             } else {
                 sidebar = 'hidden';
             }
-            html.classList.remove('sidebar-visible');
-            html.classList.add("sidebar-" + sidebar);
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
                 <ol class="chapter"><li class="chapter-item expanded "><a href="../intro.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="../crash_course.html"><strong aria-hidden="true">2.</strong> Crash Course on Computing</a></li><li class="chapter-item expanded "><a href="../01_calculator/calc_intro.html"><strong aria-hidden="true">3.</strong> Calculator</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../01_calculator/grammar_lexer_parser.html"><strong aria-hidden="true">3.1.</strong> Grammar, Lexer and Parser</a></li><li class="chapter-item expanded "><a href="../01_calculator/ast.html"><strong aria-hidden="true">3.2.</strong> Abstract Syntax Tree (AST) and Interpreter</a></li><li class="chapter-item expanded "><a href="../01_calculator/jit_intro.html"><strong aria-hidden="true">3.3.</strong> Just-In-Time (JIT) Compiler with LLVM</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../01_calculator/basic_llvm.html" class="active"><strong aria-hidden="true">3.3.1.</strong> Basic Example</a></li><li class="chapter-item expanded "><a href="../01_calculator/ast_traversal.html"><strong aria-hidden="true">3.3.2.</strong> AST Traversal Patterns</a></li></ol></li><li class="chapter-item expanded "><a href="../01_calculator/exercise.html"><strong aria-hidden="true">3.4.</strong> Exercises</a></li><li class="chapter-item expanded "><a href="../01_calculator/vm.html"><strong aria-hidden="true">3.5.</strong> Virtual Machine (VM), Bytecode and Interpreter</a></li><li class="chapter-item expanded "><a href="../01_calculator/repl.html"><strong aria-hidden="true">3.6.</strong> Read-Eval-Print Loop (REPL)</a></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">4.</strong> Firstlang</div></li><li><ol class="section"><li class="chapter-item expanded "><div><strong aria-hidden="true">4.1.</strong> Static Typing and Type Inference</div></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">5.</strong> Object System and Object Oriented Language</div></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.</strong> TENTATIVE: Mini Standard Library</div></li><li class="chapter-item expanded "><div><strong aria-hidden="true">7.</strong> Resources</div></li></ol>
             </div>
-            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
         </nav>
 
         <!-- Track and set sidebar scroll position -->
@@ -117,9 +124,9 @@
                                 <div id="menu-bar-hover-placeholder"></div>
                 <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
-                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
-                        </button>
+                        </label>
                         <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
                             <i class="fa fa-paint-brush"></i>
                         </button>
@@ -169,8 +176,8 @@
                     <main>
                         <h2 id="addition"><a class="header" href="#addition">Addition</a></h2>
 <h3 id="setup"><a class="header" href="#setup">Setup</a></h3>
-<p>The code is available in <a href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/calculator/examples/llvm/src/main.rs"><code>calculator/examples/llvm/src/main.rs</code></a>. Because my <code>llvm-config --version</code> shows <code>14.0.6</code> so I'm using <code>features = [&quot;llvm14-0&quot;]</code> in inkwell</p>
-<pre><code class="language-text">inkwell = { git = &quot;https://github.com/TheDan64/inkwell&quot;, branch = &quot;master&quot;, features = [&quot;llvm14-0&quot;] }
+<p>The code is available in <a href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/calculator/examples/llvm/src/main.rs"><code>calculator/examples/llvm/src/main.rs</code></a>. Because my <code>llvm-config --version</code> shows <code>14.0.6</code> so I'm using <code>features = ["llvm14-0"]</code> in inkwell</p>
+<pre><code class="language-text">inkwell = { git = "https://github.com/TheDan64/inkwell", branch = "master", features = ["llvm14-0"] }
 </code></pre>
 <p>Go to <a href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/calculator/examples/llvm/"><code>calculator/examples/llvm</code></a> sub-crate and <code>cargo run</code>.</p>
 <h3 id="add-function"><a class="header" href="#add-function">Add Function</a></h3>
@@ -183,15 +190,15 @@
 <li>We start by creating a <code>context</code>, adding the <code>addition</code> module and setting up the data type we want to use <code>i32_type</code> of type <a href="https://thedan64.github.io/inkwell/inkwell/types/struct.IntType.html"><code>IntType</code></a></li>
 </ol>
 <pre><code class="language-rust ignore">    let context = Context::create();
-    let module = context.create_module(&quot;addition&quot;);
+    let module = context.create_module("addition");
     let i32_type = context.i32_type();</code></pre>
 <ol start="2">
 <li>We define the signature of <code>add(i32, i32) -&gt; i32</code>, add the function to our module, create a <a href="https://thedan64.github.io/inkwell/inkwell/basic_block/index.html">basic block</a> entry point and a builder to add later parts</li>
 </ol>
 <pre><code class="language-rust ignore">
     let fn_type = i32_type.fn_type(&amp;[i32_type.into(), i32_type.into()], false);
-    let fn_val = module.add_function(&quot;add&quot;, fn_type, None);
-    let entry_basic_block = context.append_basic_block(fn_val, &quot;entry&quot;);
+    let fn_val = module.add_function("add", fn_type, None);
+    let entry_basic_block = context.append_basic_block(fn_val, "entry");
 
     let builder = context.create_builder();
     builder.position_at_end(entry_basic_block);</code></pre>
@@ -201,7 +208,7 @@
 <pre><code class="language-rust ignore">    let x = fn_val.get_nth_param(0).unwrap().into_int_value();
     let y = fn_val.get_nth_param(1).unwrap().into_int_value();
 
-    let ret = builder.build_int_add(x, y, &quot;add&quot;).unwrap();
+    let ret = builder.build_int_add(x, y, "add").unwrap();
     let return_instruction = builder.build_return(Some(&amp;ret)).unwrap();</code></pre>
 <ol start="4">
 <li>Finally, we create a JIT execution engine (with no optimization for now) and let LLVM handle rest of the work for us</li>
@@ -210,8 +217,8 @@
         .create_jit_execution_engine(OptimizationLevel::None)
         .unwrap();
     unsafe {
-        type Addition = unsafe extern &quot;C&quot; fn(i32, i32) -&gt; i32;
-        let add: JitFunction&lt;Addition&gt; = execution_engine.get_function(&quot;add&quot;).unwrap();
+        type Addition = unsafe extern "C" fn(i32, i32) -&gt; i32;
+        let add: JitFunction&lt;Addition&gt; = execution_engine.get_function("add").unwrap();
         let x = 1;
         let y = 2;
         assert_eq!(add.call(x, y), x + y);
@@ -226,7 +233,7 @@
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next" href="../01_calculator/ast_traversal.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../01_calculator/ast_traversal.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -240,7 +247,7 @@
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next" href="../01_calculator/ast_traversal.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../01_calculator/ast_traversal.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>

@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html lang="en" class="sidebar-visible no-js light">
+<html lang="en" class="light" dir="ltr">
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
@@ -10,7 +10,7 @@
         
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="theme-color" content="#ffffff" />
+        <meta name="theme-color" content="#ffffff">
 
         <link rel="icon" href="favicon.svg">
         <link rel="shortcut icon" href="favicon.png">
@@ -32,7 +32,7 @@
         <link rel="stylesheet" href="theme/custom.css">
 
     </head>
-    <body>
+    <body class="sidebar-visible no-js">
     <div id="body-container">
         <!-- Provide site root to javascript -->
         <script>
@@ -62,31 +62,38 @@
             try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
             if (theme === null || theme === undefined) { theme = default_theme; }
             var html = document.querySelector('html');
-            html.classList.remove('no-js')
             html.classList.remove('light')
             html.classList.add(theme);
-            html.classList.add('js');
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
         </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
 
         <!-- Hide / unhide sidebar before it is displayed -->
         <script>
-            var html = document.querySelector('html');
+            var body = document.querySelector('body');
             var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
             if (document.body.clientWidth >= 1080) {
                 try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
                 sidebar = sidebar || 'visible';
             } else {
                 sidebar = 'hidden';
             }
-            html.classList.remove('sidebar-visible');
-            html.classList.add("sidebar-" + sidebar);
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
                 <ol class="chapter"><li class="chapter-item expanded "><a href="intro.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="crash_course.html" class="active"><strong aria-hidden="true">2.</strong> Crash Course on Computing</a></li><li class="chapter-item expanded "><a href="01_calculator/calc_intro.html"><strong aria-hidden="true">3.</strong> Calculator</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="01_calculator/grammar_lexer_parser.html"><strong aria-hidden="true">3.1.</strong> Grammar, Lexer and Parser</a></li><li class="chapter-item expanded "><a href="01_calculator/ast.html"><strong aria-hidden="true">3.2.</strong> Abstract Syntax Tree (AST) and Interpreter</a></li><li class="chapter-item expanded "><a href="01_calculator/jit_intro.html"><strong aria-hidden="true">3.3.</strong> Just-In-Time (JIT) Compiler with LLVM</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="01_calculator/basic_llvm.html"><strong aria-hidden="true">3.3.1.</strong> Basic Example</a></li><li class="chapter-item expanded "><a href="01_calculator/ast_traversal.html"><strong aria-hidden="true">3.3.2.</strong> AST Traversal Patterns</a></li></ol></li><li class="chapter-item expanded "><a href="01_calculator/exercise.html"><strong aria-hidden="true">3.4.</strong> Exercises</a></li><li class="chapter-item expanded "><a href="01_calculator/vm.html"><strong aria-hidden="true">3.5.</strong> Virtual Machine (VM), Bytecode and Interpreter</a></li><li class="chapter-item expanded "><a href="01_calculator/repl.html"><strong aria-hidden="true">3.6.</strong> Read-Eval-Print Loop (REPL)</a></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">4.</strong> Firstlang</div></li><li><ol class="section"><li class="chapter-item expanded "><div><strong aria-hidden="true">4.1.</strong> Static Typing and Type Inference</div></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">5.</strong> Object System and Object Oriented Language</div></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.</strong> TENTATIVE: Mini Standard Library</div></li><li class="chapter-item expanded "><div><strong aria-hidden="true">7.</strong> Resources</div></li></ol>
             </div>
-            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
         </nav>
 
         <!-- Track and set sidebar scroll position -->
@@ -117,9 +124,9 @@
                                 <div id="menu-bar-hover-placeholder"></div>
                 <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
-                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
-                        </button>
+                        </label>
                         <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
                             <i class="fa fa-paint-brush"></i>
                         </button>
@@ -175,7 +182,7 @@
 <p>All these three components are intertwined together and learning their connections is crucial in understanding what makes <em>Computing</em> possible. Informally, a <em>language</em> is a structured text with syntax and semantics. A <em>Source Code</em> written in a programming language needs a translator/compiler of <em>some sort</em>, to translate it to <em>another</em> language/format. Then an executor of <em>some sort</em>, to execute/run the translated commands with the goal of matching the syntax (and semantics) to <em>some form</em> of output.</p>
 <h2 id="elements-of-computing"><a class="header" href="#elements-of-computing">Elements of Computing</a></h2>
 <h3 id="instructions-and-the-machine-language"><a class="header" href="#instructions-and-the-machine-language">Instructions and the Machine Language</a></h3>
-<p>If you want to create a &quot;computer&quot; from scratch, you need to start by defining an <em>abstract model</em> for your computer. This abstract model is also referred to as <strong>Instruction Set Architecture (ISA)</strong> (instruction set or simply <em>instructions</em>). A CPU is an <em>implementation</em> of such ISA. A standard ISA defines its basic elements such as <em>data types</em>, <em>register</em> values, various hardware supports, I/O etc. and they all make up the  <em>lowest-level language</em> of computing which is the <strong>Machine Language Instructions.</strong></p>
+<p>If you want to create a "computer" from scratch, you need to start by defining an <em>abstract model</em> for your computer. This abstract model is also referred to as <strong>Instruction Set Architecture (ISA)</strong> (instruction set or simply <em>instructions</em>). A CPU is an <em>implementation</em> of such ISA. A standard ISA defines its basic elements such as <em>data types</em>, <em>register</em> values, various hardware supports, I/O etc. and they all make up the  <em>lowest-level language</em> of computing which is the <strong>Machine Language Instructions.</strong></p>
 <p>Instructions are comprised of <em>instruction code</em> (aka <em>operation code</em>, in short <strong>opcode</strong> or p-code) which are directly executed by CPU. An opcode can either have operand(s) or no operand. For example, in an 8-bits machine where instructions are 8-bits an opcode <em>load</em> might be defined by the 4-bits <strong>0011</strong> following by the second 4-bits as operand with <strong>0101</strong> that makes up the instruction <strong>00110101</strong> in the Machine Language while the opcode for <em>incrementing by 1</em> of the previously loaded value could be defined by <strong>1000</strong> with no operand.</p>
 <p>Since <em>opcodes are like atoms of computing</em>, they are presented in an opcode table. An example of that is <a href="http://sparksandflames.com/files/x86InstructionChart.html">Intel x86 opcode table</a>.</p>
 <h3 id="assembly-language"><a class="header" href="#assembly-language">Assembly Language</a></h3>
@@ -224,7 +231,7 @@ which translates/compiles Java programs to JVM language aka Java <strong>Bytecod
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next" href="01_calculator/calc_intro.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="01_calculator/calc_intro.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -238,7 +245,7 @@ which translates/compiles Java programs to JVM language aka Java <strong>Bytecod
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next" href="01_calculator/calc_intro.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="01_calculator/calc_intro.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>
