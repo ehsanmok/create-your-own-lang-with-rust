@@ -35,7 +35,9 @@ jobs:
           cache: true
 
       - name: Install nightly Rust (for secondlang)
-        run: rustup toolchain install nightly
+        run: |
+          rustup toolchain install nightly
+          rustup component add clippy --toolchain nightly
 
       - name: Format Check
         run: pixi run format-check
@@ -64,13 +66,16 @@ jobs:
       - name: Run Examples (stable only)
         run: |
           cargo run -p calculator --bin main calculator/examples/simple.calc
+          cargo run -p firstlang -- firstlang/examples/basics.fl
           cargo run -p firstlang -- firstlang/examples/fibonacci.fl
           cargo run -p firstlang -- firstlang/examples/factorial.fl
 
       - name: Run Secondlang Examples
         run: |
+          rustup run nightly cargo run -p secondlang -- secondlang/examples/basics.sl
           rustup run nightly cargo run -p secondlang -- secondlang/examples/fibonacci.sl
           rustup run nightly cargo run -p secondlang -- secondlang/examples/factorial.sl
+          rustup run nightly cargo run -p secondlang -- secondlang/examples/inference.sl
 
       - name: Build Book
         run: pixi run book-build
