@@ -44,13 +44,13 @@ jobs:
         run: pixi run clippy
 
       - name: Clippy Secondlang (nightly)
-        run: pixi run clippy-secondlang
+        run: rustup run nightly cargo clippy -p secondlang -- -D warnings
 
       - name: Build (stable)
         run: pixi run build
 
       - name: Build Secondlang (nightly)
-        run: pixi run build-secondlang
+        run: rustup run nightly cargo build -p secondlang
 
       - name: Test Calculator
         run: pixi run test-calculator
@@ -59,10 +59,18 @@ jobs:
         run: pixi run test-firstlang
 
       - name: Test Secondlang
-        run: pixi run test-secondlang
+        run: rustup run nightly cargo test -p secondlang
 
-      - name: Run Examples
-        run: pixi run examples
+      - name: Run Examples (stable only)
+        run: |
+          cargo run -p calculator --bin main calculator/examples/simple.calc
+          cargo run -p firstlang -- firstlang/examples/fibonacci.fl
+          cargo run -p firstlang -- firstlang/examples/factorial.fl
+
+      - name: Run Secondlang Examples
+        run: |
+          rustup run nightly cargo run -p secondlang -- secondlang/examples/fibonacci.sl
+          rustup run nightly cargo run -p secondlang -- secondlang/examples/factorial.sl
 
       - name: Build Book
         run: pixi run book-build
