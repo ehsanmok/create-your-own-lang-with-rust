@@ -21,8 +21,10 @@ jobs:
         run: |
           wget https://apt.llvm.org/llvm.sh
           chmod +x llvm.sh
-          sudo ./llvm.sh 20
+          sudo ./llvm.sh 20 all
+          sudo apt-get install -y libpolly-20-dev
           echo "/usr/lib/llvm-20/bin" >> $GITHUB_PATH
+          echo "LLVM_SYS_201_PREFIX=/usr/lib/llvm-20" >> $GITHUB_ENV
 
       - name: Setup Pixi
         uses: prefix-dev/setup-pixi@v0.9.3

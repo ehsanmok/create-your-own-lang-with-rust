@@ -18,9 +18,6 @@ jobs:
           pixi-version: v0.62.0
           cache: true
 
-      - name: Install mdbook-linkcheck
-        run: pixi run install-linkcheck
-
       - name: Build Book
         run: pixi run book-build
 
