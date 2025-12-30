@@ -1,0 +1,322 @@
+<!DOCTYPE HTML>
+<html lang="en" class="rust sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Crash Course on Computing - Create Your Own Programming Language with Rust</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="theme/custom.css">
+        <link rel="stylesheet" href="theme/highlight.css">
+
+        <!-- MathJax -->
+        <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "rust";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('rust')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Create Your Own Programming Language with Rust</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/ehsanmok/create-your-own-lang-with-rust" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <p>Here is a bird’s-eye view of a computer program execution</p>
+<p align="center">
+</br>
+    <a href><img alt="compiler" src="./img/code-compiler-executor.svg"> </a>
+</p>
+<p>All these three components are intertwined together and learning their connections is crucial in understanding what makes <em>Computing</em> possible. Informally, a <em>language</em> is a structured text with syntax and semantics. A <em>Source Code</em> written in a programming language needs a translator/compiler of <em>some sort</em>, to translate it to <em>another</em> language/format. Then an executor of <em>some sort</em>, to execute/run the translated commands with the goal of matching the syntax (and semantics) to <em>some form</em> of output.</p>
+<h2 id="elements-of-computing"><a class="header" href="#elements-of-computing">Elements of Computing</a></h2>
+<h3 id="what-is-a-grammar"><a class="header" href="#what-is-a-grammar">What is a Grammar?</a></h3>
+<p>A <strong><a href="https://en.wikipedia.org/wiki/Formal_grammar">formal grammar</a></strong> is a set of rules that define what makes valid code in a programming language. Think of it like the grammar of English: “The cat sat” is valid, but “Cat the sat” is not.</p>
+<p>For programming languages, a grammar specifies:</p>
+<ul>
+<li><strong>What tokens are valid</strong> - keywords like <code>def</code>, <code>if</code>, <code>return</code>; operators like <code>+</code>, <code>-</code>, <code>*</code>; literals like <code>42</code>, <code>true</code></li>
+<li><strong>How tokens can be combined</strong> - <code>1 + 2</code> is valid, <code>+ + 1</code> is not</li>
+<li><strong>The structure of programs</strong> - functions contain statements, statements contain expressions</li>
+</ul>
+<p>We use <strong><a href="https://en.wikipedia.org/wiki/Parsing_expression_grammar">PEG (Parsing Expression Grammar)</a></strong> to define our grammars. PEG is a modern approach that is easier to learn than traditional techniques like <a href="https://en.wikipedia.org/wiki/Backus%E2%80%93Naur_form">BNF</a> or parser generators like <a href="https://en.wikipedia.org/wiki/Yacc">yacc</a>/<a href="https://en.wikipedia.org/wiki/GNU_Bison">bison</a>.</p>
+<h3 id="peg-and-pest-syntax"><a class="header" href="#peg-and-pest-syntax">PEG and pest Syntax</a></h3>
+<p>We use <strong><a href="https://pest.rs">pest</a></strong>, a Rust library that generates <a href="https://en.wikipedia.org/wiki/Parsing">parsers</a> from PEG grammars. Here is a quick reference of pest syntax:</p>
+<div class="table-wrapper"><table><thead><tr><th>Syntax</th><th>Meaning</th><th>Example</th></tr></thead><tbody>
+<tr><td><code>"text"</code></td><td>Match exact text</td><td><code>"def"</code> matches the keyword def</td></tr>
+<tr><td><code>~</code></td><td>Sequence (then)</td><td><code>"if" ~ "(" ~ Expr ~ ")"</code> matches <code>if</code> followed by <code>(</code></td></tr>
+<tr><td><code>|</code></td><td>Choice (or)</td><td><code>"true" | "false"</code> matches either</td></tr>
+<tr><td><code>*</code></td><td>Zero or more (<a href="https://en.wikipedia.org/wiki/Kleene_star">Kleene star</a>)</td><td><code>Stmt*</code> matches any number of statements</td></tr>
+<tr><td><code>+</code></td><td>One or more</td><td><code>ASCII_DIGIT+</code> matches one or more digits</td></tr>
+<tr><td><code>?</code></td><td>Optional</td><td><code>ReturnType?</code> matches zero or one return type</td></tr>
+<tr><td><code>{ }</code></td><td>Rule definition</td><td><code>Add = { "+" }</code> defines a rule</td></tr>
+<tr><td><code>_{ }</code></td><td>Silent rule</td><td><code>_{ Expr }</code> matches but does not appear in AST</td></tr>
+<tr><td><code>@{ }</code></td><td>Atomic rule</td><td><code>@{ ASCII_DIGIT+ }</code> matches as a single token</td></tr>
+<tr><td><code>SOI</code></td><td>Start of input</td><td>Beginning of the source code</td></tr>
+<tr><td><code>EOI</code></td><td>End of input</td><td>End of the source code</td></tr>
+</tbody></table>
+</div>
+<p><strong>Silent rules</strong> (<code>_{ }</code>) are useful for grouping without cluttering the <a href="https://en.wikipedia.org/wiki/Parse_tree">parse tree</a>. For example, whitespace rules are typically silent.</p>
+<p><strong>Atomic rules</strong> (<code>@{ }</code>) prevent whitespace from being inserted between parts. <code>@{ ASCII_DIGIT+ }</code> matches <code>123</code> as one token, not <code>1 2 3</code>.</p>
+<p>A simple grammar example:</p>
+<pre><code class="language-text">Program = _{ SOI ~ Expr ~ EOI }       // A program is an expression
+Expr = { Int | "(" ~ Expr ~ ")" }     // An expression is an int or parenthesized expr
+Int = @{ ASCII_DIGIT+ }               // An int is one or more digits (atomic)
+WHITESPACE = _{ " " | "\t" | "\n" }   // Whitespace is silent (ignored)
+</code></pre>
+<p>This grammar accepts: <code>42</code>, <code>(42)</code>, <code>((42))</code>, etc.</p>
+<p>We use this pest syntax throughout the book. See <a href="./01_calculator/grammar_lexer_parser.html">Calculator’s grammar</a> for a real example, <a href="./02_firstlang/syntax.html">Firstlang’s syntax</a> for a more complex grammar, and <a href="./03_secondlang/annotations.html">Secondlang’s type annotations</a> for adding types.</p>
+<h3 id="instructions-and-the-machine-language"><a class="header" href="#instructions-and-the-machine-language">Instructions and the Machine Language</a></h3>
+<p>If you want to create a “computer” from scratch, you need to start by defining an <em>abstract model</em> for your computer. This abstract model is also referred to as <strong><a href="https://en.wikipedia.org/wiki/Instruction_set_architecture">Instruction Set Architecture (ISA)</a></strong> (instruction set or simply <em>instructions</em>). A <a href="https://en.wikipedia.org/wiki/Central_processing_unit">CPU</a> is an <em>implementation</em> of such ISA. A standard ISA defines its basic elements such as <em>data types</em>, <em><a href="https://en.wikipedia.org/wiki/Processor_register">register</a></em> values, various hardware supports, I/O etc. and they all make up the  <em>lowest-level language</em> of computing which is the <strong><a href="https://en.wikipedia.org/wiki/Machine_code">Machine Language</a> Instructions.</strong></p>
+<p>Instructions are comprised of <em>instruction code</em> (aka <em>operation code</em>, in short <strong><a href="https://en.wikipedia.org/wiki/Opcode">opcode</a></strong> or p-code) which are directly executed by the CPU. An opcode can either have operand(s) or no operand. For example, in an 8-bit machine where instructions are 8 bits, an opcode <em>load</em> might be defined by the 4 bits <strong>0011</strong> followed by the second 4 bits as operand with <strong>0101</strong>, making up the instruction <strong>00110101</strong> in Machine Language. The opcode for <em>incrementing by 1</em> of the previously loaded value could be defined by <strong>1000</strong> with no operand.</p>
+<p>Since <em>opcodes are like atoms of computing</em>, they are presented in an opcode table. An example of that is the <a href="https://www.felixcloutier.com/x86/">x86 opcode reference</a>.</p>
+<h3 id="assembly-language"><a class="header" href="#assembly-language">Assembly Language</a></h3>
+<p>Since it’s hard to remember the opcodes by their bit-patterns, we can assign <em>abstract</em> symbols to opcodes matching their operations by name. This way, we can create <a href="https://en.wikipedia.org/wiki/Assembly_language">Assembly language</a> from the Machine Language. In the previous Machine Language example above, <strong>00110101</strong> (means load the binary <strong>0101</strong>), we can define the symbol <strong>LOAD</strong> referring to <strong>0011</strong> as a higher level abstraction so that <strong>00110101</strong> can be written as <strong>LOAD 0101</strong>.</p>
+<p>The utility program that translates the Assembly language to Machine Language is called an <strong><a href="https://en.wikipedia.org/wiki/Assembly_language#Assembler">Assembler</a></strong>.</p>
+<h3 id="compiler"><a class="header" href="#compiler">Compiler</a></h3>
+<p align="center">
+</br>
+    <a href><img alt="compiler" src="./img/compiler.svg"> </a>
+</p>
+<p>A <a href="https://en.wikipedia.org/wiki/Compiler">compiler</a> is any program that translates (maps, encodes) a language A to language B. Each compiler has two major components:</p>
+<ul>
+<li><strong>Frontend:</strong> deals with mapping the source code string to a structured format called <strong><a href="https://en.wikipedia.org/wiki/Abstract_syntax_tree">Abstract Syntax Tree (AST)</a></strong></li>
+<li><strong>Backend (code generator):</strong> translates the AST into the <a href="#bytecode">Bytecode</a> / <a href="#intermediate-representation-ir">IR</a> or Assembly</li>
+</ul>
+<p>Most often, when we talk about compiler, we mean <strong><a href="https://en.wikipedia.org/wiki/Ahead-of-time_compilation">Ahead-Of-Time (AOT)</a></strong> compiler where the translation happens <em>before</em> execution. Another form of translation is <strong><a href="https://en.wikipedia.org/wiki/Just-in-time_compilation">Just-In-Time (JIT)</a></strong> compilation where translation happens right at the time of the execution.</p>
+<p>From the diagram above, to distinguish between a program that translates for example, Python to Assembly vs. Python to Java, the former is called compiler and the latter <strong><a href="https://en.wikipedia.org/wiki/Source-to-source_compiler">transpiler</a></strong> (or source-to-source compiler).</p>
+<h4 id="relativity-of-low-level-high-level"><a class="header" href="#relativity-of-low-level-high-level"><em>Relativity of low-level, high-level</em></a></h4>
+<p>Assembly is a <em>high-level</em> language compared to the Machine Language but is considered <em>low-level</em> when viewing it from C/C++/Rust. High-level and low-level are relative terms conveying the amount of <em>abstractions</em> involved.</p>
+<h3 id="virtual-machine-vm"><a class="header" href="#virtual-machine-vm">Virtual Machine (VM)</a></h3>
+<p><a href="#instructions-and-the-machine-language">Instructions</a> are hardware and vendor specific. That is, an Intel CPU instructions are different from AMD CPU. A <strong><a href="https://en.wikipedia.org/wiki/Virtual_machine#Process_virtual_machines">Virtual Machine (VM)</a></strong> abstracts away details of the underlying hardware or operating system so that programs translated/compiled into the VM language becomes platform agnostic. A famous example is the <strong><a href="https://en.wikipedia.org/wiki/Java_virtual_machine">Java Virtual Machine (JVM)</a></strong> which translates/compiles Java programs to JVM language aka Java <strong><a href="https://en.wikipedia.org/wiki/Java_bytecode">Bytecode</a></strong>. Therefore, if you have a valid Java Bytecode and <em>Java Runtime Environment (JRE)</em> in your system, you can execute the Bytecode, regardless on what platform it was compiled on.</p>
+<h4 id="bytecode"><a class="header" href="#bytecode">Bytecode</a></h4>
+<p>Another technique to translate source code to Machine Code is emulating the Instruction Set with a new (human-friendly) encoding (perhaps easier than assembly). <a href="https://en.wikipedia.org/wiki/Bytecode">Bytecode</a> is such an <em>intermediate language/representation</em> which is lower-level than the actual programming language that it was translated from, and higher-level than Assembly language.</p>
+<h4 id="stack-machine"><a class="header" href="#stack-machine">Stack Machine</a></h4>
+<p>A <a href="https://en.wikipedia.org/wiki/Stack_machine">Stack Machine</a> is a simple model for a computing machine with two main components:</p>
+<ul>
+<li>a memory (stack) array keeping the Bytecode instructions that supports <code>push</code>ing and <code>pop</code>ing instructions</li>
+<li>an instruction pointer (IP) and stack pointer (SP) guiding which instruction was executed and what is next.</li>
+</ul>
+<p>We implement a stack-based bytecode VM in the <a href="./01_calculator/vm.html">Calculator VM chapter</a>.</p>
+<h3 id="intermediate-representation-ir"><a class="header" href="#intermediate-representation-ir">Intermediate Representation (IR)</a></h3>
+<p>Any representation that’s between source code and (usually) Assembly language is considered an <a href="https://en.wikipedia.org/wiki/Intermediate_representation">intermediate representation</a>. Mainstream languages usually have more than one such representations and going from one IR to another IR is called <em>lowering</em>.</p>
+<p>We explore <a href="https://en.wikipedia.org/wiki/LLVM#Intermediate_representation">LLVM IR</a> in detail in the <a href="./03_secondlang/ir.html">Secondlang IR chapter</a>.</p>
+<h3 id="code-generation"><a class="header" href="#code-generation">Code Generation</a></h3>
+<p><a href="https://en.wikipedia.org/wiki/Code_generation_(compiler)">Code generation</a> for a compiler is when the compiler <em>converts an IR to some Machine Code</em>. But it has a wider semantic too for example, when using Rust declarative macro via <code>macro_rules!</code> to automate some repetitive implementations, you’re essentially generating codes (as well as expanding the syntax).</p>
+<h2 id="conclusion"><a class="header" href="#conclusion">Conclusion</a></h2>
+<p>In conclusion, we want to settle one of the most frequently asked questions</p>
+<h2 id="is-python-or-a-language-x-compiled-or-interpreted"><a class="header" href="#is-python-or-a-language-x-compiled-or-interpreted"><span style="color:blue">Is Python (or a language X) Compiled or Interpreted?</span></a></h2>
+<p>This is in fact the <span style="color:red">WRONG</span> question to ask!</p>
+<p>Being AOT compiled, JIT compiled or interpreted is <strong>implementation-dependent</strong>. For example, the standard Python <em>implementation</em> is <a href="https://www.python.org/"><strong>CPython</strong></a> which compiles a Python source code (in CPython VM) to CPython Bytecode (contents of <code>.pyc</code>) and <strong>interprets</strong> the Bytecode. However, another implementation of Python is <a href="https://www.pypy.org/"><strong>PyPy</strong></a> which (more or less) compiles a Python source code (in PyPy VM) to PyPy Bytecode and <strong>JIT</strong> compiles the PyPy Bytecode to the Machine Code (and is usually faster than CPython interpreter).</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="intro.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="01_calculator/calc_intro.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="intro.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="01_calculator/calc_intro.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="theme/force-theme.js"></script>
+
+
+
+    </div>
+    </body>
+</html>

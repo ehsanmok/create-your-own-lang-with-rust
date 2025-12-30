@@ -1,0 +1,409 @@
+<!DOCTYPE HTML>
+<html lang="en" class="rust sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Virtual Machine (VM), Bytecode and Interpreter - Create Your Own Programming Language with Rust</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/custom.css">
+        <link rel="stylesheet" href="../theme/highlight.css">
+
+        <!-- MathJax -->
+        <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "rust";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('rust')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Create Your Own Programming Language with Rust</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/ehsanmok/create-your-own-lang-with-rust" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h2 id="virtual-machine"><a class="header" href="#virtual-machine">Virtual Machine</a></h2>
+<p>Recall from the <a href="../crash_course.html#virtual-machine-vm">crash course</a> that a (process) VM abstracts away hardware-specific instructions so that its Bytecodes (abstract instructions) can be executed in any environment that has Bytecode runtime support. To create our VM and its runtime, we need to define our:</p>
+<ul>
+<li>Opcodes (new encoding atoms)</li>
+<li>Bytecode representation and</li>
+<li><strong>Runtime model</strong>  as <a href="../crash_course.html#stack-machine">Stack Machine</a></li>
+</ul>
+<h3 id="opcode"><a class="header" href="#opcode">Opcode</a></h3>
+<p>Since our expression-based <code>Calc</code> language is made up of:</p>
+<ul>
+<li><em>constant</em> integers</li>
+<li><em>unary</em> (plus, minus sign) operators and</li>
+<li><em>binary</em> (addition, subtraction) operators</li>
+</ul>
+<p>we can define our new opcode encodings like</p>
+<pre><code class="language-rust ignore">pub enum OpCode {
+    OpConstant(u16), // pointer to constant table
+    OpPop,           // pop is needed for execution
+    OpAdd,
+    OpSub,
+    OpPlus,
+    OpMinus,
+}</code></pre>
+<p><a class="filename" href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/calculator/src/compiler/vm/opcode.rs">calculator/src/compiler/vm/opcode.rs</a></p>
+<p>We choose the simplest form of encoding—encoding the ops as bytes <code>u8</code> (in hex format):</p>
+<pre><code class="language-rust ignore">        OpCode::OpConstant(arg) =&gt; make_three_byte_op(0x01, arg),
+        OpCode::OpPop =&gt; vec![0x02],  // decimal repr is 2
+        OpCode::OpAdd =&gt; vec![0x03],  // decimal repr is 3
+        OpCode::OpSub =&gt; vec![0x04],  // decimal repr is 4
+        OpCode::OpPlus =&gt; vec![0x0A], // decimal repr is 10
+        OpCode::OpMinus =&gt; vec![0x0B], // decimal repr is 11</code></pre>
+<p>For ease of access, we store constant <code>Node::Int(i32)</code> nodes in a separate memory, and <code>OpConstant(arg)</code> tracks these values.
+In a unary expression like <code>"1"</code>, we encode <code>Node::Int(1)</code> as the opcode <code>[1, 0, 0]</code> as the first constant. (<strong>0x01</strong> in decimal is <strong>1</strong>).</p>
+<h3 id="bytecode"><a class="header" href="#bytecode">Bytecode</a></h3>
+<p>We define</p>
+<pre><code class="language-rust ignore">pub struct Bytecode {
+    pub instructions: Vec&lt;u8&gt;,
+    pub constants: Vec&lt;Node&gt;,
+}</code></pre>
+<p><a class="filename" href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/calculator/src/compiler/vm/bytecode.rs">calculator/src/compiler/vm/bytecode.rs</a></p>
+<p>and pictorially, here is how <code>"1 + 2"</code> AST to Bytecode conversion would look like</p>
+<p align="center">
+</br>
+    <a href><img alt="ast bytecode" src="../img/ast-bytecode.svg"> </a>
+</p>
+<p>and in Rust</p>
+<pre><code class="language-rust  ignore">ByteCode {
+    instructions: [1, 0, 0, 1, 0, 1, 3, 2],
+    constants: [Int(1), Int(2)]
+}</code></pre>
+<p>Now, we can implement our Bytecode interpreter</p>
+<pre><code class="language-rust ignore">pub struct Interpreter {
+    bytecode: Bytecode,
+}
+
+impl Compile for Interpreter {
+    type Output = Bytecode;
+
+    fn from_ast(ast: Vec&lt;Node&gt;) -&gt; Self::Output {
+        let mut interpreter = Interpreter {
+            bytecode: Bytecode::new(),
+        };
+        for node in ast {
+            println!("compiling node {:?}", node);
+            interpreter.interpret_node(node);
+            // pop one element from the stack after
+            // each expression statement to clean up
+            interpreter.add_instruction(OpCode::OpPop);
+        }
+        interpreter.bytecode
+    }
+}</code></pre>
+<p><a class="filename" href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/calculator/src/compiler/vm/bytecode.rs">calculator/src/compiler/vm/bytecode.rs</a></p>
+<h3 id="runtime"><a class="header" href="#runtime">Runtime</a></h3>
+<p>From the previous example, our interpreter goes through the bytecode instructions and executes them.</p>
+<p>Continuing our <code>"1 + 2"</code> Bytecode example,</p>
+<pre><code class="language-text">instructions: [1, 0, 0, 1, 0, 1,   3,   2],
+              -------- --------    -    -
+                 |         |       |    |
+constants: [  Int(1),   Int(2)]  OpAdd  OpPop
+
+[1, 0, 0] points to the first element in the constants table, i.e., Int(1)
+[1, 0, 1] points to Int(2)
+[3] (or [0x03]) corresponding to the Opcode *OpAdd*, performs the addition operation Int(1 + 2)
+[2] (or [0x02]) corresponding to the Opcode *OpPop* pops out the computed Bytecodes
+</code></pre>
+<p>Since we want to model our runtime as a Stack Machine, we define our VM as a struct with Bytecode, stack memory (in Stack Machine), and a stack pointer to the next free space:</p>
+<pre><code class="language-rust ignore">const STACK_SIZE: usize = 512;
+
+pub struct VM {
+    bytecode: Bytecode,
+    stack: [Node; STACK_SIZE],
+    stack_ptr: usize, // points to the next free space
+}</code></pre>
+<p>and with the help of <em>instruction pointer (IP)</em>, we execute the Bytecodes as follows</p>
+<pre><code class="language-rust ignore">    pub fn run(&amp;mut self) {
+        let mut ip = 0; // instruction pointer
+        while ip &lt; self.bytecode.instructions.len() {
+            let inst_addr = ip;
+            ip += 1;
+
+            match self.bytecode.instructions[inst_addr] {
+                0x01 =&gt; {
+                    //OpConst
+                    let const_idx = convert_two_u8s_to_usize(
+                        self.bytecode.instructions[ip],
+                        self.bytecode.instructions[ip + 1],
+                    );
+                    ip += 2;
+                    self.push(self.bytecode.constants[const_idx].clone());
+                }
+                0x02 =&gt; {
+                    //OpPop
+                    self.pop();
+                }
+                0x03 =&gt; {
+                    // OpAdd
+                    match (self.pop(), self.pop()) {
+                        (Node::Int(rhs), Node::Int(lhs)) =&gt; self.push(Node::Int(lhs + rhs)),
+                        _ =&gt; panic!("Unknown types to OpAdd"),
+                    }
+                }
+                0x04 =&gt; {
+                    // OpSub
+                    match (self.pop(), self.pop()) {
+                        (Node::Int(rhs), Node::Int(lhs)) =&gt; self.push(Node::Int(lhs - rhs)),
+                        _ =&gt; panic!("Unknown types to OpSub"),
+                    }
+                }
+                0x0A =&gt; {
+                    // OpPlus
+                    match self.pop() {
+                        Node::Int(num) =&gt; self.push(Node::Int(num)),
+                        _ =&gt; panic!("Unknown arg type to OpPlus"),
+                    }
+                }
+                0x0B =&gt; {
+                    // OpMinus
+                    match self.pop() {
+                        Node::Int(num) =&gt; self.push(Node::Int(-num)),
+                        _ =&gt; panic!("Unknown arg type to OpMinus"),
+                    }
+                }
+                _ =&gt; panic!("Unknown instruction"),
+            }
+        }
+    }
+
+    pub fn push(&amp;mut self, node: Node) {
+        self.stack[self.stack_ptr] = node;
+        self.stack_ptr += 1; // ignoring the potential stack overflow
+    }
+
+    pub fn pop(&amp;mut self) -&gt; Node {
+        // ignoring the potential of stack underflow
+        // cloning rather than mem::replace for easier testing
+        let node = self.stack[self.stack_ptr - 1].clone();
+        self.stack_ptr -= 1;
+        node
+    }</code></pre>
+<p><a class="filename" href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/calculator/src/compiler/vm/vm.rs">calculator/src/compiler/vm/vm.rs</a></p>
+<p>To examine the generated Bytecodes and run our VM, we can do</p>
+<pre><code class="language-rust ignore">let byte_code = Interpreter::from_source(source);
+println!("byte code: {:?}", byte_code);
+let mut vm = VM::new(byte_code);
+vm.run();
+println!("{}", vm.pop_last());</code></pre>
+<p>Run tests locally for our VM with</p>
+<pre><code class="language-bash">cargo test vm --tests
+</code></pre>
+<p>Checkout the <a href="./repl.html">next section</a> on how to create a REPL for our <code>Calc</code> to compare different compilation paths.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../01_calculator/ast_traversal.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../01_calculator/repl.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../01_calculator/ast_traversal.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../01_calculator/repl.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../theme/force-theme.js"></script>
+
+
+
+    </div>
+    </body>
+</html>

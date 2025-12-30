@@ -1,0 +1,704 @@
+<!DOCTYPE HTML>
+<html lang="en" class="rust sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>LLVM Code Generation - Create Your Own Programming Language with Rust</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/custom.css">
+        <link rel="stylesheet" href="../theme/highlight.css">
+
+        <!-- MathJax -->
+        <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "rust";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('rust')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Create Your Own Programming Language with Rust</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/ehsanmok/create-your-own-lang-with-rust" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="llvm-code-generation"><a class="header" href="#llvm-code-generation">LLVM Code Generation</a></h1>
+<p>Now we write the code that turns our typed AST into LLVM IR. We use the <strong>inkwell</strong> library, which provides safe Rust bindings to LLVM.</p>
+<h2 id="the-codegen-structure"><a class="header" href="#the-codegen-structure">The CodeGen Structure</a></h2>
+<p>Our code generator keeps track of several things:</p>
+<pre><code class="language-rust ignore">/// Code generator state
+pub struct CodeGen&lt;'ctx&gt; {
+    context: &amp;'ctx Context,
+    module: Module&lt;'ctx&gt;,
+    builder: Builder&lt;'ctx&gt;,
+    /// Map from variable names to their stack allocations
+    variables: HashMap&lt;String, PointerValue&lt;'ctx&gt;&gt;,
+    /// Map from function names to LLVM functions
+    functions: HashMap&lt;String, FunctionValue&lt;'ctx&gt;&gt;,
+    /// Current function being compiled
+    current_fn: Option&lt;FunctionValue&lt;'ctx&gt;&gt;,
+}</code></pre>
+<p><a class="filename" href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/secondlang/src/codegen.rs">secondlang/src/codegen.rs</a></p>
+<p>Let us understand each field:</p>
+<ul>
+<li><strong>context</strong> - The LLVM context. All LLVM objects belong to a context. Think of it as the “workspace” for LLVM.</li>
+<li><strong>module</strong> - A container for functions. Think of it as a single source file or compilation unit.</li>
+<li><strong>builder</strong> - The tool we use to create IR instructions. We position it in a basic block and it adds instructions there.</li>
+<li><strong>variables</strong> - Maps variable names to their stack locations (pointers from <code>alloca</code>). When we see <code>x</code>, we look it up here to find where it lives in memory.</li>
+<li><strong>functions</strong> - Maps function names to their LLVM function objects. Needed so we can call functions by name.</li>
+<li><strong>current_fn</strong> - The function we are currently compiling. Needed to create new basic blocks for conditionals and loops.</li>
+</ul>
+<h2 id="the-compilation-process"><a class="header" href="#the-compilation-process">The Compilation Process</a></h2>
+<p>Compilation happens in three passes:</p>
+<pre><code class="language-rust ignore">    /// Compile a program and return the module
+    pub fn compile(&amp;mut self, program: &amp;Program) -&gt; Result&lt;(), String&gt; {
+        // First pass: declare all functions
+        for stmt in program {
+            if let Stmt::Function {
+                name,
+                params,
+                return_type,
+                ..
+            } = stmt
+            {
+                self.declare_function(name, params, return_type)?;
+            }
+        }
+
+        // Second pass: compile function bodies only (not top-level expressions)
+        for stmt in program {
+            if let Stmt::Function { .. } = stmt {
+                self.compile_stmt(stmt)?;
+            }
+        }
+
+        // Third pass: create __main wrapper for top-level expression
+        if let Some(Stmt::Expr(expr)) = program.last() {
+            self.compile_main_wrapper(expr)?;
+        }
+
+        // Verify module
+        self.module
+            .verify()
+            .map_err(|e| format!("Module verification failed: {}", e.to_string()))?;
+
+        Ok(())
+    }</code></pre>
+<p><a class="filename" href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/secondlang/src/codegen.rs">secondlang/src/codegen.rs</a></p>
+<p><strong>Pass 1: Declare all functions</strong></p>
+<p>Before we can compile function bodies, we need to know about all functions. Why? Because <code>foo</code> might call <code>bar</code>, and <code>bar</code> might call <code>foo</code>. We declare all functions first so calls can find their targets.</p>
+<p>A function <em>declaration</em> tells LLVM “there is a function with this name and signature” but does not include the body yet.</p>
+<p><strong>Pass 2: Compile function bodies</strong></p>
+<p>Now we go through each function and generate its body - the actual instructions.</p>
+<p><strong>Pass 3: Create the <code>__main</code> wrapper</strong></p>
+<p>If there is a top-level expression (like <code>fib(10)</code>), we wrap it in a <code>__main</code> function. This gives the JIT an entry point to call.</p>
+<p><strong>Verify the module</strong></p>
+<p>Finally, we ask LLVM to verify that our IR is well-formed. This catches bugs in our code generator.</p>
+<h2 id="compiling-expressions"><a class="header" href="#compiling-expressions">Compiling Expressions</a></h2>
+<p>The heart of code generation is <code>compile_expr</code>. It takes a typed expression and produces an LLVM value:</p>
+<pre><code class="language-rust ignore">    /// Compile an expression
+    fn compile_expr(&amp;mut self, expr: &amp;TypedExpr) -&gt; Result&lt;IntValue&lt;'ctx&gt;, String&gt; {
+        match &amp;expr.expr {
+            Expr::Int(n) =&gt; Ok(self.context.i64_type().const_int(*n as u64, false)),
+
+            Expr::Bool(b) =&gt; Ok(self.context.bool_type().const_int(*b as u64, false)),
+
+            Expr::Var(name) =&gt; {
+                let ptr = self
+                    .variables
+                    .get(name)
+                    .ok_or_else(|| format!("Undefined variable: {}", name))?;
+                let val = self
+                    .builder
+                    .build_load(self.context.i64_type(), *ptr, name)
+                    .unwrap();
+                Ok(val.into_int_value())
+            }
+
+            Expr::Unary { op, expr: inner } =&gt; {
+                let val = self.compile_expr(inner)?;
+                match op {
+                    UnaryOp::Neg =&gt; Ok(self.builder.build_int_neg(val, "neg").unwrap()),
+                    UnaryOp::Not =&gt; Ok(self.builder.build_not(val, "not").unwrap()),
+                }
+            }
+
+            Expr::Binary { op, left, right } =&gt; {
+                let l = self.compile_expr(left)?;
+                let r = self.compile_expr(right)?;
+
+                match op {
+                    BinaryOp::Add =&gt; Ok(self.builder.build_int_add(l, r, "add").unwrap()),
+                    BinaryOp::Sub =&gt; Ok(self.builder.build_int_sub(l, r, "sub").unwrap()),
+                    BinaryOp::Mul =&gt; Ok(self.builder.build_int_mul(l, r, "mul").unwrap()),
+                    BinaryOp::Div =&gt; Ok(self.builder.build_int_signed_div(l, r, "div").unwrap()),
+                    BinaryOp::Mod =&gt; Ok(self.builder.build_int_signed_rem(l, r, "mod").unwrap()),
+                    BinaryOp::Lt =&gt; {
+                        let cmp = self
+                            .builder
+                            .build_int_compare(IntPredicate::SLT, l, r, "lt")
+                            .unwrap();
+                        Ok(self
+                            .builder
+                            .build_int_z_extend(cmp, self.context.i64_type(), "ext")
+                            .unwrap())
+                    }
+                    BinaryOp::Gt =&gt; {
+                        let cmp = self
+                            .builder
+                            .build_int_compare(IntPredicate::SGT, l, r, "gt")
+                            .unwrap();
+                        Ok(self
+                            .builder
+                            .build_int_z_extend(cmp, self.context.i64_type(), "ext")
+                            .unwrap())
+                    }
+                    BinaryOp::Le =&gt; {
+                        let cmp = self
+                            .builder
+                            .build_int_compare(IntPredicate::SLE, l, r, "le")
+                            .unwrap();
+                        Ok(self
+                            .builder
+                            .build_int_z_extend(cmp, self.context.i64_type(), "ext")
+                            .unwrap())
+                    }
+                    BinaryOp::Ge =&gt; {
+                        let cmp = self
+                            .builder
+                            .build_int_compare(IntPredicate::SGE, l, r, "ge")
+                            .unwrap();
+                        Ok(self
+                            .builder
+                            .build_int_z_extend(cmp, self.context.i64_type(), "ext")
+                            .unwrap())
+                    }
+                    BinaryOp::Eq =&gt; {
+                        let cmp = self
+                            .builder
+                            .build_int_compare(IntPredicate::EQ, l, r, "eq")
+                            .unwrap();
+                        Ok(self
+                            .builder
+                            .build_int_z_extend(cmp, self.context.i64_type(), "ext")
+                            .unwrap())
+                    }
+                    BinaryOp::Ne =&gt; {
+                        let cmp = self
+                            .builder
+                            .build_int_compare(IntPredicate::NE, l, r, "ne")
+                            .unwrap();
+                        Ok(self
+                            .builder
+                            .build_int_z_extend(cmp, self.context.i64_type(), "ext")
+                            .unwrap())
+                    }
+                }
+            }
+
+            Expr::Call { name, args } =&gt; {
+                let function = self
+                    .functions
+                    .get(name)
+                    .cloned()
+                    .ok_or_else(|| format!("Undefined function: {}", name))?;
+
+                let arg_values: Vec&lt;BasicMetadataValueEnum&gt; = args
+                    .iter()
+                    .map(|a| self.compile_expr(a).map(|v| v.into()))
+                    .collect::&lt;Result&lt;_, _&gt;&gt;()?;
+
+                let call = self
+                    .builder
+                    .build_call(function, &amp;arg_values, "call")
+                    .unwrap();
+                Ok(call.try_as_basic_value().unwrap_basic().into_int_value())
+            }
+
+            Expr::If {
+                cond,
+                then_branch,
+                else_branch,
+            } =&gt; {
+                let cond_val = self.compile_expr(cond)?;
+                // Convert to i1 for branch
+                let cond_bool = self
+                    .builder
+                    .build_int_truncate(cond_val, self.context.bool_type(), "cond")
+                    .unwrap();
+
+                let function = self.current_fn.unwrap();
+                let then_bb = self.context.append_basic_block(function, "then");
+                let else_bb = self.context.append_basic_block(function, "else");
+                let merge_bb = self.context.append_basic_block(function, "merge");
+
+                self.builder
+                    .build_conditional_branch(cond_bool, then_bb, else_bb)
+                    .unwrap();
+
+                // Then branch
+                self.builder.position_at_end(then_bb);
+                let mut then_val = self.context.i64_type().const_int(0, false);
+                for stmt in then_branch {
+                    if let Some(v) = self.compile_stmt(stmt)? {
+                        then_val = v;
+                    }
+                }
+                let then_end = self.builder.get_insert_block().unwrap();
+                let then_has_terminator = then_end.get_terminator().is_some();
+                if !then_has_terminator {
+                    self.builder.build_unconditional_branch(merge_bb).unwrap();
+                }
+
+                // Else branch
+                self.builder.position_at_end(else_bb);
+                let mut else_val = self.context.i64_type().const_int(0, false);
+                for stmt in else_branch {
+                    if let Some(v) = self.compile_stmt(stmt)? {
+                        else_val = v;
+                    }
+                }
+                let else_end = self.builder.get_insert_block().unwrap();
+                let else_has_terminator = else_end.get_terminator().is_some();
+                if !else_has_terminator {
+                    self.builder.build_unconditional_branch(merge_bb).unwrap();
+                }
+
+                // Merge - only if at least one branch reaches it
+                if then_has_terminator &amp;&amp; else_has_terminator {
+                    // Both branches return/terminate, merge block is unreachable
+                    // Remove it and return a dummy value
+                    unsafe {
+                        merge_bb.delete().unwrap();
+                    }
+                    // Return a dummy value - the actual return happened in the branches
+                    Ok(self.context.i64_type().const_int(0, false))
+                } else {
+                    self.builder.position_at_end(merge_bb);
+                    let phi = self
+                        .builder
+                        .build_phi(self.context.i64_type(), "phi")
+                        .unwrap();
+
+                    // Only add incoming from branches that don't have terminators
+                    if !then_has_terminator {
+                        phi.add_incoming(&amp;[(&amp;then_val, then_end)]);
+                    }
+                    if !else_has_terminator {
+                        phi.add_incoming(&amp;[(&amp;else_val, else_end)]);
+                    }
+
+                    Ok(phi.as_basic_value().into_int_value())
+                }
+            }
+
+            Expr::While { cond, body } =&gt; {
+                let function = self.current_fn.unwrap();
+                let cond_bb = self.context.append_basic_block(function, "while_cond");
+                let body_bb = self.context.append_basic_block(function, "while_body");
+                let end_bb = self.context.append_basic_block(function, "while_end");
+
+                self.builder.build_unconditional_branch(cond_bb).unwrap();
+
+                // Condition
+                self.builder.position_at_end(cond_bb);
+                let cond_val = self.compile_expr(cond)?;
+                let cond_bool = self
+                    .builder
+                    .build_int_truncate(cond_val, self.context.bool_type(), "cond")
+                    .unwrap();
+                self.builder
+                    .build_conditional_branch(cond_bool, body_bb, end_bb)
+                    .unwrap();
+
+                // Body
+                self.builder.position_at_end(body_bb);
+                for stmt in body {
+                    self.compile_stmt(stmt)?;
+                }
+                if self
+                    .builder
+                    .get_insert_block()
+                    .unwrap()
+                    .get_terminator()
+                    .is_none()
+                {
+                    self.builder.build_unconditional_branch(cond_bb).unwrap();
+                }
+
+                // End
+                self.builder.position_at_end(end_bb);
+                Ok(self.context.i64_type().const_int(0, false))
+            }
+
+            Expr::Block(stmts) =&gt; {
+                let mut last_val = self.context.i64_type().const_int(0, false);
+                for stmt in stmts {
+                    if let Some(v) = self.compile_stmt(stmt)? {
+                        last_val = v;
+                    }
+                }
+                Ok(last_val)
+            }
+        }
+    }</code></pre>
+<p><a class="filename" href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/secondlang/src/codegen.rs">secondlang/src/codegen.rs</a></p>
+<p>Let us walk through the important cases:</p>
+<h3 id="integers-and-booleans"><a class="header" href="#integers-and-booleans">Integers and Booleans</a></h3>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>Expr::Int(n) =&gt; Ok(self.context.i64_type().const_int(*n as u64, false)),
+Expr::Bool(b) =&gt; Ok(self.context.bool_type().const_int(*b as u64, false)),
+<span class="boring">}</span></code></pre></pre>
+<p>Constants are simple. We create a constant integer value of the right type. The <code>false</code> argument means the value is unsigned (we use signed arithmetic in operations).</p>
+<h3 id="variables-the-allocaload-pattern"><a class="header" href="#variables-the-allocaload-pattern">Variables: The Alloca/Load Pattern</a></h3>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>Expr::Var(name) =&gt; {
+    let ptr = self.variables.get(name)
+        .ok_or_else(|| format!("Undefined variable: {}", name))?;
+    let val = self.builder.build_load(self.context.i64_type(), *ptr, name)?;
+    Ok(val.into_int_value())
+}
+<span class="boring">}</span></code></pre></pre>
+<p>Variables are stored on the stack using the <strong>alloca/load/store pattern</strong> we discussed in the <a href="./ir.html#why-all-the-loading-and-storing">IR chapter</a>:</p>
+<ol>
+<li>When we declare a variable, we use <code>alloca</code> to reserve stack space and store the pointer</li>
+<li>When we read a variable, we <code>load</code> from that pointer</li>
+<li>When we write a variable, we <code>store</code> to that pointer</li>
+</ol>
+<p>This pattern handles mutable variables naturally and LLVM optimizes it away when possible (promoting stack slots to registers).</p>
+<h3 id="binary-operations"><a class="header" href="#binary-operations">Binary Operations</a></h3>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>Expr::Binary { op, left, right } =&gt; {
+    let l = self.compile_expr(left)?;  // compile left operand
+    let r = self.compile_expr(right)?; // compile right operand
+
+    match op {
+        BinaryOp::Add =&gt; Ok(self.builder.build_int_add(l, r, "add")?),
+        BinaryOp::Sub =&gt; Ok(self.builder.build_int_sub(l, r, "sub")?),
+        // ... etc
+    }
+}
+<span class="boring">}</span></code></pre></pre>
+<p>We recursively compile left and right operands, then emit the appropriate instruction. The <code>"add"</code> string is a name for the result (helps when reading the IR).</p>
+<h3 id="function-calls"><a class="header" href="#function-calls">Function Calls</a></h3>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>Expr::Call { name, args } =&gt; {
+    let function = self.functions.get(name)
+        .ok_or_else(|| format!("Undefined function: {}", name))?;
+
+    let arg_values: Vec&lt;_&gt; = args.iter()
+        .map(|a| self.compile_expr(a).map(|v| v.into()))
+        .collect::&lt;Result&lt;_, _&gt;&gt;()?;
+
+    let call = self.builder.build_call(*function, &amp;arg_values, "call")?;
+    Ok(call.try_as_basic_value().unwrap_basic().into_int_value())
+}
+<span class="boring">}</span></code></pre></pre>
+<p>We look up the function, compile each argument, then emit a <code>call</code> instruction.</p>
+<p>The <code>try_as_basic_value().unwrap_basic()</code> deserves explanation. In LLVM, function calls can return either:</p>
+<ul>
+<li>A “basic value” (like an integer or pointer) that we can use</li>
+<li>Nothing (for void functions)</li>
+</ul>
+<p><code>try_as_basic_value()</code> returns an enum with both possibilities. Since our functions always return <code>int</code>, we know we have a basic value and can safely unwrap it. The <code>into_int_value()</code> converts it to the specific integer type we need.</p>
+<h3 id="conditionals"><a class="header" href="#conditionals">Conditionals</a></h3>
+<p>Conditionals need multiple basic blocks:</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>Expr::If { cond, then_branch, else_branch } =&gt; {
+    // Compile condition and convert to i1 for branching
+    let cond_val = self.compile_expr(cond)?;
+    let cond_bool = self.builder.build_int_truncate(cond_val, self.context.bool_type(), "cond")?;
+
+    // Create basic blocks for then, else, and merge
+    let function = self.current_fn.unwrap();
+    let then_bb = self.context.append_basic_block(function, "then");
+    let else_bb = self.context.append_basic_block(function, "else");
+    let merge_bb = self.context.append_basic_block(function, "merge");
+
+    // Branch based on condition
+    self.builder.build_conditional_branch(cond_bool, then_bb, else_bb)?;
+
+    // Compile then branch
+    self.builder.position_at_end(then_bb);
+    // ... compile statements ...
+    self.builder.build_unconditional_branch(merge_bb)?;
+
+    // Compile else branch
+    self.builder.position_at_end(else_bb);
+    // ... compile statements ...
+    self.builder.build_unconditional_branch(merge_bb)?;
+
+    // Continue at merge point
+    self.builder.position_at_end(merge_bb);
+    // ... use phi node to select result ...
+}
+<span class="boring">}</span></code></pre></pre>
+<p>The key insight: we create separate basic blocks, compile each branch by positioning the builder at the right block, then use a <strong>phi node</strong> to merge the results.</p>
+<p>Remember from the <a href="./ir.html#phi-nodes-merging-values-from-different-paths">IR chapter</a>: a phi node selects a value based on which block we came from. If the condition was true and we came from <code>then_bb</code>, use the then-result. Otherwise use the else-result.</p>
+<h2 id="jit-execution"><a class="header" href="#jit-execution">JIT Execution</a></h2>
+<p>Finally, we can run our compiled code:</p>
+<pre><code class="language-rust ignore">/// JIT compile and run a program
+pub fn jit_run(program: &amp;Program) -&gt; Result&lt;i64, String&gt; {
+    let context = Context::create();
+    let mut codegen = CodeGen::new(&amp;context, "secondlang");
+
+    codegen.compile(program)?;
+
+    // Create execution engine
+    let engine = codegen
+        .module
+        .create_jit_execution_engine(OptimizationLevel::Default)
+        .map_err(|e| format!("Failed to create JIT: {}", e.to_string()))?;
+
+    // Call the __main wrapper function which contains the top-level expression
+    unsafe {
+        let func: inkwell::execution_engine::JitFunction&lt;unsafe extern "C" fn() -&gt; i64&gt; =
+            engine.get_function("__main").map_err(|e| e.to_string())?;
+        Ok(func.call())
+    }
+}</code></pre>
+<p><a class="filename" href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/secondlang/src/codegen.rs">secondlang/src/codegen.rs</a></p>
+<p>This function:</p>
+<ol>
+<li>Creates a code generator</li>
+<li>Compiles the program to IR</li>
+<li>Creates a JIT execution engine</li>
+<li>Gets a pointer to <code>__main</code> (our entry point)</li>
+<li>Calls it and returns the result</li>
+</ol>
+<p>The JIT engine compiles our IR to native machine code on the fly, then executes it. This is much faster than interpretation because we are running actual machine code, not walking a tree.</p>
+<p>The <code>unsafe</code> block is required because we are calling raw machine code. We have to trust that our code generator produced valid code.</p>
+<h2 id="putting-it-all-together"><a class="header" href="#putting-it-all-together">Putting It All Together</a></h2>
+<p>Here is what happens when you run <code>cargo run -- examples/fibonacci.sl</code>:</p>
+<ol>
+<li><strong>Parse</strong> the source file → Typed AST (with <code>Unknown</code> types)</li>
+<li><strong>Type check</strong> → Typed AST (all types resolved)</li>
+<li><strong>Optimize</strong> (optional) → Simplified AST</li>
+<li><strong>Compile</strong> → LLVM IR</li>
+<li><strong>JIT</strong> → Native machine code</li>
+<li><strong>Execute</strong> → Result</li>
+</ol>
+<p>All in a fraction of a second.</p>
+<h2 id="testing"><a class="header" href="#testing">Testing</a></h2>
+<pre><code class="language-bash">cargo test codegen
+</code></pre>
+<p>In the next chapter, we put it all together and run Fibonacci.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../03_secondlang/ir.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../03_secondlang/jit_fibonacci.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../03_secondlang/ir.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../03_secondlang/jit_fibonacci.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../theme/force-theme.js"></script>
+
+
+
+    </div>
+    </body>
+</html>

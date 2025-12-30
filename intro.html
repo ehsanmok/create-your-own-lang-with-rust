@@ -1,0 +1,332 @@
+<!DOCTYPE HTML>
+<html lang="en" class="rust sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Introduction - Create Your Own Programming Language with Rust</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="theme/custom.css">
+        <link rel="stylesheet" href="theme/highlight.css">
+
+        <!-- MathJax -->
+        <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "rust";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('rust')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Create Your Own Programming Language with Rust</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/ehsanmok/create-your-own-lang-with-rust" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <div class="license-notice">
+<p><em>Materials in this book are distributed under the terms of <a href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/LICENSE">Creative Commons BY-NC-SA 4.0</a></em></p>
+<img alt="license" src="./img/by-nc-sa.png">
+</div>
+<p>This book assumes some basic knowledge of the Rust language. Please take a look at the official <a href="https://doc.rust-lang.org/book/">Rust book</a>.</p>
+<p>The accompanying code and materials for this book are available on <a href="https://github.com/ehsanmok/create-your-own-lang-with-rust">GitHub</a>. To follow along, make sure you have</p>
+<ul>
+<li>
+<p><a href="https://www.rust-lang.org/tools/install">Rust toolchain installed</a> (stable 1.70+)</p>
+</li>
+<li>
+<p>Cloned the repository</p>
+<pre><code class="language-bash">git clone https://github.com/ehsanmok/create-your-own-lang-with-rust
+</code></pre>
+<p>Then navigate to the project directory:</p>
+<pre><code class="language-bash">cd create-your-own-lang-with-rust
+</code></pre>
+</li>
+</ul>
+<p><strong>What works with stable Rust:</strong></p>
+<ul>
+<li><strong>Calculator</strong> (interpreter and VM modes) - <code>cargo run</code></li>
+<li><strong>Firstlang</strong> (interpreter) - <code>cargo run</code></li>
+</ul>
+<p><strong>What requires nightly Rust + LLVM:</strong></p>
+<ul>
+<li><strong>Calculator JIT</strong> - <code>rustup run nightly cargo run --features jit</code></li>
+<li><strong>Secondlang</strong> (compiled to native code) - <code>rustup run nightly cargo run</code></li>
+</ul>
+<p>To use LLVM features:</p>
+<ul>
+<li>Install nightly: <code>rustup toolchain install nightly</code></li>
+<li>Install LLVM: macOS (<code>brew install llvm</code>), Debian/Ubuntu (<a href="https://apt.llvm.org/">apt.llvm.org</a>)</li>
+<li>Check your version: <code>llvm-config --version</code></li>
+<li>Update <code>Cargo.toml</code> to match: LLVM 20.x uses <code>llvm20-1</code>, LLVM 19.x uses <code>llvm19-1</code>, LLVM 18.x uses <code>llvm18-1</code></li>
+</ul>
+<h2 id="motivations-and-goals"><a class="header" href="#motivations-and-goals">Motivations and Goals</a></h2>
+<p>This book arises from my frustration of not finding modern, clear, and concise teaching materials that are readily accessible to beginners like me who want to learn how to create their own programming language.</p>
+<p>The following are my guidelines:</p>
+<blockquote>
+<p>“If you don’t know how <em>compilers</em> work, then you don’t know how computers work” <sup><a href="http://steve-yegge.blogspot.com/2007/06/rich-programmer-food.html?">1</a></sup></p>
+</blockquote>
+<blockquote>
+<p>“If you can’t explain something in simple terms, you don’t understand it” <sup><a href="https://skeptics.stackexchange.com/questions/8742/did-einstein-say-if-you-cant-explain-it-simply-you-dont-understand-it-well-en">2</a></sup></p>
+</blockquote>
+<p><span style="font-family:Trebuchet MS">Pedagogically, one of the most effective methods of teaching is co-creating interactively. Introducing the core aspects around the <em>simplest example</em> (here, our calculator language) helps a lot to build knowledge and confidence. For that, we will use mature technologies instead of spending tons of time partially reinventing the wheel and boring the reader.</span></p>
+<h2 id="learning-progression"><a class="header" href="#learning-progression">Learning Progression</a></h2>
+<p>We build three languages, each building on concepts from the previous:</p>
+<div class="table-wrapper"><table><thead><tr><th>Language</th><th>Grammar</th><th>New Concepts</th><th>Execution</th></tr></thead><tbody>
+<tr><td><strong>Calculator</strong></td><td>18 lines</td><td>PEG basics, AST, operators</td><td>Interpreter, VM, JIT</td></tr>
+<tr><td><strong>Firstlang</strong></td><td>70 lines</td><td>Variables, functions, control flow, recursion</td><td>Tree-walking interpreter</td></tr>
+<tr><td><strong>Secondlang</strong></td><td>77 lines</td><td>Types, type inference, optimization passes</td><td>LLVM JIT compilation</td></tr>
+</tbody></table>
+</div>
+<h3 id="part-i-calculator"><a class="header" href="#part-i-calculator">Part I: Calculator</a></h3>
+<p>We start with the <em>simplest possible language</em>: integer arithmetic with <code>+</code> and <code>-</code>. The grammar fits in 18 lines:</p>
+<pre><code class="language-text">Program = _{ SOI ~ Expr ~ EOF }
+Expr = { UnaryExpr | BinaryExpr | Term }
+Term = _{Int | "(" ~ Expr ~ ")" }
+...
+</code></pre>
+<p>This minimal language lets us focus on the fundamentals without distraction: what is a grammar? How does pest generate a parser? What is an AST? We also explore <em>three different backends</em> (interpreter, bytecode VM, JIT) to show that the same AST can be executed in multiple ways.</p>
+<h3 id="part-ii-firstlang"><a class="header" href="#part-ii-firstlang">Part II: Firstlang</a></h3>
+<p>With the basics understood, we add the features that make a <em>real</em> programming language. The grammar grows to 70 lines, adding:</p>
+<pre><code class="language-text">// New: Statements instead of just expressions
+Stmt = { Function | Return | Assignment | Expr }
+
+// New: Functions with parameters
+Function = { "def" ~ Identifier ~ "(" ~ Params? ~ ")" ~ Block }
+
+// New: Control flow
+Conditional = { "if" ~ "(" ~ Expr ~ ")" ~ Block ~ "else" ~ Block }
+WhileLoop = { "while" ~ "(" ~ Expr ~ ")" ~ Block }
+</code></pre>
+<p>We focus on a single backend (tree-walking interpreter) to deeply understand scoping, call stacks, and recursion. The culminating example is computing Fibonacci recursively.</p>
+<h3 id="part-iii-secondlang"><a class="header" href="#part-iii-secondlang">Part III: Secondlang</a></h3>
+<p>Finally, we add <em>static types</em> and compile to native code. The grammar changes are minimal (just 7 more lines), but the compiler grows significantly:</p>
+<pre><code class="language-text">// New: Type annotations
+Type = { IntType | BoolType }
+TypedParam = { Identifier ~ ":" ~ Type }
+ReturnType = { "-&gt;" ~ Type }
+
+// Modified: Functions now have types
+Function = { "def" ~ Identifier ~ "(" ~ TypedParams? ~ ")" ~ ReturnType? ~ Block }
+</code></pre>
+<p>This demonstrates a key insight: types are primarily a <em>semantic</em> addition, not a syntactic one. The grammar changes are small, but we need new compiler phases (type checking, type inference) and can now generate efficient native code via LLVM.</p>
+<h2 id="outline"><a class="header" href="#outline">Outline</a></h2>
+<ul>
+<li><a href="./crash_course.html">Crash Course on Computing</a> where we briefly set up definitions and foundations</li>
+<li><a href="./01_calculator/calc_intro.html"><strong>Calculator</strong></a>: Our first language supporting simple integer addition and subtraction. We use <a href="https://en.wikipedia.org/wiki/Parsing_expression_grammar">PEG</a> to define our grammar, <a href="https://pest.rs/">pest</a> to generate the parser, and explore AST interpretation, JIT compilation with <a href="https://github.com/TheDan64/inkwell">inkwell</a>, and a bytecode VM</li>
+<li><a href="./02_firstlang/intro.html"><strong>Firstlang</strong></a>: An interpreted language with variables, functions, control flow, and recursion. We implement <a href="./02_firstlang/fibonacci.html">Fibonacci</a> as the culminating example</li>
+<li><a href="./03_secondlang/intro.html"><strong>Secondlang</strong></a>: A statically typed language that compiles to native code via LLVM. We add <a href="./03_secondlang/annotations.html">type annotations</a>, <a href="./03_secondlang/inference.html">type inference</a>, AST <a href="./03_secondlang/optimizations.html">optimization passes</a> with the visitor pattern, and <a href="./03_secondlang/jit_fibonacci.html">JIT compilation</a></li>
+</ul>
+<h2 id="donation"><a class="header" href="#donation">Donation</a></h2>
+<p>If you have found this book useful, please consider donating to any of the organizations below</p>
+<ul>
+<li><a href="https://childfoundation.org/">Child Foundation</a></li>
+<li><a href="https://blacklivesmatter.com/">Black Lives Matter</a></li>
+<li><a href="https://www.foodbankscanada.ca/">Food Bank of Canada</a></li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+
+                            <a rel="next prefetch" href="crash_course.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+
+                    <a rel="next prefetch" href="crash_course.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="theme/force-theme.js"></script>
+
+
+
+    </div>
+    </body>
+</html>
