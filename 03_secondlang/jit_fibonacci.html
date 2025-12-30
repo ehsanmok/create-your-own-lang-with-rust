@@ -279,7 +279,12 @@ entry:
 <li>All the loads and stores for local variables</li>
 <li>The branching for the if/else</li>
 </ul>
-<h2 id="more-examples"><a class="header" href="#more-examples">More Examples</a></h2>
+<h2 id="running-all-examples"><a class="header" href="#running-all-examples">Running All Examples</a></h2>
+<p>Secondlang comes with several examples demonstrating different features:</p>
+<h3 id="basics-with-types"><a class="header" href="#basics-with-types">Basics with Types</a></h3>
+<pre><code class="language-bash">rustup run nightly cargo run -- examples/basics.sl
+</code></pre>
+<p>Shows typed variables, functions, and control flow.</p>
 <h3 id="factorial"><a class="header" href="#factorial">Factorial</a></h3>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -291,16 +296,14 @@ entry:
     }
 }
 
-factorial(20)
+factorial(10)
 <span class="boring">}</span></code></pre></pre>
 <pre><code class="language-bash">rustup run nightly cargo run -- examples/factorial.sl
-2432902008176640000
 </code></pre>
-<h3 id="type-inference"><a class="header" href="#type-inference">Type Inference</a></h3>
-<p>This example shows the compiler inferring types automatically:</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>def complex_calc(x: int) -&gt; int {
+<p>Expected output: <code>3628800</code></p>
+<h3 id="type-inference-showcase"><a class="header" href="#type-inference-showcase">Type Inference Showcase</a></h3>
+<p>The <code>inference.sl</code> example demonstrates the compiler inferring types automatically:</p>
+<pre><code class="language-python">def complex_calc(x: int) -&gt; int {
     a = x + 1           # int (inferred from x + literal)
     b = a * a           # int (inferred from int * int)
     c = b - x           # int (inferred from int - int)
@@ -313,10 +316,42 @@ factorial(20)
 }
 
 complex_calc(10)
-<span class="boring">}</span></code></pre></pre>
-<pre><code class="language-bash">rustup run nightly cargo run -- examples/inference.sl
-111
 </code></pre>
+<pre><code class="language-bash">rustup run nightly cargo run -- examples/inference.sl
+</code></pre>
+<p>Expected output: <code>111</code></p>
+<h3 id="run-all-examples"><a class="header" href="#run-all-examples">Run All Examples</a></h3>
+<pre><code class="language-bash">for file in examples/*.sl; do
+    echo "Running $file..."
+    rustup run nightly cargo run -- "$file"
+done
+</code></pre>
+<h2 id="running-tests"><a class="header" href="#running-tests">Running Tests</a></h2>
+<p>Secondlang has comprehensive integration tests covering all compiler stages:</p>
+<ul>
+<li><strong>Parsing</strong>: Grammar validation</li>
+<li><strong>Type Checking</strong>: Type inference and error detection</li>
+<li><strong>Code Generation</strong>: LLVM IR generation</li>
+<li><strong>JIT Execution</strong>: Running compiled code</li>
+</ul>
+<p>Run all tests:</p>
+<pre><code class="language-bash">rustup run nightly cargo test
+</code></pre>
+<p>Run a specific test:</p>
+<pre><code class="language-bash">rustup run nightly cargo test test_jit_fibonacci
+</code></pre>
+<p>Run tests with verbose output:</p>
+<pre><code class="language-bash">rustup run nightly cargo test -- --nocapture
+</code></pre>
+<p>The tests are in <code>tests/integration_tests.rs</code> and cover:</p>
+<ul>
+<li>Arithmetic operations</li>
+<li>Conditionals and loops</li>
+<li>Recursion (Fibonacci, factorial, GCD)</li>
+<li>Type inference</li>
+<li>Type errors (caught at compile time)</li>
+<li>Function calls</li>
+</ul>
 <h2 id="what-we-built"><a class="header" href="#what-we-built">What We Built</a></h2>
 <p>Let us step back and appreciate what we have accomplished. Starting from scratch, we built:</p>
 <ol>

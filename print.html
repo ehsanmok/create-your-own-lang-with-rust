@@ -1799,6 +1799,46 @@ Runtime error: Division by zero
 3
 </code></pre>
 <p>The REPL is your best friend for experimenting with the language! Try computing <a href="02_firstlang/./fibonacci.html">Fibonacci</a> interactively.</p>
+<h2 id="running-examples"><a class="header" href="#running-examples">Running Examples</a></h2>
+<p>Firstlang comes with several example programs demonstrating different features.</p>
+<h3 id="fibonacci-sequence"><a class="header" href="#fibonacci-sequence">Fibonacci Sequence</a></h3>
+<pre><code class="language-bash">cargo run -- examples/fibonacci.fl
+</code></pre>
+<p>Expected output: <code>55</code></p>
+<h3 id="factorial"><a class="header" href="#factorial">Factorial</a></h3>
+<pre><code class="language-bash">cargo run -- examples/factorial.fl
+</code></pre>
+<p>Expected output: <code>120</code></p>
+<h3 id="basics"><a class="header" href="#basics">Basics</a></h3>
+<pre><code class="language-bash">cargo run -- examples/basics.fl
+</code></pre>
+<p>This demonstrates variables, functions, conditionals, and loops.</p>
+<h3 id="all-examples"><a class="header" href="#all-examples">All Examples</a></h3>
+<pre><code class="language-bash">for file in examples/*.fl; do
+    echo "Running $file..."
+    cargo run -- "$file"
+done
+</code></pre>
+<h2 id="running-tests"><a class="header" href="#running-tests">Running Tests</a></h2>
+<p>Firstlang has comprehensive integration tests covering:</p>
+<ul>
+<li>Variables and assignments</li>
+<li>Functions with parameters</li>
+<li>Recursion (Fibonacci, factorial)</li>
+<li>Control flow (if/else, while)</li>
+<li>Type errors</li>
+<li>Undefined variables and functions</li>
+</ul>
+<p>Run all tests:</p>
+<pre><code class="language-bash">cargo test
+</code></pre>
+<p>Run a specific test:</p>
+<pre><code class="language-bash">cargo test test_fibonacci_recursive
+</code></pre>
+<p>Run tests with verbose output:</p>
+<pre><code class="language-bash">cargo test -- --nocapture
+</code></pre>
+<p>The tests are in <code>tests/integration_tests.rs</code> and serve as examples of what the language can do.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="computing-fibonacci"><a class="header" href="#computing-fibonacci">Computing Fibonacci</a></h1>
 <p>This is it - the culmination of everything we’ve built! Let’s compute the <a href="https://en.wikipedia.org/wiki/Fibonacci_number">Fibonacci sequence</a>.</p>
 <h2 id="the-fibonacci-sequence"><a class="header" href="#the-fibonacci-sequence">The Fibonacci Sequence</a></h2>
@@ -4306,8 +4346,13 @@ entry:
 <li>All the loads and stores for local variables</li>
 <li>The branching for the if/else</li>
 </ul>
-<h2 id="more-examples-1"><a class="header" href="#more-examples-1">More Examples</a></h2>
-<h3 id="factorial"><a class="header" href="#factorial">Factorial</a></h3>
+<h2 id="running-all-examples"><a class="header" href="#running-all-examples">Running All Examples</a></h2>
+<p>Secondlang comes with several examples demonstrating different features:</p>
+<h3 id="basics-with-types"><a class="header" href="#basics-with-types">Basics with Types</a></h3>
+<pre><code class="language-bash">rustup run nightly cargo run -- examples/basics.sl
+</code></pre>
+<p>Shows typed variables, functions, and control flow.</p>
+<h3 id="factorial-1"><a class="header" href="#factorial-1">Factorial</a></h3>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>def factorial(n: int) -&gt; int {
@@ -4318,16 +4363,14 @@ entry:
     }
 }
 
-factorial(20)
+factorial(10)
 <span class="boring">}</span></code></pre></pre>
 <pre><code class="language-bash">rustup run nightly cargo run -- examples/factorial.sl
-2432902008176640000
 </code></pre>
-<h3 id="type-inference-1"><a class="header" href="#type-inference-1">Type Inference</a></h3>
-<p>This example shows the compiler inferring types automatically:</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>def complex_calc(x: int) -&gt; int {
+<p>Expected output: <code>3628800</code></p>
+<h3 id="type-inference-showcase"><a class="header" href="#type-inference-showcase">Type Inference Showcase</a></h3>
+<p>The <code>inference.sl</code> example demonstrates the compiler inferring types automatically:</p>
+<pre><code class="language-python">def complex_calc(x: int) -&gt; int {
     a = x + 1           # int (inferred from x + literal)
     b = a * a           # int (inferred from int * int)
     c = b - x           # int (inferred from int - int)
@@ -4340,10 +4383,42 @@ factorial(20)
 }
 
 complex_calc(10)
-<span class="boring">}</span></code></pre></pre>
-<pre><code class="language-bash">rustup run nightly cargo run -- examples/inference.sl
-111
 </code></pre>
+<pre><code class="language-bash">rustup run nightly cargo run -- examples/inference.sl
+</code></pre>
+<p>Expected output: <code>111</code></p>
+<h3 id="run-all-examples"><a class="header" href="#run-all-examples">Run All Examples</a></h3>
+<pre><code class="language-bash">for file in examples/*.sl; do
+    echo "Running $file..."
+    rustup run nightly cargo run -- "$file"
+done
+</code></pre>
+<h2 id="running-tests-1"><a class="header" href="#running-tests-1">Running Tests</a></h2>
+<p>Secondlang has comprehensive integration tests covering all compiler stages:</p>
+<ul>
+<li><strong>Parsing</strong>: Grammar validation</li>
+<li><strong>Type Checking</strong>: Type inference and error detection</li>
+<li><strong>Code Generation</strong>: LLVM IR generation</li>
+<li><strong>JIT Execution</strong>: Running compiled code</li>
+</ul>
+<p>Run all tests:</p>
+<pre><code class="language-bash">rustup run nightly cargo test
+</code></pre>
+<p>Run a specific test:</p>
+<pre><code class="language-bash">rustup run nightly cargo test test_jit_fibonacci
+</code></pre>
+<p>Run tests with verbose output:</p>
+<pre><code class="language-bash">rustup run nightly cargo test -- --nocapture
+</code></pre>
+<p>The tests are in <code>tests/integration_tests.rs</code> and cover:</p>
+<ul>
+<li>Arithmetic operations</li>
+<li>Conditionals and loops</li>
+<li>Recursion (Fibonacci, factorial, GCD)</li>
+<li>Type inference</li>
+<li>Type errors (caught at compile time)</li>
+<li>Function calls</li>
+</ul>
 <h2 id="what-we-built"><a class="header" href="#what-we-built">What We Built</a></h2>
 <p>Let us step back and appreciate what we have accomplished. Starting from scratch, we built:</p>
 <ol>

@@ -278,6 +278,46 @@ Runtime error: Division by zero
 3
 </code></pre>
 <p>The REPL is your best friend for experimenting with the language! Try computing <a href="./fibonacci.html">Fibonacci</a> interactively.</p>
+<h2 id="running-examples"><a class="header" href="#running-examples">Running Examples</a></h2>
+<p>Firstlang comes with several example programs demonstrating different features.</p>
+<h3 id="fibonacci-sequence"><a class="header" href="#fibonacci-sequence">Fibonacci Sequence</a></h3>
+<pre><code class="language-bash">cargo run -- examples/fibonacci.fl
+</code></pre>
+<p>Expected output: <code>55</code></p>
+<h3 id="factorial"><a class="header" href="#factorial">Factorial</a></h3>
+<pre><code class="language-bash">cargo run -- examples/factorial.fl
+</code></pre>
+<p>Expected output: <code>120</code></p>
+<h3 id="basics"><a class="header" href="#basics">Basics</a></h3>
+<pre><code class="language-bash">cargo run -- examples/basics.fl
+</code></pre>
+<p>This demonstrates variables, functions, conditionals, and loops.</p>
+<h3 id="all-examples"><a class="header" href="#all-examples">All Examples</a></h3>
+<pre><code class="language-bash">for file in examples/*.fl; do
+    echo "Running $file..."
+    cargo run -- "$file"
+done
+</code></pre>
+<h2 id="running-tests"><a class="header" href="#running-tests">Running Tests</a></h2>
+<p>Firstlang has comprehensive integration tests covering:</p>
+<ul>
+<li>Variables and assignments</li>
+<li>Functions with parameters</li>
+<li>Recursion (Fibonacci, factorial)</li>
+<li>Control flow (if/else, while)</li>
+<li>Type errors</li>
+<li>Undefined variables and functions</li>
+</ul>
+<p>Run all tests:</p>
+<pre><code class="language-bash">cargo test
+</code></pre>
+<p>Run a specific test:</p>
+<pre><code class="language-bash">cargo test test_fibonacci_recursive
+</code></pre>
+<p>Run tests with verbose output:</p>
+<pre><code class="language-bash">cargo test -- --nocapture
+</code></pre>
+<p>The tests are in <code>tests/integration_tests.rs</code> and serve as examples of what the language can do.</p>
 
                     </main>
 
