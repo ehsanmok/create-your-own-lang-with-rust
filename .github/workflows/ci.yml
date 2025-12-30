@@ -17,12 +17,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install LLVM
+      - name: Install LLVM and dependencies
         run: |
+          sudo apt-get update
+          sudo apt-get install -y libffi-dev libz-dev libxml2-dev zlib1g-dev
           wget https://apt.llvm.org/llvm.sh
           chmod +x llvm.sh
           sudo ./llvm.sh 20 all
-          sudo apt-get install -y libpolly-20-dev
+          sudo apt-get install -y libpolly-20-dev llvm-20-dev
           echo "/usr/lib/llvm-20/bin" >> $GITHUB_PATH
           echo "LLVM_SYS_201_PREFIX=/usr/lib/llvm-20" >> $GITHUB_ENV
 
