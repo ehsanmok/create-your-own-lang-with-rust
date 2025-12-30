@@ -27,15 +27,19 @@ fn main() -> Result<()> {
         let readline = rl.readline(">> ");
         match readline {
             Ok(line) => {
+                let line = line.trim();
+                if line.is_empty() {
+                    continue;
+                }
                 cfg_if! {
                     if #[cfg(any(feature = "jit", feature = "interpreter"))] {
-                        match Engine::from_source(&line) {
+                        match Engine::from_source(line) {
                             Ok(result) => println!("{}", result),
                             Err(e) => eprintln!("{}", e),
                         };
                     }
                     else if #[cfg(feature = "vm")] {
-                        let byte_code = Engine::from_source(&line);
+                        let byte_code = Engine::from_source(line);
                         println!("byte code: {:?}", byte_code);
                         let mut vm = VM::new(byte_code);
                         vm.run();

@@ -47,6 +47,15 @@ entry:
 }
 
 3
+>> -2 + 5
+Compiling the source: -2 + 5
+[BinaryExpr { op: Plus, lhs: UnaryExpr { op: Minus, child: Int(2) }, rhs: Int(5) }]
+Generated LLVM IR: define i32 @jit() {
+entry:
+  ret i32 3
+}
+
+3
 >> (1 + 2) - (8 - 10)
 Compiling the source: (1 + 2) - (8 - 10)
 [BinaryExpr { op: Minus, lhs: BinaryExpr { op: Plus, lhs: Int(1), rhs: Int(2) }, rhs: BinaryExpr { op: Minus, lhs: Int(8), rhs: Int(10) } }]
@@ -96,6 +105,8 @@ CTRL-C
 
 This concludes our [Calculator](./calc_intro.md) chapter. We took advantage of the simplicity of our `Calc` language to touch on a lot of topics.
 
+Note that our Calculator grammar is intentionally simple. It handles basic cases like negative first numbers (`-1 + 2`) and flexible whitespace, but it doesn't have proper operator precedence. In the next chapter, we'll see how [Firstlang](../02_firstlang/intro.md) builds a more sophisticated grammar with proper operator precedence and multiple expression types.
+
 Thanks for following along and reading up this far!
 
-Stay tuned for the next chapter where we gradually work our way up to create a statically typed language named creatively as **Firstlang** :D
+Stay tuned for the next chapter where we gradually work our way up to create a dynamically typed language named creatively as **Firstlang** :D

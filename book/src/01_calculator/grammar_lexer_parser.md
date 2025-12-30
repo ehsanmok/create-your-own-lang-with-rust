@@ -24,9 +24,11 @@ Here is how the grammar for our simple calculator language `Calc` (supporting ad
 This grammar basically defines the syntax and semantics where
 
 * each `Program` consists of expressions (`Expr`)
-* expressions are either unary (`-1`) or binary (`1 + 2`)
-* unary or binary expressions are made of `Term` and `Operator` (`"+"` and `"-"`)
+* expressions are either unary (`-1`), binary (`1 + 2`), or a simple term
+* binary expressions can start with a unary expression (e.g., `-1 + 2`)
+* unary and binary expressions are made of `Term` and `Operator` (`"+"` and `"-"`)
 * the only *atom* is integer `Int`
+* `WHITESPACE` includes spaces, tabs, and newlines for flexible formatting
 
 Given our grammar, we will use [pest](https://pest.rs/), which is a powerful *parser generator* for PEG grammars. (For more details on pest, check out the [pest book](https://pest.rs/book/).)
 

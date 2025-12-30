@@ -36,7 +36,17 @@ fn build_ast_from_expr(pair: pest::iterators::Pair<Rule>) -> Node {
         Rule::BinaryExpr => {
             let mut pair = pair.into_inner();
             let lhspair = pair.next().unwrap();
-            let mut lhs = build_ast_from_term(lhspair);
+            // First element can be UnaryExpr or Term (Int/Expr)
+            let mut lhs = match lhspair.as_rule() {
+                Rule::UnaryExpr => {
+                    let mut inner = lhspair.into_inner();
+                    let op = inner.next().unwrap();
+                    let child = inner.next().unwrap();
+                    let child = build_ast_from_term(child);
+                    parse_unary_expr(op, child)
+                }
+                _ => build_ast_from_term(lhspair),
+            };
             let op = pair.next().unwrap();
             let rhspair = pair.next().unwrap();
             let mut rhs = build_ast_from_term(rhspair);
@@ -59,13 +69,8 @@ fn build_ast_from_expr(pair: pest::iterators::Pair<Rule>) -> Node {
 fn build_ast_from_term(pair: pest::iterators::Pair<Rule>) -> Node {
     match pair.as_rule() {
         Rule::Int => {
-            let istr = pair.as_str();
-            let (sign, istr) = match &istr[..1] {
-                "-" => (-1, &istr[1..]),
-                _ => (1, istr),
-            };
-            let int: i32 = istr.parse().unwrap();
-            Node::Int(sign * int)
+            let int: i32 = pair.as_str().parse().unwrap();
+            Node::Int(int)
         }
         Rule::Expr => build_ast_from_expr(pair),
         unknown => panic!("Unknown term: {:?}", unknown),
@@ -188,5 +193,37 @@ mod tests {
                 rhs: Box::new(Node::Int(3)),
             }]
         )
+    }
+
+    #[test]
+    fn negative_first_number() {
+        // Issue #17: First number in expression cannot be negative
+        let result = parse("-1 + 2");
+        assert!(result.is_ok());
+        assert_eq!(
+            result.unwrap(),
+            vec![Node::BinaryExpr {
+                op: Operator::Plus,
+                lhs: Box::new(Node::UnaryExpr {
+                    op: Operator::Minus,
+                    child: Box::new(Node::Int(1))
+                }),
+                rhs: Box::new(Node::Int(2))
+            }]
+        );
+
+        // Also test -2 + 5 = 3
+        let result = parse("-2 + 5");
+        assert!(result.is_ok());
+    }
+
+    #[test]
+    fn whitespace_handling() {
+        // Issue #13: Parser should treat linefeed as whitespace
+        let result = parse("1+2\n");
+        assert!(result.is_ok());
+
+        let result = parse("1 + 2\r\n");
+        assert!(result.is_ok());
     }
 }
