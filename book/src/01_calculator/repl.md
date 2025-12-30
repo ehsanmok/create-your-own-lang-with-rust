@@ -9,16 +9,20 @@ REPL (as its name implies) loops through every line of the input and compiles it
 ```rust,no_run,noplaypen
 {{#include ../../../calculator/src/bin/repl.rs:repl}}
 ```
-<span class="filename">Filename: calculator/src/bin/repl.rs</span>
+
+<a class="filename" href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/calculator/src/bin/repl.rs">calculator/src/bin/repl.rs</a>
 
 Now, we can use run the REPL and choose different compilation path
 
-```
-cargo run --bin repl --features jit
-// OR
+```bash
+# Interpreter (stable Rust)
 cargo run --bin repl --features interpreter
-// OR
+
+# Bytecode VM (stable Rust)
 cargo run --bin repl --features vm
+
+# JIT (requires nightly Rust + LLVM)
+rustup run nightly cargo run --bin repl --features jit
 ```
 
 In any of them, you should see the prompt like
@@ -30,7 +34,7 @@ Calculator prompt. Expressions are line evaluated.
 
 waiting for your inputs. Here are some sample outputs of different compilation paths in debug mode.
 
-*  with `--features jit`
+* with `--features jit`
 
 ```text
 Calculator prompt. Expressions are line evaluated.

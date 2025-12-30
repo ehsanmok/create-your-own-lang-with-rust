@@ -1,0 +1,70 @@
+// Firstlang Grammar - A simple Python-like language
+// Supports: variables, functions, if/else, while, recursion
+
+WHITESPACE = _{ " " | "\t" | NEWLINE }
+COMMENT = _{ "#" ~ (!NEWLINE ~ ANY)* }
+
+// Keywords
+KEYWORD = @{ "def" | "if" | "else" | "while" | "true" | "false" | "return" }
+
+// Identifiers (variable/function names)
+Identifier = @{ !KEYWORD ~ (ASCII_ALPHA | "_") ~ (ASCII_ALPHANUMERIC | "_")* }
+
+// Program is a sequence of statements/expressions
+Program = _{ SOI ~ Stmt* ~ EOI }
+
+// Statements
+Stmt = { Function | SimpleStmt }
+SimpleStmt = _{ (Return | Assignment | Expr) }
+
+// Function definition: def name(params) { body }
+Function = { "def" ~ Identifier ~ "(" ~ Params? ~ ")" ~ Block }
+Params = _{ Identifier ~ ("," ~ Identifier)* }
+
+// Block: { statements }
+Block = { "{" ~ Stmt* ~ "}" }
+
+// Return statement
+Return = { "return" ~ Expr }
+
+// Assignment: x = expr
+Assignment = { Identifier ~ "=" ~ Expr }
+
+// Expressions (ordered by precedence - lowest to highest)
+Expr = { Conditional | WhileLoop | Comparison }
+
+// if (cond) { ... } else { ... }
+Conditional = { "if" ~ "(" ~ Expr ~ ")" ~ Block ~ "else" ~ Block }
+
+// while (cond) { ... }
+WhileLoop = { "while" ~ "(" ~ Expr ~ ")" ~ Block }
+
+// Comparison operators
+Comparison = { Additive ~ (CompOp ~ Additive)* }
+CompOp = { "<=" | ">=" | "<" | ">" | "==" | "!=" }
+
+// Addition/Subtraction
+Additive = { Multiplicative ~ (AddOp ~ Multiplicative)* }
+AddOp = { "+" | "-" }
+
+// Multiplication/Division
+Multiplicative = { Unary ~ (MulOp ~ Unary)* }
+MulOp = { "*" | "/" | "%" }
+
+// Unary operators
+Unary = { UnaryOp ~ Unary | Call }
+UnaryOp = { "-" | "!" }
+
+// Function call: name(args)
+Call = { Primary ~ CallArgs* }
+CallArgs = { "(" ~ Args? ~ ")" }
+Args = _{ Expr ~ ("," ~ Expr)* }
+
+// Primary expressions
+Primary = _{ Literal | Identifier | "(" ~ Expr ~ ")" }
+
+// Literals
+Literal = { Bool | Int }
+Int = @{ ASCII_DIGIT+ }
+Bool = @{ "true" | "false" }
+

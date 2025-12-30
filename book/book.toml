@@ -7,15 +7,30 @@ title = "Create Your Own Programming Language with Rust"
 version = "0.1"
 
 [output.html]
-google-analytics = "UA-168768722-1"
-additional-css = ["theme/custom.css"]
-preferred-dark-theme = "Rust"
+additional-css = ["theme/custom.css", "theme/highlight.css"]
+additional-js = ["theme/force-theme.js"]
+default-theme = "rust"
+git-repository-url = "https://github.com/ehsanmok/create-your-own-lang-with-rust"
+git-repository-icon = "fa-github"
+mathjax-support = true
+smart-punctuation = true
+copy-fonts = true
 
 [output.html.search]
 enable = true
+limit-results = 20
+use-boolean-and = true
+boost-title = 2
+boost-hierarchy = 1
+boost-paragraph = 1
+expand = true
 
-[output.linkcheck]
-optional = true
-follow-web-links = true
-exclude = ['blacklivesmatter\.com']
-warning-policy = "error"
+[output.html.print]
+enable = true
+
+# Uncomment to enable link checking (requires: cargo install mdbook-linkcheck)
+# [output.linkcheck]
+# optional = true
+# follow-web-links = false
+# exclude = ['blacklivesmatter\.com']
+# warning-policy = "warn"

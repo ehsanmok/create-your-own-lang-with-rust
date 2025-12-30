@@ -1,0 +1,118 @@
+[workspace]
+authors = ["ehsanmok <ehsanmok@users.noreply.github.com>"]
+channels = ["conda-forge"]
+name = "create-your-own-lang-with-rust"
+platforms = ["osx-arm64", "linux-64"]
+version = "0.1.0"
+
+[dependencies]
+rust = ">=1.83.0,<2"
+mdbook = ">=0.4.40,<0.5"
+
+# =============================================================================
+# Tasks
+# =============================================================================
+
+[tasks]
+# -----------------------------------------------------------------------------
+# Book tasks
+# -----------------------------------------------------------------------------
+
+# Install mdbook-linkcheck (run once)
+install-linkcheck = "cargo install mdbook-linkcheck"
+
+# Build the book
+book-build = { cmd = "mdbook build", cwd = "book" }
+
+# Run linkcheck on the book
+linkcheck = { cmd = "mdbook build", cwd = "book", depends-on = ["install-linkcheck"] }
+
+# Build and serve the book locally (opens browser)
+book = { cmd = "mdbook serve --open", cwd = "book" }
+
+# -----------------------------------------------------------------------------
+# Test tasks
+# -----------------------------------------------------------------------------
+
+# Run all tests (stable Rust for calculator/firstlang, nightly for secondlang)
+test-calculator = "cargo test -p calculator"
+test-firstlang = "cargo test -p firstlang"
+test-secondlang = "rustup run nightly cargo test -p secondlang"
+
+# Run all tests
+tests = { cmd = "cargo test -p calculator -p firstlang && rustup run nightly cargo test -p secondlang" }
+
+# -----------------------------------------------------------------------------
+# Example tasks
+# -----------------------------------------------------------------------------
+
+# Run calculator example
+example-calculator = "cargo run -p calculator --bin main examples/simple.calc"
+
+# Run firstlang examples
+example-firstlang-fib = "cargo run -p firstlang -- firstlang/examples/fibonacci.fl"
+example-firstlang-factorial = "cargo run -p firstlang -- firstlang/examples/factorial.fl"
+
+# Run secondlang examples (requires nightly)
+example-secondlang-fib = "rustup run nightly cargo run -p secondlang -- secondlang/examples/fibonacci.sl"
+example-secondlang-factorial = "rustup run nightly cargo run -p secondlang -- secondlang/examples/factorial.sl"
+example-secondlang-inference = "rustup run nightly cargo run -p secondlang -- secondlang/examples/inference.sl"
+
+# Run all examples
+examples = """
+cargo run -p calculator --bin main calculator/examples/simple.calc && \
+cargo run -p firstlang -- firstlang/examples/fibonacci.fl && \
+cargo run -p firstlang -- firstlang/examples/factorial.fl && \
+rustup run nightly cargo run -p secondlang -- secondlang/examples/fibonacci.sl && \
+rustup run nightly cargo run -p secondlang -- secondlang/examples/factorial.sl
+"""
+
+# -----------------------------------------------------------------------------
+# Code quality tasks
+# -----------------------------------------------------------------------------
+
+# Check code formatting
+format-check = "cargo fmt --all -- --check"
+
+# Format code
+format = "cargo fmt --all"
+
+# Run clippy lints (stable projects)
+clippy = "cargo clippy -p calculator -p firstlang -- -D warnings"
+
+# Run clippy for secondlang (requires nightly)
+clippy-secondlang = "rustup run nightly cargo clippy -p secondlang -- -D warnings"
+
+# Run all clippy lints
+clippy-all = { cmd = "cargo clippy -p calculator -p firstlang -- -D warnings && rustup run nightly cargo clippy -p secondlang -- -D warnings" }
+
+# Lint: format check + clippy (all projects)
+lint = { cmd = "cargo fmt --all -- --check && cargo clippy -p calculator -p firstlang -- -D warnings && rustup run nightly cargo clippy -p secondlang -- -D warnings" }
+
+# -----------------------------------------------------------------------------
+# Build tasks
+# -----------------------------------------------------------------------------
+
+# Build all projects (stable)
+build = "cargo build -p calculator -p firstlang"
+
+# Build secondlang (requires nightly)
+build-secondlang = "rustup run nightly cargo build -p secondlang"
+
+# Build everything
+build-all = { cmd = "cargo build -p calculator -p firstlang && rustup run nightly cargo build -p secondlang" }
+
+# -----------------------------------------------------------------------------
+# CI task (runs everything)
+# -----------------------------------------------------------------------------
+
+ci = { cmd = """
+cargo fmt --all -- --check && \
+cargo clippy -p calculator -p firstlang -- -D warnings && \
+cargo build -p calculator -p firstlang && \
+cargo test -p calculator -p firstlang && \
+rustup run nightly cargo clippy -p secondlang -- -D warnings && \
+rustup run nightly cargo build -p secondlang && \
+rustup run nightly cargo test -p secondlang && \
+cd book && mdbook build
+""" }

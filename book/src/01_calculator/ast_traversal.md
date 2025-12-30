@@ -12,7 +12,8 @@ Recall how we have interpreted our AST by traversing recursively and evaluating 
 ```rust, no_run, noplaypen
 {{#include ../../../calculator/src/compiler/interpreter.rs:interpreter_recursive}}
 ```
-<span class="filename">Filename: calculator/src/compiler/interpreter.rs</span>
+
+<a class="filename" href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/calculator/src/compiler/interpreter.rs">calculator/src/compiler/interpreter.rs</a>
 
 but instead, we can take advantage of the [inkwell Builder](https://thedan64.github.io/inkwell/inkwell/builder/struct.Builder.html) and recursively traverse our `Calc` AST as follows
 
@@ -25,7 +26,8 @@ and similar to our addition example, we can JIT the builder output
 ```rust, no_run, noplaypen
 {{#include ../../../calculator/src/compiler/jit.rs:jit_ast}}
 ```
-<span class="filename">Filename: calculator/src/compiler/jit.rs</span>
+
+<a class="filename" href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/calculator/src/compiler/jit.rs">calculator/src/compiler/jit.rs</a>
 
 Finally, we can test it
 
@@ -35,6 +37,6 @@ assert_eq!(Jit::from_source("1 + 2").unwrap(), 3)
 
 Run such tests locally with
 
-```text
+```bash
 cargo test jit --tests
 ```

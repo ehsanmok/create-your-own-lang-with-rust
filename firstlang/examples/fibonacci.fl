@@ -1,0 +1,14 @@
+# Fibonacci sequence in Firstlang
+# This demonstrates recursion, conditionals, and arithmetic
+
+def fib(n) {
+    if (n < 2) {
+        return n
+    } else {
+        return fib(n - 1) + fib(n - 2)
+    }
+}
+
+# Calculate the 10th Fibonacci number
+fib(10)
+

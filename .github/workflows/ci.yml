@@ -3,50 +3,62 @@ name: CI
 on:
   pull_request:
   push:
-    branches: [ master ]
+    branches: [master]
 
 env:
   CARGO_TERM_COLOR: always
   RUST_BACKTRACE: 1
 
 jobs:
-  style:
-    name: Style Check
+  ci:
+    name: CI
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Install Rust
-        uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-          override: true
-          components: rustfmt
-
-      - name: cargo fmt --check
-        uses: actions-rs/cargo@v1
-        with:
-          command: fmt
-          args: --all -- --check
-
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
       - name: Install LLVM
         run: |
           wget https://apt.llvm.org/llvm.sh
           chmod +x llvm.sh
-          sudo ./llvm.sh 14
+          sudo ./llvm.sh 20
+          echo "/usr/lib/llvm-20/bin" >> $GITHUB_PATH
 
-      - name: Clippy lint
-        run: |
-          rustup component add clippy && cargo clippy -- -D warnings
+      - name: Setup Pixi
+        uses: prefix-dev/setup-pixi@v0.9.3
+        with:
+          pixi-version: v0.62.0
+          cache: true
 
-      - name: Build
-        run: cargo build --verbose
+      - name: Install nightly Rust (for secondlang)
+        run: rustup toolchain install nightly
 
-      - name: Run tests
-        run: cargo test --tests --verbose
+      - name: Format Check
+        run: pixi run format-check
+
+      - name: Clippy (stable)
+        run: pixi run clippy
+
+      - name: Clippy Secondlang (nightly)
+        run: pixi run clippy-secondlang
+
+      - name: Build (stable)
+        run: pixi run build
+
+      - name: Build Secondlang (nightly)
+        run: pixi run build-secondlang
+
+      - name: Test Calculator
+        run: pixi run test-calculator
+
+      - name: Test Firstlang
+        run: pixi run test-firstlang
+
+      - name: Test Secondlang
+        run: pixi run test-secondlang
+
+      - name: Run Examples
+        run: pixi run examples
+
+      - name: Build Book
+        run: pixi run book-build

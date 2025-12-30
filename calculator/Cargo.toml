@@ -1,18 +1,22 @@
 [package]
 name = "calculator"
-version = "0.0.0"
-authors = ["Ehsan M. Kermani <ehsanmo1367@gmail.com>"]
-edition = "2018"
+version = "0.1.0"
+authors = ["Ehsan M. Kermani <ehsanmok@users.noreply.github.com>"]
+edition = "2021"
+rust-version = "1.70"
+description = "A simple calculator language for learning compiler basics"
 
 [dependencies]
-pest = "2.1"
-pest_derive = "2.1"
+pest = "2.7"
+pest_derive = "2.7"
 anyhow = "1.0"
-inkwell = { git = "https://github.com/TheDan64/inkwell", branch = "master", features = [
-    "llvm14-0",
-] } # use correct feature according to your llvm version
 rustyline = "12.0"
 cfg-if = "1.0"
+# Pin home to exact stable-compatible version (0.5.12 requires edition2024/nightly)
+home = "=0.5.9"
+# LLVM bindings - optional, requires nightly Rust
+# Update feature to match your llvm-config --version
+inkwell = { version = "0.7.1", features = ["llvm20-1"], optional = true }
 
 [lib]
 path = "src/lib.rs"
@@ -27,6 +31,7 @@ name = "repl"
 test = false
 
 [features]
-jit = []
+default = ["interpreter"]
+jit = ["inkwell"]
 interpreter = []
 vm = []

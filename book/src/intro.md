@@ -1,50 +1,122 @@
-> Materials in this book are distributed under the terms of [Creative Commons BY-NC-SA 4.0](https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/LICENSE)
-> <p align="center">
->    <a href><img alt="license" src="./img/by-nc-sa.png" width="250" height="100"> </a>
-> </p>
+<div class="license-notice">
+<p><em>Materials in this book are distributed under the terms of <a href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/LICENSE">Creative Commons BY-NC-SA 4.0</a></em></p>
+<img alt="license" src="./img/by-nc-sa.png">
+</div>
 
-This book assumes some basic knowledge of Rust language. Please take a look at the official [Rust book](https://doc.rust-lang.org/book/).
+This book assumes some basic knowledge of the Rust language. Please take a look at the official [Rust book](https://doc.rust-lang.org/book/).
 
-The accompanying codes and materials for this book are available in [GitHub](https://github.com/ehsanmok/create-your-own-lang-with-rust). To follow along, make sure you have
+The accompanying code and materials for this book are available on [GitHub](https://github.com/ehsanmok/create-your-own-lang-with-rust). To follow along, make sure you have
 
-* [Rust toolchain installed](https://www.rust-lang.org/tools/install)
+* [Rust toolchain installed](https://www.rust-lang.org/tools/install) (stable 1.70+)
 * Cloned the repository
 
-    ```text
+    ```bash
     git clone https://github.com/ehsanmok/create-your-own-lang-with-rust
+    ```
+
+    Then navigate to the project directory:
+
+    ```bash
     cd create-your-own-lang-with-rust
     ```
 
-* LLVM installed to run and test locally `cargo test --tests`
-  * Easiest option is LLVM v14.0 ([Debian/Ubuntu](https://apt.llvm.org/) or [macOS](https://formulae.brew.sh/formula/llvm))
-  * Otherwise, in `Cargo.toml` you'd need to change the `inkwell = { ..., branch = "master", features = ["your-llvm-version"] }` with LLVM version on your system (output of `llvm-config --version`)
+**What works with stable Rust:**
+
+* **Calculator** (interpreter and VM modes) - `cargo run`
+* **Firstlang** (interpreter) - `cargo run`
+
+**What requires nightly Rust + LLVM:**
+
+* **Calculator JIT** - `rustup run nightly cargo run --features jit`
+* **Secondlang** (compiled to native code) - `rustup run nightly cargo run`
+
+To use LLVM features:
+
+* Install nightly: `rustup toolchain install nightly`
+* Install LLVM: macOS (`brew install llvm`), Debian/Ubuntu ([apt.llvm.org](https://apt.llvm.org/))
+* Check your version: `llvm-config --version`
+* Update `Cargo.toml` to match: LLVM 20.x uses `llvm20-1`, LLVM 19.x uses `llvm19-1`, LLVM 18.x uses `llvm18-1`
 
 ## Motivations and Goals
 
-This book arises from my frustration of not finding modern, clear and concise teaching materials that are readily accessible to beginners like me who wants to learn a bit on how to create their own programming language.
+This book arises from my frustration of not finding modern, clear, and concise teaching materials that are readily accessible to beginners like me who want to learn how to create their own programming language.
 
-The following are my guidelines
+The following are my guidelines:
 
 > "If you don't know how *compilers* work, then you don't know how computers work" <sup>[1](http://steve-yegge.blogspot.com/2007/06/rich-programmer-food.html?)</sup>
 
+> "If you can't explain something in simple terms, you don't understand it" <sup>[2](https://skeptics.stackexchange.com/questions/8742/did-einstein-say-if-you-cant-explain-it-simply-you-dont-understand-it-well-en)</sup>
 
-> "If you can’t explain something in simple terms, you don’t understand it" <sup>[2](https://skeptics.stackexchange.com/questions/8742/did-einstein-say-if-you-cant-explain-it-simply-you-dont-understand-it-well-en)</sup>
+<span style="font-family:Trebuchet MS">Pedagogically, one of the most effective methods of teaching is co-creating interactively. Introducing the core aspects around the *simplest example* (here, our calculator language) helps a lot to build knowledge and confidence. For that, we will use mature technologies instead of spending tons of time partially reinventing the wheel and boring the reader.</span>
 
-<span style="font-family:Trebuchet MS"> Pedagogically, one of the most effective methods of teaching is co-creating interactively. Introducing the core aspects around the *simplest example* (here, our calculator language) helps a lot to build knowledge and confidence. For that, we will use mature technologies instead of spending tone of time on partially reinventing-the-wheel and bore the reader.</span>
+## Learning Progression
 
-Here is the outline of the contents
+We build three languages, each building on concepts from the previous:
 
-* [Crash Course on Computing](./crash_course.md) which we briefly set up the definitions and foundations
-* We create our first programming language `Calc` that supports simple integer addition and subtraction. The simplicity allows us to touch a lot of important topics. We will use [PEG](https://en.wikipedia.org/wiki/Parsing_expression_grammar) to define our grammar, [pest](https://bitbegin.github.io/pest-rs/) to generate our `CalcParser` and explain what AST is and interpreting the AST means. Next, we will introduce JIT compilation and use [inkwell](https://github.com/TheDan64/inkwell) to JIT compile our `Calc` language from its AST. To show an alternative compilation approach, we will create a Virtual Machine and a Runtime environment and discuss its features. Finally, we will write a simple REPL for our `Calc` language and test out different execution paths.
-* TODO: We will create `Firstlang`, a statically typed language, by gradually working our way up from our `Calc`
-* TODO: Object system and minimal object oriented programming support
-* TENTATIVE: Create a mini standard library
-* TODO: Resources
+| Language | Grammar | New Concepts | Execution |
+|----------|---------|--------------|-----------|
+| **Calculator** | 18 lines | PEG basics, AST, operators | Interpreter, VM, JIT |
+| **Firstlang** | 70 lines | Variables, functions, control flow, recursion | Tree-walking interpreter |
+| **Secondlang** | 77 lines | Types, type inference, optimization passes | LLVM JIT compilation |
+
+### Part I: Calculator
+
+We start with the *simplest possible language*: integer arithmetic with `+` and `-`. The grammar fits in 18 lines:
+
+```text
+Program = _{ SOI ~ Expr ~ EOF }
+Expr = { UnaryExpr | BinaryExpr | Term }
+Term = _{Int | "(" ~ Expr ~ ")" }
+...
+```
+
+This minimal language lets us focus on the fundamentals without distraction: what is a grammar? How does pest generate a parser? What is an AST? We also explore *three different backends* (interpreter, bytecode VM, JIT) to show that the same AST can be executed in multiple ways.
+
+### Part II: Firstlang
+
+With the basics understood, we add the features that make a *real* programming language. The grammar grows to 70 lines, adding:
+
+```text
+// New: Statements instead of just expressions
+Stmt = { Function | Return | Assignment | Expr }
+
+// New: Functions with parameters
+Function = { "def" ~ Identifier ~ "(" ~ Params? ~ ")" ~ Block }
+
+// New: Control flow
+Conditional = { "if" ~ "(" ~ Expr ~ ")" ~ Block ~ "else" ~ Block }
+WhileLoop = { "while" ~ "(" ~ Expr ~ ")" ~ Block }
+```
+
+We focus on a single backend (tree-walking interpreter) to deeply understand scoping, call stacks, and recursion. The culminating example is computing Fibonacci recursively.
+
+### Part III: Secondlang
+
+Finally, we add *static types* and compile to native code. The grammar changes are minimal (just 7 more lines), but the compiler grows significantly:
+
+```text
+// New: Type annotations
+Type = { IntType | BoolType }
+TypedParam = { Identifier ~ ":" ~ Type }
+ReturnType = { "->" ~ Type }
+
+// Modified: Functions now have types
+Function = { "def" ~ Identifier ~ "(" ~ TypedParams? ~ ")" ~ ReturnType? ~ Block }
+```
+
+This demonstrates a key insight: types are primarily a *semantic* addition, not a syntactic one. The grammar changes are small, but we need new compiler phases (type checking, type inference) and can now generate efficient native code via LLVM.
+
+## Outline
+
+* [Crash Course on Computing](./crash_course.md) where we briefly set up definitions and foundations
+* [**Calculator**](./01_calculator/calc_intro.md): Our first language supporting simple integer addition and subtraction. We use [PEG](https://en.wikipedia.org/wiki/Parsing_expression_grammar) to define our grammar, [pest](https://pest.rs/) to generate the parser, and explore AST interpretation, JIT compilation with [inkwell](https://github.com/TheDan64/inkwell), and a bytecode VM
+* [**Firstlang**](./02_firstlang/intro.md): An interpreted language with variables, functions, control flow, and recursion. We implement [Fibonacci](./02_firstlang/fibonacci.md) as the culminating example
+* [**Secondlang**](./03_secondlang/intro.md): A statically typed language that compiles to native code via LLVM. We add [type annotations](./03_secondlang/annotations.md), [type inference](./03_secondlang/inference.md), AST [optimization passes](./03_secondlang/optimizations.md) with the visitor pattern, and [JIT compilation](./03_secondlang/jit_fibonacci.md)
 
 ## Donation
 
 If you have found this book useful, please consider donating to any of the organizations below
 
-* [Child Foundation](https://www.childfoundation.org/page/donate)
+* [Child Foundation](https://childfoundation.org/)
 * [Black Lives Matter](https://blacklivesmatter.com/)
 * [Food Bank of Canada](https://www.foodbankscanada.ca/)

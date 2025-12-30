@@ -60,7 +60,7 @@ impl<'a> RecursiveBuilder<'a> {
     pub fn new(i32_type: IntType<'a>, builder: &'a Builder) -> Self {
         Self { i32_type, builder }
     }
-    pub fn build(&self, ast: &Node) -> IntValue {
+    pub fn build(&self, ast: &Node) -> IntValue<'a> {
         match ast {
             Node::Int(n) => self.i32_type.const_int(*n as u64, true),
             Node::UnaryExpr { op, child } => {

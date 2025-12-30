@@ -8,6 +8,8 @@ JIT compilation is a combination of Ahead-Of-Time (AOT) compilation and interpre
 
 We will use [inkwell](https://github.com/TheDan64/inkwell) which provides a safe Rust wrapper around LLVM.
 
+**Note**: The JIT examples in this chapter require nightly Rust and LLVM installed. The interpreter and VM examples work with stable Rust.
+
 ### Alternatives
 
 Other code generators that you can use (see the [exercises](./exercise.md)) in this book (not at mature as LLVM) are [cratelift-simpljit](https://docs.rs/cranelift-simplejit/0.64.0/cranelift_simplejit/index.html) and [gcc-jit](https://github.com/swgillespie/gccjit.rs).

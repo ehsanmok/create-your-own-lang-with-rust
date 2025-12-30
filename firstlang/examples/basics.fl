@@ -1,0 +1,27 @@
+# Basic Firstlang examples
+
+# Variables
+x = 10
+y = 20
+
+# Arithmetic
+sum = x + y
+diff = x - y
+prod = x * y
+
+# Comparisons
+is_less = x < y
+is_equal = x == 10
+
+# Functions
+def double(n) {
+    return n * 2
+}
+
+def add(a, b) {
+    return a + b
+}
+
+# Function calls
+add(double(5), 3)
+

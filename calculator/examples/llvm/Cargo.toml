@@ -1,8 +1,11 @@
 [package]
 name = "llvm"
-version = "0.0.0"
-authors = ["ehsanmok <ehsanmo1367@gmail.com>"]
-edition = "2018"
+version = "0.1.0"
+authors = ["Ehsan M. Kermani <ehsanmok@users.noreply.github.com>"]
+edition = "2021"
+rust-version = "1.70"
+description = "LLVM example for calculator"
 
 [dependencies]
-inkwell = { git = "https://github.com/TheDan64/inkwell", branch = "master", features = ["llvm14-0"] }
+# LLVM bindings - requires nightly Rust
+inkwell = { version = "0.7.1", features = ["llvm20-1"] }

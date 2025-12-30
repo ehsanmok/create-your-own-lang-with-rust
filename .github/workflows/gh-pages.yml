@@ -9,17 +9,20 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - name: Setup mdBook
-        uses: peaceiris/actions-mdbook@v1
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Pixi
+        uses: prefix-dev/setup-pixi@v0.9.3
         with:
-          mdbook-version: 'latest'
+          pixi-version: v0.62.0
+          cache: true
 
-      # - name: Link check
-      #   run: cargo install mdbook-linkcheck
+      - name: Install mdbook-linkcheck
+        run: pixi run install-linkcheck
 
-      - name: Build
-        run: cd book && mdbook build
+      - name: Build Book
+        run: pixi run book-build
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3

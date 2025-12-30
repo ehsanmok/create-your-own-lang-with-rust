@@ -1,16 +1,18 @@
-##  Addition
-
+## Addition
 
 ### Setup
 
-The code is available in [`calculator/examples/llvm/src/main.rs`](https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/calculator/examples/llvm/src/main.rs). Because my `llvm-config --version` shows `14.0.6` so I'm using `features = ["llvm14-0"]` in inkwell
+The code is available in [`calculator/examples/llvm/src/main.rs`](https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/calculator/examples/llvm/src/main.rs). Update the `inkwell` feature flag to match your LLVM version (check with `llvm-config --version`):
 
-```text
-inkwell = { git = "https://github.com/TheDan64/inkwell", branch = "master", features = ["llvm14-0"] }
+```toml
+inkwell = { version = "0.7.1", features = ["llvm20-1"] }  # For LLVM 20.x
 ```
 
-Go to [`calculator/examples/llvm`](https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/calculator/examples/llvm/) sub-crate and `cargo run`.
+This example requires nightly Rust. Go to [`calculator/examples/llvm`](https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/calculator/examples/llvm/) sub-crate and run:
 
+```bash
+rustup run nightly cargo run
+```
 
 ### Add Function
 
@@ -30,20 +32,20 @@ Here is how to *stitch* our add function in LLVM
 {{#include ../../../calculator/examples/llvm/src/main.rs:first}}
 ```
 
-2. We define the signature of `add(i32, i32) -> i32`, add the function to our module, create a [basic block](https://thedan64.github.io/inkwell/inkwell/basic_block/index.html) entry point and a builder to add later parts
+1. We define the signature of `add(i32, i32) -> i32`, add the function to our module, create a [basic block](https://thedan64.github.io/inkwell/inkwell/basic_block/index.html) entry point and a builder to add later parts
 
 ```rust,ignore
 
 {{#include ../../../calculator/examples/llvm/src/main.rs:second}}
 ```
 
-3. We create the arguments `x` and `y` and add them to the `builder` to make up the return instruction
+1. We create the arguments `x` and `y` and add them to the `builder` to make up the return instruction
 
 ```rust,ignore
 {{#include ../../../calculator/examples/llvm/src/main.rs:third}}
 ```
 
-4. Finally, we create a JIT execution engine (with no optimization for now) and let LLVM handle rest of the work for us
+1. Finally, we create a JIT execution engine (with no optimization for now) and let LLVM handle rest of the work for us
 
 ```rust,ignore
 {{#include ../../../calculator/examples/llvm/src/main.rs:fourth}}

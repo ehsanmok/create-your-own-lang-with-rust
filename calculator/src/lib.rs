@@ -4,6 +4,7 @@ pub mod parser;
 
 pub use crate::ast::{Node, Operator};
 pub use crate::compiler::interpreter::Interpreter;
+#[cfg(feature = "jit")]
 pub use crate::compiler::jit::Jit;
 pub use crate::compiler::vm::{self, vm::VM};
 
