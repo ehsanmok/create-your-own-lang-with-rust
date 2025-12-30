@@ -194,19 +194,20 @@
 <p>Here is how the grammar for our simple calculator language <code>Calc</code> (supporting addition and subtraction) looks in PEG:</p>
 <pre><code class="language-text">Program = _{ SOI ~ Expr ~ EOF }
 
-Expr = { UnaryExpr | BinaryExpr | Term }
+Expr = { BinaryExpr | UnaryExpr | Term }
 
-Term = _{Int | "(" ~ Expr ~ ")" }
+Term = _{ Int | "(" ~ Expr ~ ")" }
 
 UnaryExpr = { Operator ~ Term }
 
-BinaryExpr = { Term ~ (Operator ~ Term)+ }
+// Allow expressions to start with a unary expression (e.g., -1 + 2)
+BinaryExpr = { (UnaryExpr | Term) ~ (Operator ~ Term)+ }
 
 Operator = { "+" | "-" }
 
-Int = @{ Operator? ~ ASCII_DIGIT+ }
+Int = @{ ASCII_DIGIT+ }
 
-WHITESPACE = _{ " " | "\t" }
+WHITESPACE = _{ " " | "\t" | "\r" | "\n" }
 
 EOF = _{ EOI | ";" }
 </code></pre>
@@ -214,9 +215,11 @@ EOF = _{ EOI | ";" }
 <p>This grammar basically defines the syntax and semantics where</p>
 <ul>
 <li>each <code>Program</code> consists of expressions (<code>Expr</code>)</li>
-<li>expressions are either unary (<code>-1</code>) or binary (<code>1 + 2</code>)</li>
-<li>unary or binary expressions are made of <code>Term</code> and <code>Operator</code> (<code>"+"</code> and <code>"-"</code>)</li>
+<li>expressions are either unary (<code>-1</code>), binary (<code>1 + 2</code>), or a simple term</li>
+<li>binary expressions can start with a unary expression (e.g., <code>-1 + 2</code>)</li>
+<li>unary and binary expressions are made of <code>Term</code> and <code>Operator</code> (<code>"+"</code> and <code>"-"</code>)</li>
 <li>the only <em>atom</em> is integer <code>Int</code></li>
+<li><code>WHITESPACE</code> includes spaces, tabs, and newlines for flexible formatting</li>
 </ul>
 <p>Given our grammar, we will use <a href="https://pest.rs/">pest</a>, which is a powerful <em>parser generator</em> for PEG grammars. (For more details on pest, check out the <a href="https://pest.rs/book/">pest book</a>.)</p>
 <p><code>pest</code> <em>derives</em> the parser <code>CalcParser::parse</code> from our grammar</p>

@@ -196,15 +196,19 @@
         let readline = rl.readline("&gt;&gt; ");
         match readline {
             Ok(line) =&gt; {
+                let line = line.trim();
+                if line.is_empty() {
+                    continue;
+                }
                 cfg_if! {
                     if #[cfg(any(feature = "jit", feature = "interpreter"))] {
-                        match Engine::from_source(&amp;line) {
+                        match Engine::from_source(line) {
                             Ok(result) =&gt; println!("{}", result),
                             Err(e) =&gt; eprintln!("{}", e),
                         };
                     }
                     else if #[cfg(feature = "vm")] {
-                        let byte_code = Engine::from_source(&amp;line);
+                        let byte_code = Engine::from_source(line);
                         println!("byte code: {:?}", byte_code);
                         let mut vm = VM::new(byte_code);
                         vm.run();
@@ -256,6 +260,15 @@ entry:
 }
 
 3
+&gt;&gt; -2 + 5
+Compiling the source: -2 + 5
+[BinaryExpr { op: Plus, lhs: UnaryExpr { op: Minus, child: Int(2) }, rhs: Int(5) }]
+Generated LLVM IR: define i32 @jit() {
+entry:
+  ret i32 3
+}
+
+3
 &gt;&gt; (1 + 2) - (8 - 10)
 Compiling the source: (1 + 2) - (8 - 10)
 [BinaryExpr { op: Minus, lhs: BinaryExpr { op: Plus, lhs: Int(1), rhs: Int(2) }, rhs: BinaryExpr { op: Minus, lhs: Int(8), rhs: Int(10) } }]
@@ -301,8 +314,9 @@ CTRL-C
 </code></pre>
 <h2 id="conclusion"><a class="header" href="#conclusion">Conclusion</a></h2>
 <p>This concludes our <a href="./calc_intro.html">Calculator</a> chapter. We took advantage of the simplicity of our <code>Calc</code> language to touch on a lot of topics.</p>
+<p>Note that our Calculator grammar is intentionally simple. It handles basic cases like negative first numbers (<code>-1 + 2</code>) and flexible whitespace, but it doesn’t have proper operator precedence. In the next chapter, we’ll see how <a href="../02_firstlang/intro.html">Firstlang</a> builds a more sophisticated grammar with proper operator precedence and multiple expression types.</p>
 <p>Thanks for following along and reading up this far!</p>
-<p>Stay tuned for the next chapter where we gradually work our way up to create a statically typed language named creatively as <strong>Firstlang</strong> :D</p>
+<p>Stay tuned for the next chapter where we gradually work our way up to create a dynamically typed language named creatively as <strong>Firstlang</strong> :D</p>
 
                     </main>
 

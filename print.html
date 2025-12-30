@@ -391,19 +391,20 @@ WHITESPACE = _{ " " | "\t" | "\n" }   // Whitespace is silent (ignored)
 <p>Here is how the grammar for our simple calculator language <code>Calc</code> (supporting addition and subtraction) looks in PEG:</p>
 <pre><code class="language-text">Program = _{ SOI ~ Expr ~ EOF }
 
-Expr = { UnaryExpr | BinaryExpr | Term }
+Expr = { BinaryExpr | UnaryExpr | Term }
 
-Term = _{Int | "(" ~ Expr ~ ")" }
+Term = _{ Int | "(" ~ Expr ~ ")" }
 
 UnaryExpr = { Operator ~ Term }
 
-BinaryExpr = { Term ~ (Operator ~ Term)+ }
+// Allow expressions to start with a unary expression (e.g., -1 + 2)
+BinaryExpr = { (UnaryExpr | Term) ~ (Operator ~ Term)+ }
 
 Operator = { "+" | "-" }
 
-Int = @{ Operator? ~ ASCII_DIGIT+ }
+Int = @{ ASCII_DIGIT+ }
 
-WHITESPACE = _{ " " | "\t" }
+WHITESPACE = _{ " " | "\t" | "\r" | "\n" }
 
 EOF = _{ EOI | ";" }
 </code></pre>
@@ -411,9 +412,11 @@ EOF = _{ EOI | ";" }
 <p>This grammar basically defines the syntax and semantics where</p>
 <ul>
 <li>each <code>Program</code> consists of expressions (<code>Expr</code>)</li>
-<li>expressions are either unary (<code>-1</code>) or binary (<code>1 + 2</code>)</li>
-<li>unary or binary expressions are made of <code>Term</code> and <code>Operator</code> (<code>"+"</code> and <code>"-"</code>)</li>
+<li>expressions are either unary (<code>-1</code>), binary (<code>1 + 2</code>), or a simple term</li>
+<li>binary expressions can start with a unary expression (e.g., <code>-1 + 2</code>)</li>
+<li>unary and binary expressions are made of <code>Term</code> and <code>Operator</code> (<code>"+"</code> and <code>"-"</code>)</li>
 <li>the only <em>atom</em> is integer <code>Int</code></li>
+<li><code>WHITESPACE</code> includes spaces, tabs, and newlines for flexible formatting</li>
 </ul>
 <p>Given our grammar, we will use <a href="https://pest.rs/">pest</a>, which is a powerful <em>parser generator</em> for PEG grammars. (For more details on pest, check out the <a href="https://pest.rs/book/">pest book</a>.)</p>
 <p><code>pest</code> <em>derives</em> the parser <code>CalcParser::parse</code> from our grammar</p>
@@ -927,15 +930,19 @@ println!("{}", vm.pop_last());</code></pre>
         let readline = rl.readline("&gt;&gt; ");
         match readline {
             Ok(line) =&gt; {
+                let line = line.trim();
+                if line.is_empty() {
+                    continue;
+                }
                 cfg_if! {
                     if #[cfg(any(feature = "jit", feature = "interpreter"))] {
-                        match Engine::from_source(&amp;line) {
+                        match Engine::from_source(line) {
                             Ok(result) =&gt; println!("{}", result),
                             Err(e) =&gt; eprintln!("{}", e),
                         };
                     }
                     else if #[cfg(feature = "vm")] {
-                        let byte_code = Engine::from_source(&amp;line);
+                        let byte_code = Engine::from_source(line);
                         println!("byte code: {:?}", byte_code);
                         let mut vm = VM::new(byte_code);
                         vm.run();
@@ -987,6 +994,15 @@ entry:
 }
 
 3
+&gt;&gt; -2 + 5
+Compiling the source: -2 + 5
+[BinaryExpr { op: Plus, lhs: UnaryExpr { op: Minus, child: Int(2) }, rhs: Int(5) }]
+Generated LLVM IR: define i32 @jit() {
+entry:
+  ret i32 3
+}
+
+3
 &gt;&gt; (1 + 2) - (8 - 10)
 Compiling the source: (1 + 2) - (8 - 10)
 [BinaryExpr { op: Minus, lhs: BinaryExpr { op: Plus, lhs: Int(1), rhs: Int(2) }, rhs: BinaryExpr { op: Minus, lhs: Int(8), rhs: Int(10) } }]
@@ -1032,8 +1048,9 @@ CTRL-C
 </code></pre>
 <h2 id="conclusion-1"><a class="header" href="#conclusion-1">Conclusion</a></h2>
 <p>This concludes our <a href="01_calculator/./calc_intro.html">Calculator</a> chapter. We took advantage of the simplicity of our <code>Calc</code> language to touch on a lot of topics.</p>
+<p>Note that our Calculator grammar is intentionally simple. It handles basic cases like negative first numbers (<code>-1 + 2</code>) and flexible whitespace, but it doesn’t have proper operator precedence. In the next chapter, we’ll see how <a href="01_calculator/../02_firstlang/intro.html">Firstlang</a> builds a more sophisticated grammar with proper operator precedence and multiple expression types.</p>
 <p>Thanks for following along and reading up this far!</p>
-<p>Stay tuned for the next chapter where we gradually work our way up to create a statically typed language named creatively as <strong>Firstlang</strong> :D</p>
+<p>Stay tuned for the next chapter where we gradually work our way up to create a dynamically typed language named creatively as <strong>Firstlang</strong> :D</p>
 <div style="break-before: page; page-break-before: always;"></div><h2 id="exercise"><a class="header" href="#exercise">Exercise</a></h2>
 <p>To get most out of this chapter, it is recommended to at least try the first exercise below</p>
 <ol>
