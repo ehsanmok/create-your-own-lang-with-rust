@@ -17,11 +17,13 @@ The book teaches programming language implementation through three progressively
 | **Secondlang** | Static | LLVM JIT | nightly (LLVM) |
 
 ```
-├── calculator/     # Simple arithmetic language
-├── firstlang/      # Interpreted language with recursion
-├── secondlang/     # Typed language with LLVM backend
+├── calculator/     # Simple arithmetic language (see calculator/README.md)
+├── firstlang/      # Interpreted language with recursion (see firstlang/README.md)
+├── secondlang/     # Typed language with LLVM backend (see secondlang/README.md)
 └── book/           # mdbook source
 ```
+
+Each language has its own README with detailed instructions for running examples and tests.
 
 ## Quick Start
 

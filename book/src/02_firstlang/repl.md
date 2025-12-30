@@ -115,3 +115,71 @@ Runtime error: Division by zero
 ```
 
 The REPL is your best friend for experimenting with the language! Try computing [Fibonacci](./fibonacci.md) interactively.
+
+## Running Examples
+
+Firstlang comes with several example programs demonstrating different features.
+
+### Fibonacci Sequence
+
+```bash
+cargo run -- examples/fibonacci.fl
+```
+
+Expected output: `55`
+
+### Factorial
+
+```bash
+cargo run -- examples/factorial.fl
+```
+
+Expected output: `120`
+
+### Basics
+
+```bash
+cargo run -- examples/basics.fl
+```
+
+This demonstrates variables, functions, conditionals, and loops.
+
+### All Examples
+
+```bash
+for file in examples/*.fl; do
+    echo "Running $file..."
+    cargo run -- "$file"
+done
+```
+
+## Running Tests
+
+Firstlang has comprehensive integration tests covering:
+
+- Variables and assignments
+- Functions with parameters
+- Recursion (Fibonacci, factorial)
+- Control flow (if/else, while)
+- Type errors
+- Undefined variables and functions
+
+Run all tests:
+
+```bash
+cargo test
+```
+
+Run a specific test:
+
+```bash
+cargo test test_fibonacci_recursive
+```
+
+Run tests with verbose output:
+
+```bash
+cargo test -- --nocapture
+```
+
+The tests are in `tests/integration_tests.rs` and serve as examples of what the language can do.

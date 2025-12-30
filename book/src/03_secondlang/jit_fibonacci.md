@@ -118,7 +118,17 @@ You can see:
 - All the loads and stores for local variables
 - The branching for the if/else
 
-## More Examples
+## Running All Examples
+
+Secondlang comes with several examples demonstrating different features:
+
+### Basics with Types
+
+```bash
+rustup run nightly cargo run -- examples/basics.sl
+```
+
+Shows typed variables, functions, and control flow.
 
 ### Factorial
 
@@ -131,19 +141,20 @@ def factorial(n: int) -> int {
     }
 }
 
-factorial(20)
+factorial(10)
 ```
 
 ```bash
 rustup run nightly cargo run -- examples/factorial.sl
-2432902008176640000
 ```
 
-### Type Inference
+Expected output: `3628800`
 
-This example shows the compiler inferring types automatically:
+### Type Inference Showcase
 
-```rust
+The `inference.sl` example demonstrates the compiler inferring types automatically:
+
+```python
 def complex_calc(x: int) -> int {
     a = x + 1           # int (inferred from x + literal)
     b = a * a           # int (inferred from int * int)
@@ -161,8 +172,54 @@ complex_calc(10)
 
 ```bash
 rustup run nightly cargo run -- examples/inference.sl
-111
 ```
+
+Expected output: `111`
+
+### Run All Examples
+
+```bash
+for file in examples/*.sl; do
+    echo "Running $file..."
+    rustup run nightly cargo run -- "$file"
+done
+```
+
+## Running Tests
+
+Secondlang has comprehensive integration tests covering all compiler stages:
+
+- **Parsing**: Grammar validation
+- **Type Checking**: Type inference and error detection
+- **Code Generation**: LLVM IR generation
+- **JIT Execution**: Running compiled code
+
+Run all tests:
+
+```bash
+rustup run nightly cargo test
+```
+
+Run a specific test:
+
+```bash
+rustup run nightly cargo test test_jit_fibonacci
+```
+
+Run tests with verbose output:
+
+```bash
+rustup run nightly cargo test -- --nocapture
+```
+
+The tests are in `tests/integration_tests.rs` and cover:
+
+- Arithmetic operations
+- Conditionals and loops
+- Recursion (Fibonacci, factorial, GCD)
+- Type inference
+- Type errors (caught at compile time)
+- Function calls
 
 ## What We Built
 
