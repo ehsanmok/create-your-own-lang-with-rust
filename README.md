@@ -1,7 +1,7 @@
 # Create your own programming language with Rust
 
-![Github Pages](https://github.com/ehsanmok/create-your-own-lang-with-rust/workflows/Github%20Pages/badge.svg?branch=master)
-![CI](https://github.com/ehsanmok/create-your-own-lang-with-rust/workflows/CI/badge.svg?branch=master)
+[![CI](https://github.com/ehsanmok/create-your-own-lang-with-rust/actions/workflows/ci.yml/badge.svg)](https://github.com/ehsanmok/create-your-own-lang-with-rust/actions/workflows/ci.yml)
+[![Github Pages](https://github.com/ehsanmok/create-your-own-lang-with-rust/actions/workflows/gh-pages.yml/badge.svg)](https://github.com/ehsanmok/create-your-own-lang-with-rust/actions/workflows/gh-pages.yml)
 
 This repository contains the codes and the contents for [createlang.rs](https://createlang.rs)
 
