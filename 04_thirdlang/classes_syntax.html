@@ -1,0 +1,756 @@
+<!DOCTYPE HTML>
+<html lang="en" class="rust sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Class Syntax and Parsing - Create Your Own Programming Language with Rust</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/custom.css">
+        <link rel="stylesheet" href="../theme/highlight.css">
+
+        <!-- MathJax -->
+        <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "rust";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('rust')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Create Your Own Programming Language with Rust</h1>
+
+                    <div class="right-buttons">
+                        <a href="https://github.com/ehsanmok/create-your-own-lang-with-rust" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="class-syntax-and-parsing"><a class="header" href="#class-syntax-and-parsing">Class Syntax and Parsing</a></h1>
+<p>Now that we understand <a href="why_classes.html">why we want classes</a>, let us see how to add them to our language. The grammar changes are significant but follow patterns we have seen before in <a href="../03_secondlang/annotations.html">Secondlang’s grammar</a>.</p>
+<p>If the PEG syntax looks unfamiliar, review the <a href="../crash_course.html#peg-and-pest-syntax">PEG and pest Syntax</a> section in the Crash Course.</p>
+<h2 id="new-grammar-rules"><a class="header" href="#new-grammar-rules">New Grammar Rules</a></h2>
+<h3 id="types-adding-class-types"><a class="header" href="#types-adding-class-types">Types: Adding Class Types</a></h3>
+<p>In Secondlang, types were just <code>int</code> or <code>bool</code>. Now any class name is also a type:</p>
+<pre><code class="language-text">// Types - now includes class types
+Type = { IntType | BoolType | ClassType }
+IntType = { "int" }
+BoolType = { "bool" }
+ClassType = { Identifier }  // Class name as type
+</code></pre>
+<p><a class="filename" href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/thirdlang/src/grammar.pest">thirdlang/src/grammar.pest</a></p>
+<p>The <code>ClassType</code> rule matches any identifier. When we see <code>Point</code> in a type position, we now parse it as a class type. The type checker (later) verifies that a class with that name actually exists.</p>
+<h3 id="class-definition"><a class="header" href="#class-definition">Class Definition</a></h3>
+<p>Here is the grammar for class definitions:</p>
+<pre><code class="language-text">// =============================================================================
+// Class Definition
+// =============================================================================
+// class Point {
+//     x: int
+//     y: int
+//
+//     def __init__(self, x: int, y: int) {
+//         self.x = x
+//         self.y = y
+//     }
+//
+//     def distance(self, other: Point) -&gt; int {
+//         dx = self.x - other.x
+//         return dx * dx
+//     }
+//
+//     def __del__(self) { }
+// }
+
+ClassDef = { "class" ~ Identifier ~ "{" ~ ClassBody ~ "}" }
+ClassBody = { (FieldDef | MethodDef)* }
+
+// Field definition: x: int
+FieldDef = { Identifier ~ ":" ~ Type }
+
+// Method definition: def name(self, params) -&gt; type { body }
+// First parameter must be 'self'
+MethodDef = { "def" ~ Identifier ~ "(" ~ SelfParam ~ MethodParams? ~ ")" ~ ReturnType? ~ Block }
+SelfParam = { "self" }
+MethodParams = _{ "," ~ TypedParam ~ ("," ~ TypedParam)* }
+</code></pre>
+<p><a class="filename" href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/thirdlang/src/grammar.pest">thirdlang/src/grammar.pest</a></p>
+<p>Let us break this down:</p>
+<ul>
+<li><strong>ClassDef</strong> - The whole class: <code>class Name { body }</code></li>
+<li><strong>ClassBody</strong> - Zero or more fields and methods</li>
+<li><strong>FieldDef</strong> - A field declaration: <code>name: type</code></li>
+<li><strong>MethodDef</strong> - A method: <code>def name(self, params) -&gt; type { body }</code></li>
+<li><strong>SelfParam</strong> - The literal <code>self</code> keyword</li>
+<li><strong>MethodParams</strong> - Additional parameters after <code>self</code></li>
+</ul>
+<p>The key difference from regular functions: methods <em>must</em> have <code>self</code> as their first parameter.</p>
+<h3 id="object-creation-with-new"><a class="header" href="#object-creation-with-new">Object Creation with New</a></h3>
+<pre><code class="language-text">// new Point(1, 2)
+NewExpr = { "new" ~ Identifier ~ "(" ~ Args? ~ ")" }
+</code></pre>
+<p><a class="filename" href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/thirdlang/src/grammar.pest">thirdlang/src/grammar.pest</a></p>
+<p>The <code>new</code> keyword followed by a class name and constructor arguments. This allocates memory and calls <code>__init__</code>.</p>
+<h3 id="object-deletion"><a class="header" href="#object-deletion">Object Deletion</a></h3>
+<pre><code class="language-text">// Delete statement: delete obj
+Delete = { "delete" ~ Expr }
+</code></pre>
+<p><a class="filename" href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/thirdlang/src/grammar.pest">thirdlang/src/grammar.pest</a></p>
+<p>The <code>delete</code> statement takes an expression (which should evaluate to an object) and frees its memory.</p>
+<h3 id="field-access-and-method-calls"><a class="header" href="#field-access-and-method-calls">Field Access and Method Calls</a></h3>
+<pre><code class="language-text">// Postfix: field access and method calls
+Postfix = { Primary ~ PostfixOp* }
+PostfixOp = { MethodCall | FieldAccessOp }
+MethodCall = { "." ~ Identifier ~ "(" ~ Args? ~ ")" }
+FieldAccessOp = { "." ~ Identifier }
+
+// For assignment target parsing
+FieldAccess = { (SelfKeyword | Identifier) ~ ("." ~ Identifier)+ }
+SelfKeyword = { "self" }
+</code></pre>
+<p><a class="filename" href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/thirdlang/src/grammar.pest">thirdlang/src/grammar.pest</a></p>
+<p>Postfix operations handle:</p>
+<ul>
+<li><strong>Field access</strong>: <code>obj.field</code> - read a field</li>
+<li><strong>Method calls</strong>: <code>obj.method(args)</code> - call a method</li>
+</ul>
+<p>The <code>PostfixOp*</code> means zero or more, allowing chaining: <code>a.b.c.method()</code>.</p>
+<h2 id="the-typed-ast"><a class="header" href="#the-typed-ast">The Typed AST</a></h2>
+<h3 id="top-level-items"><a class="header" href="#top-level-items">Top-Level Items</a></h3>
+<p>Programs now contain both classes and statements:</p>
+<pre><code class="language-rust ignore">/// Top-level items in a program
+#[derive(Debug, Clone, PartialEq)]
+pub enum TopLevel {
+    /// Class definition
+    Class(ClassDef),
+    /// Statement (function definition or expression)
+    Stmt(Stmt),
+}</code></pre>
+<p><a class="filename" href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/thirdlang/src/ast.rs">thirdlang/src/ast.rs</a></p>
+<p>A program is now <code>Vec&lt;TopLevel&gt;</code> instead of <code>Vec&lt;Stmt&gt;</code>. Each top-level item is either a class definition or a statement.</p>
+<h3 id="class-definition-ast"><a class="header" href="#class-definition-ast">Class Definition AST</a></h3>
+<pre><code class="language-rust ignore">/// Class definition
+#[derive(Debug, Clone, PartialEq)]
+pub struct ClassDef {
+    /// Class name
+    pub name: String,
+    /// Field definitions (in order)
+    pub fields: Vec&lt;FieldDef&gt;,
+    /// Method definitions
+    pub methods: Vec&lt;MethodDef&gt;,
+}
+
+/// Field definition
+#[derive(Debug, Clone, PartialEq)]
+pub struct FieldDef {
+    pub name: String,
+    pub ty: Type,
+}
+
+/// Method definition
+#[derive(Debug, Clone, PartialEq)]
+pub struct MethodDef {
+    /// Method name (e.g., "__init__", "__del__", "distance")
+    pub name: String,
+    /// Parameters (excluding self)
+    pub params: Vec&lt;(String, Type)&gt;,
+    /// Return type
+    pub return_type: Type,
+    /// Method body
+    pub body: Vec&lt;Stmt&gt;,
+}
+
+impl MethodDef {
+    pub fn is_constructor(&amp;self) -&gt; bool {
+        self.name == "__init__"
+    }
+
+    pub fn is_destructor(&amp;self) -&gt; bool {
+        self.name == "__del__"
+    }
+}</code></pre>
+<p><a class="filename" href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/thirdlang/src/ast.rs">thirdlang/src/ast.rs</a></p>
+<p>The <code>ClassDef</code> struct contains:</p>
+<ul>
+<li><strong>name</strong> - The class name (e.g., <code>"Point"</code>)</li>
+<li><strong>fields</strong> - List of field definitions</li>
+<li><strong>methods</strong> - List of method definitions</li>
+</ul>
+<p>Each <code>FieldDef</code> has a name and type. Each <code>MethodDef</code> is like a function but with <code>self</code> implied.</p>
+<h3 id="statements-with-delete"><a class="header" href="#statements-with-delete">Statements with Delete</a></h3>
+<pre><code class="language-rust ignore">/// Statements in our language
+#[derive(Debug, Clone, PartialEq)]
+pub enum Stmt {
+    /// Function definition with types
+    Function {
+        name: String,
+        params: Vec&lt;(String, Type)&gt;,
+        return_type: Type,
+        body: Vec&lt;Stmt&gt;,
+    },
+    /// Return statement
+    Return(TypedExpr),
+    /// Assignment with optional type annotation
+    Assignment {
+        target: AssignTarget,
+        type_ann: Option&lt;Type&gt;,
+        value: TypedExpr,
+    },
+    /// Delete statement
+    Delete(TypedExpr),
+    /// Expression statement
+    Expr(TypedExpr),
+}</code></pre>
+<p><a class="filename" href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/thirdlang/src/ast.rs">thirdlang/src/ast.rs</a></p>
+<p>The <code>Stmt</code> enum gains a <code>Delete</code> variant for the <code>delete</code> statement.</p>
+<h3 id="assignment-targets"><a class="header" href="#assignment-targets">Assignment Targets</a></h3>
+<p>Assignments can now target fields:</p>
+<pre><code class="language-rust ignore">/// Assignment target - can be a variable or field access
+#[derive(Debug, Clone, PartialEq)]
+pub enum AssignTarget {
+    /// Simple variable: x = ...
+    Var(String),
+    /// Field access: self.x = ... or obj.field = ...
+    Field {
+        object: Box&lt;TypedExpr&gt;,
+        field: String,
+    },
+}</code></pre>
+<p><a class="filename" href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/thirdlang/src/ast.rs">thirdlang/src/ast.rs</a></p>
+<p>This allows both:</p>
+<ul>
+<li><code>x = 10</code> - assign to variable</li>
+<li><code>self.x = 10</code> - assign to field</li>
+</ul>
+<h3 id="new-expressions"><a class="header" href="#new-expressions">New Expressions</a></h3>
+<pre><code class="language-rust ignore">/// Expressions in our language
+#[derive(Debug, Clone, PartialEq)]
+pub enum Expr {
+    /// Integer literal
+    Int(i64),
+    /// Boolean literal
+    Bool(bool),
+    /// Variable reference
+    Var(String),
+    /// Self reference (inside methods)
+    SelfRef,
+    /// Unary operation
+    Unary { op: UnaryOp, expr: Box&lt;TypedExpr&gt; },
+    /// Binary operation
+    Binary {
+        op: BinaryOp,
+        left: Box&lt;TypedExpr&gt;,
+        right: Box&lt;TypedExpr&gt;,
+    },
+    /// Function call
+    Call { name: String, args: Vec&lt;TypedExpr&gt; },
+    /// Method call: obj.method(args)
+    MethodCall {
+        object: Box&lt;TypedExpr&gt;,
+        method: String,
+        args: Vec&lt;TypedExpr&gt;,
+    },
+    /// Field access: obj.field
+    FieldAccess {
+        object: Box&lt;TypedExpr&gt;,
+        field: String,
+    },
+    /// Object creation: new ClassName(args)
+    New { class: String, args: Vec&lt;TypedExpr&gt; },
+    /// Conditional
+    If {
+        cond: Box&lt;TypedExpr&gt;,
+        then_branch: Vec&lt;Stmt&gt;,
+        else_branch: Vec&lt;Stmt&gt;,
+    },
+    /// While loop
+    While {
+        cond: Box&lt;TypedExpr&gt;,
+        body: Vec&lt;Stmt&gt;,
+    },
+    /// Block
+    Block(Vec&lt;Stmt&gt;),
+}</code></pre>
+<p><a class="filename" href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/thirdlang/src/ast.rs">thirdlang/src/ast.rs</a></p>
+<p>The <code>Expr</code> enum gains several new variants:</p>
+<ul>
+<li><strong>SelfRef</strong> - The <code>self</code> keyword</li>
+<li><strong>New</strong> - Object creation: <code>new Point(1, 2)</code></li>
+<li><strong>FieldAccess</strong> - Reading a field: <code>obj.x</code></li>
+<li><strong>MethodCall</strong> - Calling a method: <code>obj.method(args)</code></li>
+</ul>
+<h2 id="parser-implementation"><a class="header" href="#parser-implementation">Parser Implementation</a></h2>
+<p>Here is how we parse classes in Rust:</p>
+<pre><code class="language-rust ignore">fn parse_class_def(pair: Pair&lt;Rule&gt;) -&gt; Result&lt;ClassDef, String&gt; {
+    let mut inner = pair.into_inner();
+
+    let name = inner.next().unwrap().as_str().to_string();
+    let body = inner.next().unwrap(); // ClassBody
+
+    let mut fields = Vec::new();
+    let mut methods = Vec::new();
+
+    for item in body.into_inner() {
+        match item.as_rule() {
+            Rule::FieldDef =&gt; {
+                fields.push(parse_field_def(item)?);
+            }
+            Rule::MethodDef =&gt; {
+                methods.push(parse_method_def(item)?);
+            }
+            _ =&gt; {}
+        }
+    }
+
+    Ok(ClassDef {
+        name,
+        fields,
+        methods,
+    })
+}
+
+fn parse_field_def(pair: Pair&lt;Rule&gt;) -&gt; Result&lt;FieldDef, String&gt; {
+    let mut inner = pair.into_inner();
+    let name = inner.next().unwrap().as_str().to_string();
+    let ty = parse_type(inner.next().unwrap())?;
+    Ok(FieldDef { name, ty })
+}
+
+fn parse_method_def(pair: Pair&lt;Rule&gt;) -&gt; Result&lt;MethodDef, String&gt; {
+    let mut inner = pair.into_inner();
+
+    let name = inner.next().unwrap().as_str().to_string();
+
+    // Skip 'self' parameter
+    inner.next(); // SelfParam
+
+    let mut params: Vec&lt;(String, Type)&gt; = Vec::new();
+    let mut return_type = Type::Unit;
+    let mut body = Vec::new();
+
+    for item in inner {
+        match item.as_rule() {
+            Rule::TypedParam =&gt; {
+                let mut param_inner = item.into_inner();
+                let param_name = param_inner.next().unwrap().as_str().to_string();
+                let param_type = parse_type(param_inner.next().unwrap())?;
+                params.push((param_name, param_type));
+            }
+            Rule::ReturnType =&gt; {
+                let type_pair = item.into_inner().next().unwrap();
+                return_type = parse_type(type_pair)?;
+            }
+            Rule::Block =&gt; {
+                body = parse_block(item)?;
+            }
+            _ =&gt; {}
+        }
+    }
+
+    Ok(MethodDef {
+        name,
+        params,
+        return_type,
+        body,
+    })
+}</code></pre>
+<p><a class="filename" href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/thirdlang/src/parser.rs">thirdlang/src/parser.rs</a></p>
+<p>The parser:</p>
+<ol>
+<li>Extracts the class name from the first child</li>
+<li>Iterates over the class body, sorting items into fields and methods</li>
+<li>For each method, skips the <code>self</code> parameter (it is implicit)</li>
+<li>Returns a <code>ClassDef</code> with all collected data</li>
+</ol>
+<h2 id="parsing-example"><a class="header" href="#parsing-example">Parsing Example</a></h2>
+<p>Let us trace through parsing this class:</p>
+<pre><code>class Point {
+    x: int
+    y: int
+
+    def __init__(self, x: int, y: int) {
+        self.x = x
+        self.y = y
+    }
+
+    def get_x(self) -&gt; int {
+        return self.x
+    }
+}
+</code></pre>
+<h3 id="step-1-match-classdef"><a class="header" href="#step-1-match-classdef">Step 1: Match ClassDef</a></h3>
+<p>The parser sees <code>class</code>, then:</p>
+<ol>
+<li><strong>Identifier</strong>: <code>Point</code></li>
+<li><strong><code>{</code></strong>: Start of body</li>
+<li><strong>ClassBody</strong>: Fields and methods</li>
+<li><strong><code>}</code></strong>: End of body</li>
+</ol>
+<h3 id="step-2-parse-classbody"><a class="header" href="#step-2-parse-classbody">Step 2: Parse ClassBody</a></h3>
+<p>Inside the body:</p>
+<ol>
+<li><strong>FieldDef</strong>: <code>x: int</code> → <code>FieldDef { name: "x", ty: Type::Int }</code></li>
+<li><strong>FieldDef</strong>: <code>y: int</code> → <code>FieldDef { name: "y", ty: Type::Int }</code></li>
+<li><strong>MethodDef</strong>: <code>def __init__(...)</code></li>
+<li><strong>MethodDef</strong>: <code>def get_x(...)</code></li>
+</ol>
+<h3 id="step-3-parse-methoddef"><a class="header" href="#step-3-parse-methoddef">Step 3: Parse MethodDef</a></h3>
+<p>For <code>def __init__(self, x: int, y: int)</code>:</p>
+<ol>
+<li><strong><code>def</code></strong>: Method keyword</li>
+<li><strong>Identifier</strong>: <code>__init__</code></li>
+<li><strong><code>(</code></strong>: Start parameters</li>
+<li><strong>SelfParam</strong>: <code>self</code></li>
+<li><strong>MethodParams</strong>: <code>, x: int, y: int</code></li>
+<li><strong><code>)</code></strong>: End parameters</li>
+<li><strong>No ReturnType</strong>: Defaults to <code>Unit</code></li>
+<li><strong>Block</strong>: <code>{ self.x = x; self.y = y }</code></li>
+</ol>
+<h3 id="step-4-parse-method-body"><a class="header" href="#step-4-parse-method-body">Step 4: Parse Method Body</a></h3>
+<p>Inside <code>{ self.x = x; self.y = y }</code>:</p>
+<ol>
+<li><strong>Assignment</strong>: <code>self.x = x</code>
+<ul>
+<li>Target: <code>AssignTarget::Field { object: SelfRef, field: "x" }</code></li>
+<li>Value: <code>Expr::Var("x")</code></li>
+</ul>
+</li>
+<li><strong>Assignment</strong>: <code>self.y = y</code>
+<ul>
+<li>Similar structure</li>
+</ul>
+</li>
+</ol>
+<h3 id="final-ast"><a class="header" href="#final-ast">Final AST</a></h3>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>TopLevel::Class(ClassDef {
+    name: "Point".to_string(),
+    fields: vec![
+        FieldDef { name: "x".to_string(), ty: Type::Int },
+        FieldDef { name: "y".to_string(), ty: Type::Int },
+    ],
+    methods: vec![
+        MethodDef {
+            name: "__init__".to_string(),
+            params: vec![
+                // Note: 'self' is NOT stored in params - it's implicit
+                // Only the parameters AFTER self are stored
+                ("x".to_string(), Type::Int),
+                ("y".to_string(), Type::Int),
+            ],
+            return_type: Type::Unit,
+            body: vec![/* assignments */],
+        },
+        MethodDef {
+            name: "get_x".to_string(),
+            params: vec![],  // No params after self
+            return_type: Type::Int,
+            body: vec![/* return self.x */],
+        },
+    ],
+})
+<span class="boring">}</span></code></pre></pre>
+<p>Note: The <code>self</code> parameter is implicit in methods - it is not stored in the <code>params</code> list. The type checker knows every method receives <code>self</code> of the class type.</p>
+<h2 id="type-information-for-classes"><a class="header" href="#type-information-for-classes">Type Information for Classes</a></h2>
+<p>Classes need metadata for type checking. We store this in <code>ClassInfo</code>:</p>
+<pre><code class="language-rust ignore">/// Information about a class definition
+#[derive(Debug, Clone)]
+pub struct ClassInfo {
+    /// Class name
+    pub name: String,
+    /// Fields: name -&gt; type
+    pub fields: HashMap&lt;String, Type&gt;,
+    /// Field order (for memory layout)
+    pub field_order: Vec&lt;String&gt;,
+    /// Methods: name -&gt; (param_types, return_type)
+    pub methods: HashMap&lt;String, MethodInfo&gt;,
+    /// Whether the class has a destructor
+    pub has_destructor: bool,
+}
+
+/// Information about a method
+#[derive(Debug, Clone)]
+pub struct MethodInfo {
+    /// Method name
+    pub name: String,
+    /// Parameter types (excluding self)
+    pub params: Vec&lt;(String, Type)&gt;,
+    /// Return type
+    pub return_type: Type,
+    /// Is this the constructor?
+    pub is_constructor: bool,
+    /// Is this the destructor?
+    pub is_destructor: bool,
+}</code></pre>
+<p><a class="filename" href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/thirdlang/src/types.rs">thirdlang/src/types.rs</a></p>
+<p>The <code>ClassInfo</code> struct tracks:</p>
+<ul>
+<li><strong>name</strong> - Class name</li>
+<li><strong>fields</strong> - Map from field name to type</li>
+<li><strong>field_order</strong> - Order of fields (for LLVM struct layout)</li>
+<li><strong>methods</strong> - Map from method name to <code>MethodInfo</code></li>
+<li><strong>has_destructor</strong> - Whether <code>__del__</code> exists</li>
+</ul>
+<p>The <code>MethodInfo</code> struct tracks each method’s signature.</p>
+<h2 id="the-type-enum"><a class="header" href="#the-type-enum">The Type Enum</a></h2>
+<p>Our type system now includes class types:</p>
+<pre><code class="language-rust ignore">/// Types in our language
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub enum Type {
+    /// Integer type (64-bit signed)
+    Int,
+    /// Boolean type
+    Bool,
+    /// Class type (by name)
+    Class(String),
+    /// Function type: (param_types) -&gt; return_type
+    Function { params: Vec&lt;Type&gt;, ret: Box&lt;Type&gt; },
+    /// Method type: (self_type, param_types) -&gt; return_type
+    Method {
+        class: String,
+        params: Vec&lt;Type&gt;,
+        ret: Box&lt;Type&gt;,
+    },
+    /// Unit type (for statements with no value)
+    Unit,
+    /// Unknown type (for type inference)
+    Unknown,
+}</code></pre>
+<p><a class="filename" href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/thirdlang/src/types.rs">thirdlang/src/types.rs</a></p>
+<p>The new <code>Class(String)</code> variant holds the class name. When we see <code>Point</code> as a type, we create <code>Type::Class("Point".to_string())</code>.</p>
+<h2 id="comparison-with-secondlang"><a class="header" href="#comparison-with-secondlang">Comparison with Secondlang</a></h2>
+<div class="table-wrapper"><table><thead><tr><th>Aspect</th><th>Secondlang</th><th>Thirdlang</th></tr></thead><tbody>
+<tr><td>Types</td><td><code>int</code>, <code>bool</code></td><td><code>int</code>, <code>bool</code>, <code>ClassName</code></td></tr>
+<tr><td>Top-level</td><td><code>Vec&lt;Stmt&gt;</code></td><td><code>Vec&lt;TopLevel&gt;</code></td></tr>
+<tr><td>Functions only</td><td>Yes</td><td>Functions + Methods</td></tr>
+<tr><td>Field access</td><td>No</td><td><code>obj.field</code></td></tr>
+<tr><td>Method calls</td><td>No</td><td><code>obj.method()</code></td></tr>
+<tr><td>New expressions</td><td>No</td><td><code>new Class(args)</code></td></tr>
+<tr><td>Delete statement</td><td>No</td><td><code>delete obj</code></td></tr>
+</tbody></table>
+</div><div class="checkpoint">
+<strong>Checkpoint</strong>
+<p>At this point, you should be able to:</p>
+<ul>
+<li>Parse <code>class Point { x: int }</code> without errors</li>
+<li>Parse methods with <code>self</code> parameter</li>
+<li>Parse <code>new Point(1, 2)</code> expressions</li>
+</ul>
+</div>
+<div class="related-topics">
+<strong>Related Topics</strong>
+<ul>
+<li><a href="../03_secondlang/annotations.html">Secondlang Grammar</a> - The grammar we extended</li>
+<li><a href="../crash_course.html#peg-and-pest-syntax">PEG Syntax</a> - Grammar rule reference</li>
+<li><a href="constructors.html">Constructors</a> - How <code>__init__</code> works</li>
+<li><a href="codegen_classes.html">LLVM Codegen</a> - How classes compile to IR</li>
+</ul>
+</div>
+<p>In the next chapter, we look at <a href="constructors.html">constructors and object creation</a>.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../04_thirdlang/why_classes.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../04_thirdlang/constructors.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../04_thirdlang/why_classes.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../04_thirdlang/constructors.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../theme/force-theme.js"></script>
+
+
+
+    </div>
+    </body>
+</html>

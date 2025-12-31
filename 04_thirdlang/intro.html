@@ -1,0 +1,474 @@
+<!DOCTYPE HTML>
+<html lang="en" class="rust sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Thirdlang: Adding Classes and Objects - Create Your Own Programming Language with Rust</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/custom.css">
+        <link rel="stylesheet" href="../theme/highlight.css">
+
+        <!-- MathJax -->
+        <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "rust";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('rust')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Create Your Own Programming Language with Rust</h1>
+
+                    <div class="right-buttons">
+                        <a href="https://github.com/ehsanmok/create-your-own-lang-with-rust" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="thirdlang"><a class="header" href="#thirdlang">Thirdlang</a></h1>
+<blockquote>
+<p><strong>Prerequisites</strong>: This chapter builds on <a href="../03_secondlang/intro.html">Secondlang</a>. Make sure you understand <a href="../03_secondlang/inference.html">type checking</a> and <a href="../03_secondlang/codegen.html">LLVM code generation</a> before proceeding.</p>
+</blockquote>
+<p>In Part III, we built <a href="../03_secondlang/intro.html">Secondlang</a>, a statically typed language with LLVM JIT compilation. Now we take the final step: adding <strong>classes</strong> and <strong>object-oriented programming</strong>.</p>
+<h2 id="what-changes-from-secondlang"><a class="header" href="#what-changes-from-secondlang">What Changes from Secondlang?</a></h2>
+<p>The transition from Secondlang to Thirdlang demonstrates how to add user-defined types to a language. While Secondlang has primitive types (<code>int</code>, <code>bool</code>), Thirdlang allows programmers to define their own types with <strong>classes</strong>.</p>
+<h3 id="grammar-40-lines-added"><a class="header" href="#grammar-40-lines-added">Grammar: ~40 Lines Added</a></h3>
+<p>Secondlang’s type system:</p>
+<pre><code class="language-text">Type = { IntType | BoolType }
+IntType = { "int" }
+BoolType = { "bool" }
+</code></pre>
+<p>Thirdlang’s type system:</p>
+<pre><code class="language-text">Type = { IntType | BoolType | ClassType }
+IntType = { "int" }
+BoolType = { "bool" }
+ClassType = { Identifier }  // Any class name is a type!
+</code></pre>
+<p>Plus new constructs for classes:</p>
+<pre><code class="language-text">ClassDef = { "class" ~ Identifier ~ "{" ~ ClassBody ~ "}" }
+ClassBody = { (FieldDef | MethodDef)* }
+FieldDef = { Identifier ~ ":" ~ Type }
+MethodDef = { "def" ~ Identifier ~ "(" ~ SelfParam? ~ ... ~ ")" ~ ... ~ Block }
+NewExpr = { "new" ~ Identifier ~ "(" ~ Args? ~ ")" }
+Delete = { "delete" ~ Expr }
+</code></pre>
+<p>The syntactic additions unlock a powerful new paradigm: <strong>object-oriented programming</strong>.</p>
+<h3 id="compiler-new-concepts"><a class="header" href="#compiler-new-concepts">Compiler: New Concepts</a></h3>
+<div class="table-wrapper"><table><thead><tr><th>Concept</th><th>Secondlang</th><th>Thirdlang</th></tr></thead><tbody>
+<tr><td>Types</td><td><code>int</code>, <code>bool</code></td><td><code>int</code>, <code>bool</code>, <code>ClassName</code></td></tr>
+<tr><td>User-defined types</td><td>None</td><td>Classes with fields</td></tr>
+<tr><td>Methods</td><td>None</td><td>Functions attached to objects</td></tr>
+<tr><td>Memory</td><td>Stack only</td><td>Stack + heap (malloc/free)</td></tr>
+<tr><td>Object creation</td><td>None</td><td><code>new ClassName(args)</code></td></tr>
+<tr><td>Object destruction</td><td>None</td><td><code>delete obj</code></td></tr>
+</tbody></table>
+</div>
+<p>The biggest change is <strong>heap allocation</strong>. In Secondlang, all values live on the stack. In Thirdlang, objects are allocated on the heap with <code>malloc</code> and freed with <code>free</code>.</p>
+<h2 id="why-classes"><a class="header" href="#why-classes">Why Classes?</a></h2>
+<p>Classes solve a fundamental problem: <strong>grouping related data together</strong>.</p>
+<p>Without classes, you might write:</p>
+<pre><code># Unrelated variables floating around
+point_x = 10
+point_y = 20
+point2_x = 30
+point2_y = 40
+
+def distance(x1, y1, x2, y2) -&gt; int {
+    dx = x2 - x1
+    dy = y2 - y1
+    return dx * dx + dy * dy
+}
+
+distance(point_x, point_y, point2_x, point2_y)
+</code></pre>
+<p>With classes:</p>
+<pre><code>class Point {
+    x: int
+    y: int
+
+    def __init__(self, x: int, y: int) {
+        self.x = x
+        self.y = y
+    }
+
+    def distance_squared(self, other: Point) -&gt; int {
+        dx = other.x - self.x
+        dy = other.y - self.y
+        return dx * dx + dy * dy
+    }
+}
+
+p1 = new Point(10, 20)
+p2 = new Point(30, 40)
+p1.distance_squared(p2)
+</code></pre>
+<p>The second version is:</p>
+<ul>
+<li><strong>More organized</strong> - data and behavior are grouped together</li>
+<li><strong>Safer</strong> - you cannot accidentally mix up different points</li>
+<li><strong>More readable</strong> - <code>p1.distance_squared(p2)</code> is clearer than <code>distance(x1, y1, x2, y2)</code></li>
+</ul>
+<h2 id="feature-comparison"><a class="header" href="#feature-comparison">Feature Comparison</a></h2>
+<div class="table-wrapper"><table><thead><tr><th>Feature</th><th><a href="../02_firstlang/intro.html">Firstlang</a></th><th><a href="../03_secondlang/intro.html">Secondlang</a></th><th>Thirdlang</th></tr></thead><tbody>
+<tr><td>Type System</td><td>Dynamic</td><td>Static</td><td>Static</td></tr>
+<tr><td>User-defined Types</td><td>None</td><td>None</td><td>Classes</td></tr>
+<tr><td>Fields</td><td>None</td><td>None</td><td><code>self.x</code></td></tr>
+<tr><td>Methods</td><td>None</td><td>None</td><td><code>def method(self)</code></td></tr>
+<tr><td>Constructor</td><td>None</td><td>None</td><td><code>__init__</code></td></tr>
+<tr><td>Destructor</td><td>None</td><td>None</td><td><code>__del__</code></td></tr>
+<tr><td>Object Creation</td><td>None</td><td>None</td><td><code>new Point(...)</code></td></tr>
+<tr><td>Object Deletion</td><td>None</td><td>None</td><td><code>delete obj</code></td></tr>
+<tr><td>Memory Model</td><td>Stack</td><td>Stack</td><td>Stack + Heap</td></tr>
+</tbody></table>
+</div>
+<h2 id="syntax-examples"><a class="header" href="#syntax-examples">Syntax Examples</a></h2>
+<h3 id="class-definition"><a class="header" href="#class-definition">Class Definition</a></h3>
+<pre><code>class Counter {
+    count: int
+
+    def __init__(self) {
+        self.count = 0
+    }
+
+    def increment(self) -&gt; int {
+        self.count = self.count + 1
+        return self.count
+    }
+
+    def get(self) -&gt; int {
+        return self.count
+    }
+}
+</code></pre>
+<h3 id="object-creation-and-method-calls"><a class="header" href="#object-creation-and-method-calls">Object Creation and Method Calls</a></h3>
+<pre><code>c = new Counter()
+c.increment()   # returns 1
+c.increment()   # returns 2
+c.get()         # returns 2
+delete c        # free memory
+</code></pre>
+<h3 id="classes-as-parameters"><a class="header" href="#classes-as-parameters">Classes as Parameters</a></h3>
+<pre><code>class Point {
+    x: int
+    y: int
+
+    def __init__(self, x: int, y: int) {
+        self.x = x
+        self.y = y
+    }
+
+    def distance_squared(self, other: Point) -&gt; int {
+        dx = other.x - self.x
+        dy = other.y - self.y
+        return dx * dx + dy * dy
+    }
+}
+
+p1 = new Point(0, 0)
+p2 = new Point(3, 4)
+p1.distance_squared(p2)  # returns 25
+</code></pre>
+<h2 id="design-decisions"><a class="header" href="#design-decisions">Design Decisions</a></h2>
+<p>We made several deliberate simplifications:</p>
+<h3 id="no-inheritance"><a class="header" href="#no-inheritance">No Inheritance</a></h3>
+<p>Many OOP languages support <strong>inheritance</strong> (class B extends class A). We skip this because:</p>
+<ol>
+<li>It adds significant complexity (vtables, dynamic dispatch)</li>
+<li><a href="https://en.wikipedia.org/wiki/Composition_over_inheritance">Composition over inheritance</a> is often preferred</li>
+<li>The core concepts are clearer without it</li>
+</ol>
+<h3 id="explicit-memory-management"><a class="header" href="#explicit-memory-management">Explicit Memory Management</a></h3>
+<p>Instead of garbage collection, we use <strong>explicit delete</strong>:</p>
+<pre><code>p = new Point(1, 2)
+# ... use p ...
+delete p  # programmer's responsibility
+</code></pre>
+<p>This is similar to C++ and teaches important concepts:</p>
+<ul>
+<li>Objects live on the heap</li>
+<li>Memory must be freed when no longer needed</li>
+<li>Forgetting to <code>delete</code> causes memory leaks</li>
+</ul>
+<h3 id="python-like-constructor-syntax"><a class="header" href="#python-like-constructor-syntax">Python-like Constructor Syntax</a></h3>
+<p>We use <code>__init__</code> for constructors (like Python):</p>
+<pre><code>def __init__(self, x: int) {
+    self.x = x
+}
+</code></pre>
+<p>And <code>__del__</code> for destructors:</p>
+<pre><code>def __del__(self) {
+    # cleanup code
+}
+</code></pre>
+<h2 id="project-structure"><a class="header" href="#project-structure">Project Structure</a></h2>
+<pre><code>thirdlang/
+├── Cargo.toml
+├── src/
+│   ├── lib.rs           # Library exports
+│   ├── main.rs          # CLI entry point
+│   ├── grammar.pest     # PEG grammar with classes
+│   ├── parser.rs        # Parser → Typed AST
+│   ├── ast.rs           # Typed AST with class nodes
+│   ├── types.rs         # Type system with ClassInfo
+│   ├── typeck.rs        # Type checker for classes
+│   ├── visitor.rs       # AST visitors
+│   └── codegen.rs       # LLVM code generation with malloc/free
+├── examples/
+│   ├── point.tl         # Point class with methods
+│   ├── counter.tl       # Counter with state
+│   ├── destructor.tl    # Destructor example
+│   └── linked_node.tl   # Linked data structure
+└── tests/
+    └── integration_tests.rs
+</code></pre>
+<p>Compare to <a href="../03_secondlang/intro.html#project-structure">Secondlang’s structure</a>:</p>
+<pre><code>secondlang/
+├── src/
+│   ├── types.rs         # Simpler: no ClassInfo
+│   ├── typeck.rs        # Simpler: no class type checking
+│   └── codegen.rs       # Simpler: no malloc/free
+</code></pre>
+<p>The new additions handle class metadata, method resolution, and heap memory management.</p>
+<h2 id="prerequisites"><a class="header" href="#prerequisites">Prerequisites</a></h2>
+<p>Like Secondlang, Thirdlang requires LLVM and nightly Rust:</p>
+<pre><code class="language-bash"># Install nightly Rust
+rustup toolchain install nightly
+
+# Check LLVM version
+llvm-config --version
+</code></pre>
+<p>Update <code>Cargo.toml</code> for your LLVM version:</p>
+<ul>
+<li>LLVM 20.x: <code>features = ["llvm20-1"]</code></li>
+<li>LLVM 19.x: <code>features = ["llvm19-1"]</code></li>
+</ul>
+<h2 id="quick-start"><a class="header" href="#quick-start">Quick Start</a></h2>
+<pre><code class="language-bash">cd thirdlang
+
+# Run Point example
+rustup run nightly cargo run --bin thirdlang -- examples/point.tl
+
+# Run Counter example
+rustup run nightly cargo run --bin thirdlang -- examples/counter.tl
+
+# Run all tests
+rustup run nightly cargo test
+</code></pre>
+<h2 id="outline"><a class="header" href="#outline">Outline</a></h2>
+<p>In the following chapters, we build Thirdlang step by step:</p>
+<ol>
+<li><a href="why_classes.html">Why Classes?</a> - Object-oriented concepts</li>
+<li><a href="classes_syntax.html">Class Syntax and Parsing</a> - Grammar and AST</li>
+<li><a href="constructors.html">Constructors and Object Creation</a> - <code>__init__</code> and <code>new</code></li>
+<li><a href="methods.html">Methods and Self</a> - Method calls and the <code>self</code> parameter</li>
+<li><a href="memory.html">Memory Management</a> - Heap allocation with malloc/free</li>
+<li><a href="codegen_classes.html">LLVM Code Generation for Classes</a> - Structs and method compilation</li>
+<li><a href="running.html">Running Thirdlang</a> - Examples and tests</li>
+</ol>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../transition_3_to_4.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../04_thirdlang/why_classes.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../transition_3_to_4.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../04_thirdlang/why_classes.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../theme/force-theme.js"></script>
+
+
+
+    </div>
+    </body>
+</html>

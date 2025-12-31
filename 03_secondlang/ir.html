@@ -17,7 +17,6 @@
         <link rel="stylesheet" href="../css/variables.css">
         <link rel="stylesheet" href="../css/general.css">
         <link rel="stylesheet" href="../css/chrome.css">
-        <link rel="stylesheet" href="../css/print.css" media="print">
 
         <!-- Fonts -->
         <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
@@ -145,9 +144,6 @@
                     <h1 class="menu-title">Create Your Own Programming Language with Rust</h1>
 
                     <div class="right-buttons">
-                        <a href="../print.html" title="Print this book" aria-label="Print this book">
-                            <i id="print-button" class="fa fa-print"></i>
-                        </a>
                         <a href="https://github.com/ehsanmok/create-your-own-lang-with-rust" title="Git repository" aria-label="Git repository">
                             <i id="git-repository-button" class="fa fa-github"></i>
                         </a>
@@ -186,17 +182,14 @@
 <p>Now we have a typed, <a href="./optimizations.html">optimized</a> AST. The next step is to convert it to <strong><a href="https://en.wikipedia.org/wiki/LLVM#Intermediate_representation">LLVM IR</a></strong> (Intermediate Representation). But before we write the <a href="./codegen.html">code generator</a>, let us understand what LLVM IR looks like.</p>
 <h2 id="what-is-llvm-ir"><a class="header" href="#what-is-llvm-ir">What is LLVM IR?</a></h2>
 <p><a href="https://llvm.org/">LLVM</a> is a compiler infrastructure project that provides a set of reusable compiler and toolchain technologies. The key idea: you compile your language to LLVM IR, and LLVM handles everything else - optimization, code generation for different platforms, etc.</p>
+<blockquote>
+<p>LLVM is like a universal translator for CPUs. You speak LLVM IR, and LLVM translates it to x86, ARM, WebAssembly - whatever you need. You write your compiler once; LLVM gives you every platform for free.</p>
+</blockquote>
 <p>As discussed in the <a href="../crash_course.html#intermediate-representation-ir">Crash Course</a>, an <a href="https://en.wikipedia.org/wiki/Intermediate_representation">IR</a> is any representation between source and assembly:</p>
-<pre><code>Secondlang Source Code
-         |
-    [Your Compiler]
-         |
-      LLVM IR
-         |
-       [LLVM]
-         |
-   Machine Code (x86, ARM, etc.)
-</code></pre>
+<p align="center">
+</br>
+    <a href><img alt="simple llvm flow" src="../img/simple-llvm-flow.svg"> </a>
+</p>
 <p>Think of IR as a <em>universal assembly language</em>. It is low-level (close to the machine) but not tied to any specific CPU. LLVM takes IR and produces optimized machine code for whatever platform you are on.</p>
 <p>Many languages use LLVM: Rust, Swift, Julia, Kotlin/Native, and more. By using LLVM, we get world-class optimizations for free.</p>
 <h2 id="a-simple-example"><a class="header" href="#a-simple-example">A Simple Example</a></h2>
@@ -208,7 +201,7 @@
 }
 <span class="boring">}</span></code></pre></pre>
 <p>And here is the LLVM IR it compiles to:</p>
-<pre><code class="language-llvm">define i64 @answer() {
+<pre><code>define i64 @answer() {
 entry:
   ret i64 42
 }
@@ -229,7 +222,7 @@ entry:
 }
 <span class="boring">}</span></code></pre></pre>
 <p>LLVM IR:</p>
-<pre><code class="language-llvm">define i64 @add(i64 %a, i64 %b) {
+<pre><code>define i64 @add(i64 %a, i64 %b) {
 entry:
   %a.addr = alloca i64           ; allocate stack space for a
   store i64 %a, ptr %a.addr      ; store parameter a
@@ -259,7 +252,7 @@ entry:
 x = x + 1    // x is now 6
 <span class="boring">}</span></code></pre></pre>
 <p>By storing variables in stack slots (<code>alloca</code>), we can modify them:</p>
-<pre><code class="language-llvm">%x.addr = alloca i64
+<pre><code>%x.addr = alloca i64
 store i64 5, ptr %x.addr           ; x = 5
 %tmp = load i64, ptr %x.addr       ; load x
 %tmp2 = add i64 %tmp, 1            ; x + 1
@@ -279,7 +272,7 @@ store i64 %tmp2, ptr %x.addr       ; x = x + 1
 }
 <span class="boring">}</span></code></pre></pre>
 <p>LLVM IR:</p>
-<pre><code class="language-llvm">define i64 @max(i64 %a, i64 %b) {
+<pre><code>define i64 @max(i64 %a, i64 %b) {
 entry:
   %cmp = icmp sgt i64 %a, %b     ; compare: is a &gt; b? (signed greater than)
   br i1 %cmp, label %then, label %else  ; branch based on result
@@ -307,7 +300,7 @@ x = 2
 x = 3
 <span class="boring">}</span></code></pre></pre>
 <p>In SSA form, we cannot reuse <code>x</code>. Instead, we create new names:</p>
-<pre><code class="language-llvm">%x.1 = ...   ; first assignment
+<pre><code>%x.1 = ...   ; first assignment
 %x.2 = ...   ; second assignment
 %x.3 = ...   ; third assignment
 </code></pre>
@@ -327,7 +320,7 @@ x = 3
 }
 <span class="boring">}</span></code></pre></pre>
 <p>After the if/else, what is <code>x</code>? It depends on which branch we took. In SSA, we need different names:</p>
-<pre><code class="language-llvm">then:
+<pre><code>then:
   %x.then = ...
   br label %merge
 
@@ -339,7 +332,7 @@ merge:
   ; what goes here? We need x, but is it %x.then or %x.else?
 </code></pre>
 <p>The answer is a <strong><a href="https://en.wikipedia.org/wiki/Static_single-assignment_form#Converting_to_SSA">phi node</a></strong> (φ). A phi node selects a value based on which block we came from:</p>
-<pre><code class="language-llvm">merge:
+<pre><code>merge:
   %x = phi i64 [ %x.then, %then ], [ %x.else, %else ]
   ret i64 %x
 </code></pre>
@@ -358,7 +351,7 @@ merge:
 }
 <span class="boring">}</span></code></pre></pre>
 <p>LLVM IR (simplified):</p>
-<pre><code class="language-llvm">define i64 @fib(i64 %n) {
+<pre><code>define i64 @fib(i64 %n) {
 entry:
   %cmp = icmp slt i64 %n, 2      ; is n &lt; 2?
   br i1 %cmp, label %then, label %else
@@ -390,7 +383,7 @@ else:
 <pre><code class="language-bash">rustup run nightly cargo run -- --ir examples/fibonacci.sl
 </code></pre>
 <p>Output:</p>
-<pre><code class="language-llvm">; ModuleID = 'secondlang'
+<pre><code>; ModuleID = 'secondlang'
 source_filename = "secondlang"
 
 define i64 @fib(i64 %n) {
@@ -422,6 +415,24 @@ entry:
 <li><strong>Phi nodes</strong> - merge values from different control flow paths</li>
 <li><strong>Platform-independent</strong> - LLVM handles the CPU-specific details</li>
 </ul>
+<div class="checkpoint">
+<strong>Checkpoint</strong>
+<p>At this point, you should understand:</p>
+<ul>
+<li>Why LLVM IR exists (portable, optimizable)</li>
+<li>The alloca/load/store pattern for variables</li>
+<li>How conditionals use basic blocks and phi nodes</li>
+<li>What SSA form means</li>
+</ul>
+</div>
+<div class="related-topics">
+<strong>Related Topics</strong>
+<ul>
+<li><a href="./codegen.html">LLVM Code Generation</a> - Generating IR from AST</li>
+<li><a href="../01_calculator/basic_llvm.html">Basic LLVM Example</a> - Simple JIT introduction</li>
+<li><a href="../04_thirdlang/optimization.html">Thirdlang IR</a> - Optimizing IR</li>
+</ul>
+</div>
 <p>In the next chapter, we write the <a href="./codegen.html">code generator</a> that produces this IR from our typed AST.</p>
 
                     </main>

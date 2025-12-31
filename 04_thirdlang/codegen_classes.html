@@ -1,0 +1,1017 @@
+<!DOCTYPE HTML>
+<html lang="en" class="rust sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>LLVM Code Generation for Classes - Create Your Own Programming Language with Rust</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/custom.css">
+        <link rel="stylesheet" href="../theme/highlight.css">
+
+        <!-- MathJax -->
+        <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "rust";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('rust')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Create Your Own Programming Language with Rust</h1>
+
+                    <div class="right-buttons">
+                        <a href="https://github.com/ehsanmok/create-your-own-lang-with-rust" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="llvm-code-generation-for-classes"><a class="header" href="#llvm-code-generation-for-classes">LLVM Code Generation for Classes</a></h1>
+<blockquote>
+<p><strong>Prerequisites</strong>: This chapter builds directly on <a href="../03_secondlang/codegen.html">Secondlang’s code generation</a>. Make sure you understand how we compile expressions and functions to LLVM IR before proceeding.</p>
+</blockquote>
+<p>Now we see how classes translate to LLVM IR. The key insight: <strong>classes become structs, methods become functions</strong>. We extend the patterns from <a href="../03_secondlang/ir.html">From AST to IR</a> with new concepts for object-oriented features.</p>
+<h2 id="the-codegen-structure"><a class="header" href="#the-codegen-structure">The CodeGen Structure</a></h2>
+<p>Our code generator has new fields for class support:</p>
+<pre><code class="language-rust ignore">/// Code generator state
+pub struct CodeGen&lt;'ctx&gt; {
+    context: &amp;'ctx Context,
+    module: Module&lt;'ctx&gt;,
+    builder: Builder&lt;'ctx&gt;,
+    /// Map from variable names to their stack allocations
+    variables: HashMap&lt;String, PointerValue&lt;'ctx&gt;&gt;,
+    /// Map from function names to LLVM functions
+    functions: HashMap&lt;String, FunctionValue&lt;'ctx&gt;&gt;,
+    /// Map from class names to their LLVM struct types
+    class_types: HashMap&lt;String, StructType&lt;'ctx&gt;&gt;,
+    /// Class registry from type checker
+    classes: ClassRegistry,
+    /// Current function being compiled
+    current_fn: Option&lt;FunctionValue&lt;'ctx&gt;&gt;,
+    /// Current class being compiled (for method compilation)
+    current_class: Option&lt;String&gt;,
+}</code></pre>
+<p><a class="filename" href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/thirdlang/src/codegen.rs">thirdlang/src/codegen.rs</a></p>
+<p>The new fields:</p>
+<ul>
+<li><strong>class_types</strong> - Maps class names to LLVM struct types</li>
+<li><strong>classes</strong> - Maps class names to <code>ClassInfo</code> (field/method metadata)</li>
+<li><strong>current_class</strong> - The class we are currently compiling (for <code>self</code> resolution)</li>
+</ul>
+<h2 id="compilation-pipeline"><a class="header" href="#compilation-pipeline">Compilation Pipeline</a></h2>
+<pre><code class="language-rust ignore">    /// Compile a program and return the module
+    pub fn compile(&amp;mut self, program: &amp;Program) -&gt; Result&lt;(), String&gt; {
+        // Declare libc functions
+        self.declare_libc_functions();
+
+        // First pass: create LLVM struct types for classes
+        for item in program {
+            if let TopLevel::Class(class) = item {
+                self.create_class_type(class)?;
+            }
+        }
+
+        // Second pass: declare all functions and methods
+        for item in program {
+            match item {
+                TopLevel::Class(class) =&gt; {
+                    self.declare_class_methods(class)?;
+                }
+                TopLevel::Stmt(Stmt::Function {
+                    name,
+                    params,
+                    return_type,
+                    ..
+                }) =&gt; {
+                    self.declare_function(name, params, return_type)?;
+                }
+                _ =&gt; {}
+            }
+        }
+
+        // Third pass: compile function and method bodies
+        for item in program {
+            match item {
+                TopLevel::Class(class) =&gt; {
+                    self.compile_class(class)?;
+                }
+                TopLevel::Stmt(stmt @ Stmt::Function { .. }) =&gt; {
+                    self.compile_stmt(stmt)?;
+                }
+                _ =&gt; {}
+            }
+        }
+
+        // Fourth pass: create __main wrapper for all top-level non-function statements
+        self.compile_main_wrapper_all(program)?;
+
+        // Verify module
+        self.module
+            .verify()
+            .map_err(|e| format!("Module verification failed: {}", e.to_string()))?;
+
+        Ok(())
+    }</code></pre>
+<p><a class="filename" href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/thirdlang/src/codegen.rs">thirdlang/src/codegen.rs</a></p>
+<p>The compilation happens in phases:</p>
+<ol>
+<li><strong>Declare libc functions</strong> - <code>malloc</code> and <code>free</code></li>
+<li><strong>Create class struct types</strong> - Define LLVM struct for each class</li>
+<li><strong>Declare methods</strong> - Create function signatures</li>
+<li><strong>Compile class bodies</strong> - Generate method implementations</li>
+<li><strong>Compile top-level code</strong> - Generate <code>__main</code> wrapper</li>
+<li><strong>Verify module</strong> - Check IR is well-formed</li>
+</ol>
+<h2 id="classes-as-llvm-structs"><a class="header" href="#classes-as-llvm-structs">Classes as LLVM Structs</a></h2>
+<p>Each class becomes an LLVM struct type:</p>
+<pre><code>class Point {
+    x: int
+    y: int
+}
+</code></pre>
+<p>Becomes:</p>
+<pre><code>%Point = type { i64, i64 }
+;               ^^^  ^^^
+;                x    y (in field_order)
+</code></pre>
+<h3 id="creating-the-struct-type"><a class="header" href="#creating-the-struct-type">Creating the Struct Type</a></h3>
+<pre><code class="language-rust ignore">    /// Create LLVM struct type for a class
+    fn create_class_type(&amp;mut self, class: &amp;ClassDef) -&gt; Result&lt;StructType&lt;'ctx&gt;, String&gt; {
+        let class_info = self
+            .classes
+            .get(&amp;class.name)
+            .ok_or_else(|| format!("Class {} not found in registry", class.name))?;
+
+        // Create field types in order
+        let mut field_types: Vec&lt;BasicTypeEnum&gt; = Vec::new();
+        for field_name in &amp;class_info.field_order {
+            let field_type = class_info.get_field(field_name).unwrap();
+            let llvm_type = self.llvm_basic_type(field_type)?;
+            field_types.push(llvm_type);
+        }
+
+        // Create named struct type
+        let struct_type = self.context.opaque_struct_type(&amp;class.name);
+        struct_type.set_body(&amp;field_types, false);
+
+        self.class_types.insert(class.name.clone(), struct_type);
+        Ok(struct_type)
+    }</code></pre>
+<p><a class="filename" href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/thirdlang/src/codegen.rs">thirdlang/src/codegen.rs</a></p>
+<p>The <code>field_order</code> is crucial - it determines the memory layout.</p>
+<h2 id="methods-as-functions"><a class="header" href="#methods-as-functions">Methods as Functions</a></h2>
+<p>Methods compile to regular functions with a naming convention:</p>
+<pre><code>class Point {
+    def get_x(self) -&gt; int {
+        return self.x
+    }
+}
+</code></pre>
+<p>Becomes:</p>
+<pre><code>define i64 @Point__get_x(ptr %self) {
+entry:
+    %x_ptr = getelementptr %Point, ptr %self, i32 0, i32 0
+    %x = load i64, ptr %x_ptr
+    ret i64 %x
+}
+</code></pre>
+<h3 id="method-naming"><a class="header" href="#method-naming">Method Naming</a></h3>
+<p>We use <code>ClassName__methodName</code>:</p>
+<div class="table-wrapper"><table><thead><tr><th>Method</th><th>LLVM Function Name</th></tr></thead><tbody>
+<tr><td><code>Point.__init__</code></td><td><code>@Point____init__</code></td></tr>
+<tr><td><code>Point.get_x</code></td><td><code>@Point__get_x</code></td></tr>
+<tr><td><code>Counter.increment</code></td><td><code>@Counter__increment</code></td></tr>
+</tbody></table>
+</div>
+<p>This avoids name collisions between classes.</p>
+<h3 id="self-as-first-parameter"><a class="header" href="#self-as-first-parameter">Self as First Parameter</a></h3>
+<p>Every method takes <code>self</code> (a pointer) as its first parameter:</p>
+<pre><code>define i64 @Point__get_x(ptr %self) { ... }
+;                        ^^^^^^^^ self is a pointer to Point
+</code></pre>
+<p>When calling <code>p.get_x()</code>, we pass <code>p</code> as the first argument.</p>
+<h2 id="field-access"><a class="header" href="#field-access">Field Access</a></h2>
+<p>Reading a field uses LLVM’s <code>getelementptr</code> (GEP):</p>
+<pre><code>return self.x
+</code></pre>
+<p>Becomes:</p>
+<pre><code>%x_ptr = getelementptr %Point, ptr %self, i32 0, i32 0
+;                                         ^^^     ^^^
+;                                         struct  field index
+%x = load i64, ptr %x_ptr
+ret i64 %x
+</code></pre>
+<p>The GEP instruction calculates the address of field 0 (which is <code>x</code>).</p>
+<h3 id="writing-a-field"><a class="header" href="#writing-a-field">Writing a Field</a></h3>
+<pre><code>self.x = 42
+</code></pre>
+<p>Becomes:</p>
+<pre><code>%x_ptr = getelementptr %Point, ptr %self, i32 0, i32 0
+store i64 42, ptr %x_ptr
+</code></pre>
+<p>Same GEP, but followed by <code>store</code> instead of <code>load</code>.</p>
+<h2 id="compiling-expressions"><a class="header" href="#compiling-expressions">Compiling Expressions</a></h2>
+<pre><code class="language-rust ignore">    /// Compile an expression
+    fn compile_expr(&amp;mut self, expr: &amp;TypedExpr) -&gt; Result&lt;BasicValueEnum&lt;'ctx&gt;, String&gt; {
+        match &amp;expr.expr {
+            Expr::Int(n) =&gt; Ok(self.context.i64_type().const_int(*n as u64, false).into()),
+
+            Expr::Bool(b) =&gt; Ok(self.context.bool_type().const_int(*b as u64, false).into()),
+
+            Expr::Var(name) =&gt; {
+                let ptr = self
+                    .variables
+                    .get(name)
+                    .ok_or_else(|| format!("Undefined variable: {}", name))?;
+
+                let load_type = if expr.ty.is_class() {
+                    self.context
+                        .ptr_type(AddressSpace::default())
+                        .as_basic_type_enum()
+                } else {
+                    self.context.i64_type().as_basic_type_enum()
+                };
+
+                let val = self.builder.build_load(load_type, *ptr, name).unwrap();
+                Ok(val)
+            }
+
+            Expr::SelfRef =&gt; {
+                let ptr = self.variables.get("self").ok_or("'self' not in scope")?;
+                let val = self
+                    .builder
+                    .build_load(self.context.ptr_type(AddressSpace::default()), *ptr, "self")
+                    .unwrap();
+                Ok(val)
+            }
+            Expr::Unary { op, expr: inner } =&gt; {
+                let val = self.compile_expr(inner)?.into_int_value();
+                let result = match op {
+                    UnaryOp::Neg =&gt; self.builder.build_int_neg(val, "neg").unwrap(),
+                    UnaryOp::Not =&gt; self.builder.build_not(val, "not").unwrap(),
+                };
+                Ok(result.into())
+            }
+
+            Expr::Binary { op, left, right } =&gt; {
+                let l = self.compile_expr(left)?.into_int_value();
+                let r = self.compile_expr(right)?.into_int_value();
+
+                let result = match op {
+                    BinaryOp::Add =&gt; self.builder.build_int_add(l, r, "add").unwrap(),
+                    BinaryOp::Sub =&gt; self.builder.build_int_sub(l, r, "sub").unwrap(),
+                    BinaryOp::Mul =&gt; self.builder.build_int_mul(l, r, "mul").unwrap(),
+                    BinaryOp::Div =&gt; self.builder.build_int_signed_div(l, r, "div").unwrap(),
+                    BinaryOp::Mod =&gt; self.builder.build_int_signed_rem(l, r, "mod").unwrap(),
+                    BinaryOp::Lt =&gt; {
+                        let cmp = self
+                            .builder
+                            .build_int_compare(IntPredicate::SLT, l, r, "lt")
+                            .unwrap();
+                        self.builder
+                            .build_int_z_extend(cmp, self.context.i64_type(), "ext")
+                            .unwrap()
+                    }
+                    BinaryOp::Gt =&gt; {
+                        let cmp = self
+                            .builder
+                            .build_int_compare(IntPredicate::SGT, l, r, "gt")
+                            .unwrap();
+                        self.builder
+                            .build_int_z_extend(cmp, self.context.i64_type(), "ext")
+                            .unwrap()
+                    }
+                    BinaryOp::Le =&gt; {
+                        let cmp = self
+                            .builder
+                            .build_int_compare(IntPredicate::SLE, l, r, "le")
+                            .unwrap();
+                        self.builder
+                            .build_int_z_extend(cmp, self.context.i64_type(), "ext")
+                            .unwrap()
+                    }
+                    BinaryOp::Ge =&gt; {
+                        let cmp = self
+                            .builder
+                            .build_int_compare(IntPredicate::SGE, l, r, "ge")
+                            .unwrap();
+                        self.builder
+                            .build_int_z_extend(cmp, self.context.i64_type(), "ext")
+                            .unwrap()
+                    }
+                    BinaryOp::Eq =&gt; {
+                        let cmp = self
+                            .builder
+                            .build_int_compare(IntPredicate::EQ, l, r, "eq")
+                            .unwrap();
+                        self.builder
+                            .build_int_z_extend(cmp, self.context.i64_type(), "ext")
+                            .unwrap()
+                    }
+                    BinaryOp::Ne =&gt; {
+                        let cmp = self
+                            .builder
+                            .build_int_compare(IntPredicate::NE, l, r, "ne")
+                            .unwrap();
+                        self.builder
+                            .build_int_z_extend(cmp, self.context.i64_type(), "ext")
+                            .unwrap()
+                    }
+                };
+                Ok(result.into())
+            }
+
+            Expr::Call { name, args } =&gt; {
+                let function = self
+                    .functions
+                    .get(name)
+                    .cloned()
+                    .ok_or_else(|| format!("Undefined function: {}", name))?;
+
+                let arg_values: Vec&lt;BasicMetadataValueEnum&gt; = args
+                    .iter()
+                    .map(|a| self.compile_expr(a).map(|v| v.into()))
+                    .collect::&lt;Result&lt;_, _&gt;&gt;()?;
+
+                let call = self
+                    .builder
+                    .build_call(function, &amp;arg_values, "call")
+                    .unwrap();
+                Ok(call.try_as_basic_value().unwrap_basic())
+            }
+
+            Expr::MethodCall {
+                object,
+                method,
+                args,
+            } =&gt; {
+                let obj_val = self.compile_expr(object)?;
+                let obj_ptr = obj_val.into_pointer_value();
+
+                // Get class name
+                let class_name = object.ty.class_name().ok_or("Expected class type")?;
+                let fn_name = format!("{}__{}", class_name, method);
+
+                let function = self
+                    .functions
+                    .get(&amp;fn_name)
+                    .cloned()
+                    .ok_or_else(|| format!("Undefined method: {}", fn_name))?;
+
+                // Build argument list: self first, then other args
+                let mut arg_values: Vec&lt;BasicMetadataValueEnum&gt; = vec![obj_ptr.into()];
+                for arg in args {
+                    arg_values.push(self.compile_expr(arg)?.into());
+                }
+
+                let call = self
+                    .builder
+                    .build_call(function, &amp;arg_values, "call")
+                    .unwrap();
+                Ok(call.try_as_basic_value().unwrap_basic())
+            }
+            Expr::FieldAccess { object, field } =&gt; {
+                let obj_val = self.compile_expr(object)?;
+                let obj_ptr = obj_val.into_pointer_value();
+
+                // Get field index
+                let class_name = object.ty.class_name().ok_or("Expected class type")?;
+                let class_info = self.classes.get(class_name).ok_or("Class not found")?;
+                let field_idx = class_info.field_index(field).ok_or("Field not found")?;
+                let field_type = class_info.get_field(field).ok_or("Field not found")?;
+
+                // Get struct type
+                let struct_type = self
+                    .class_types
+                    .get(class_name)
+                    .ok_or("Class type not found")?;
+
+                // GEP to field
+                let field_ptr = self
+                    .builder
+                    .build_struct_gep(*struct_type, obj_ptr, field_idx as u32, "field_ptr")
+                    .unwrap();
+
+                // Load field value
+                let load_type = self.llvm_basic_type(field_type)?;
+                let val = self
+                    .builder
+                    .build_load(load_type, field_ptr, "field")
+                    .unwrap();
+                Ok(val)
+            }
+            Expr::New { class, args } =&gt; {
+                // Get struct type and size
+                let struct_type = self.class_types.get(class).ok_or("Class type not found")?;
+
+                // Calculate size (number of fields * 8 bytes)
+                let class_info = self.classes.get(class).ok_or("Class not found")?;
+                let size = (class_info.size() * 8).max(8) as u64; // At least 8 bytes
+                let size_val = self.context.i64_type().const_int(size, false);
+
+                // Call malloc
+                let malloc_fn = self.module.get_function("malloc").unwrap();
+                let ptr = self
+                    .builder
+                    .build_call(malloc_fn, &amp;[size_val.into()], "obj")
+                    .unwrap()
+                    .try_as_basic_value()
+                    .unwrap_basic()
+                    .into_pointer_value();
+
+                // Initialize fields to zero
+                for (i, _) in class_info.field_order.iter().enumerate() {
+                    let field_ptr = self
+                        .builder
+                        .build_struct_gep(*struct_type, ptr, i as u32, "init_field")
+                        .unwrap();
+                    let zero = self.context.i64_type().const_int(0, false);
+                    self.builder.build_store(field_ptr, zero).unwrap();
+                }
+
+                // Call constructor if exists
+                let ctor_name = format!("{}____init__", class);
+                if let Some(ctor) = self.functions.get(&amp;ctor_name).cloned() {
+                    let mut ctor_args: Vec&lt;BasicMetadataValueEnum&gt; = vec![ptr.into()];
+                    for arg in args {
+                        ctor_args.push(self.compile_expr(arg)?.into());
+                    }
+                    self.builder.build_call(ctor, &amp;ctor_args, "").unwrap();
+                }
+
+                Ok(ptr.into())
+            }
+            Expr::If {
+                cond,
+                then_branch,
+                else_branch,
+            } =&gt; {
+                let cond_val = self.compile_expr(cond)?.into_int_value();
+                let cond_bool = self
+                    .builder
+                    .build_int_truncate(cond_val, self.context.bool_type(), "cond")
+                    .unwrap();
+
+                let function = self.current_fn.unwrap();
+                let then_bb = self.context.append_basic_block(function, "then");
+                let else_bb = self.context.append_basic_block(function, "else");
+                let merge_bb = self.context.append_basic_block(function, "merge");
+
+                self.builder
+                    .build_conditional_branch(cond_bool, then_bb, else_bb)
+                    .unwrap();
+
+                // Then branch
+                self.builder.position_at_end(then_bb);
+                let mut then_val = self.context.i64_type().const_int(0, false);
+                for stmt in then_branch {
+                    if let Some(v) = self.compile_stmt(stmt)? {
+                        then_val = v;
+                    }
+                }
+                let then_end = self.builder.get_insert_block().unwrap();
+                let then_has_terminator = then_end.get_terminator().is_some();
+                if !then_has_terminator {
+                    self.builder.build_unconditional_branch(merge_bb).unwrap();
+                }
+
+                // Else branch
+                self.builder.position_at_end(else_bb);
+                let mut else_val = self.context.i64_type().const_int(0, false);
+                for stmt in else_branch {
+                    if let Some(v) = self.compile_stmt(stmt)? {
+                        else_val = v;
+                    }
+                }
+                let else_end = self.builder.get_insert_block().unwrap();
+                let else_has_terminator = else_end.get_terminator().is_some();
+                if !else_has_terminator {
+                    self.builder.build_unconditional_branch(merge_bb).unwrap();
+                }
+
+                // Merge
+                if then_has_terminator &amp;&amp; else_has_terminator {
+                    unsafe {
+                        merge_bb.delete().unwrap();
+                    }
+                    Ok(self.context.i64_type().const_int(0, false).into())
+                } else {
+                    self.builder.position_at_end(merge_bb);
+                    let phi = self
+                        .builder
+                        .build_phi(self.context.i64_type(), "phi")
+                        .unwrap();
+
+                    if !then_has_terminator {
+                        phi.add_incoming(&amp;[(&amp;then_val, then_end)]);
+                    }
+                    if !else_has_terminator {
+                        phi.add_incoming(&amp;[(&amp;else_val, else_end)]);
+                    }
+
+                    Ok(phi.as_basic_value())
+                }
+            }
+
+            Expr::While { cond, body } =&gt; {
+                let function = self.current_fn.unwrap();
+                let cond_bb = self.context.append_basic_block(function, "while_cond");
+                let body_bb = self.context.append_basic_block(function, "while_body");
+                let end_bb = self.context.append_basic_block(function, "while_end");
+
+                self.builder.build_unconditional_branch(cond_bb).unwrap();
+
+                // Condition
+                self.builder.position_at_end(cond_bb);
+                let cond_val = self.compile_expr(cond)?.into_int_value();
+                let cond_bool = self
+                    .builder
+                    .build_int_truncate(cond_val, self.context.bool_type(), "cond")
+                    .unwrap();
+                self.builder
+                    .build_conditional_branch(cond_bool, body_bb, end_bb)
+                    .unwrap();
+
+                // Body
+                self.builder.position_at_end(body_bb);
+                for stmt in body {
+                    self.compile_stmt(stmt)?;
+                }
+                if self
+                    .builder
+                    .get_insert_block()
+                    .unwrap()
+                    .get_terminator()
+                    .is_none()
+                {
+                    self.builder.build_unconditional_branch(cond_bb).unwrap();
+                }
+
+                // End
+                self.builder.position_at_end(end_bb);
+                Ok(self.context.i64_type().const_int(0, false).into())
+            }
+
+            Expr::Block(stmts) =&gt; {
+                let mut last_val: BasicValueEnum =
+                    self.context.i64_type().const_int(0, false).into();
+                for stmt in stmts {
+                    if let Some(v) = self.compile_stmt(stmt)? {
+                        last_val = v.into();
+                    }
+                }
+                Ok(last_val)
+            }
+        }
+    }</code></pre>
+<p><a class="filename" href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/thirdlang/src/codegen.rs">thirdlang/src/codegen.rs</a></p>
+<p>The important new cases:</p>
+<h3 id="self-reference"><a class="header" href="#self-reference">Self Reference</a></h3>
+<pre><code class="language-rust ignore">            Expr::SelfRef =&gt; {
+                let ptr = self.variables.get("self").ok_or("'self' not in scope")?;
+                let val = self
+                    .builder
+                    .build_load(self.context.ptr_type(AddressSpace::default()), *ptr, "self")
+                    .unwrap();
+                Ok(val)
+            }</code></pre>
+<p><code>self</code> is stored as a local variable pointer, just like other parameters.</p>
+<h3 id="new-expression"><a class="header" href="#new-expression">New Expression</a></h3>
+<pre><code class="language-rust ignore">            Expr::New { class, args } =&gt; {
+                // Get struct type and size
+                let struct_type = self.class_types.get(class).ok_or("Class type not found")?;
+
+                // Calculate size (number of fields * 8 bytes)
+                let class_info = self.classes.get(class).ok_or("Class not found")?;
+                let size = (class_info.size() * 8).max(8) as u64; // At least 8 bytes
+                let size_val = self.context.i64_type().const_int(size, false);
+
+                // Call malloc
+                let malloc_fn = self.module.get_function("malloc").unwrap();
+                let ptr = self
+                    .builder
+                    .build_call(malloc_fn, &amp;[size_val.into()], "obj")
+                    .unwrap()
+                    .try_as_basic_value()
+                    .unwrap_basic()
+                    .into_pointer_value();
+
+                // Initialize fields to zero
+                for (i, _) in class_info.field_order.iter().enumerate() {
+                    let field_ptr = self
+                        .builder
+                        .build_struct_gep(*struct_type, ptr, i as u32, "init_field")
+                        .unwrap();
+                    let zero = self.context.i64_type().const_int(0, false);
+                    self.builder.build_store(field_ptr, zero).unwrap();
+                }
+
+                // Call constructor if exists
+                let ctor_name = format!("{}____init__", class);
+                if let Some(ctor) = self.functions.get(&amp;ctor_name).cloned() {
+                    let mut ctor_args: Vec&lt;BasicMetadataValueEnum&gt; = vec![ptr.into()];
+                    for arg in args {
+                        ctor_args.push(self.compile_expr(arg)?.into());
+                    }
+                    self.builder.build_call(ctor, &amp;ctor_args, "").unwrap();
+                }
+
+                Ok(ptr.into())
+            }</code></pre>
+<h3 id="field-access-1"><a class="header" href="#field-access-1">Field Access</a></h3>
+<pre><code class="language-rust ignore">            Expr::FieldAccess { object, field } =&gt; {
+                let obj_val = self.compile_expr(object)?;
+                let obj_ptr = obj_val.into_pointer_value();
+
+                // Get field index
+                let class_name = object.ty.class_name().ok_or("Expected class type")?;
+                let class_info = self.classes.get(class_name).ok_or("Class not found")?;
+                let field_idx = class_info.field_index(field).ok_or("Field not found")?;
+                let field_type = class_info.get_field(field).ok_or("Field not found")?;
+
+                // Get struct type
+                let struct_type = self
+                    .class_types
+                    .get(class_name)
+                    .ok_or("Class type not found")?;
+
+                // GEP to field
+                let field_ptr = self
+                    .builder
+                    .build_struct_gep(*struct_type, obj_ptr, field_idx as u32, "field_ptr")
+                    .unwrap();
+
+                // Load field value
+                let load_type = self.llvm_basic_type(field_type)?;
+                let val = self
+                    .builder
+                    .build_load(load_type, field_ptr, "field")
+                    .unwrap();
+                Ok(val)
+            }</code></pre>
+<h3 id="method-call"><a class="header" href="#method-call">Method Call</a></h3>
+<pre><code class="language-rust ignore">            Expr::MethodCall {
+                object,
+                method,
+                args,
+            } =&gt; {
+                let obj_val = self.compile_expr(object)?;
+                let obj_ptr = obj_val.into_pointer_value();
+
+                // Get class name
+                let class_name = object.ty.class_name().ok_or("Expected class type")?;
+                let fn_name = format!("{}__{}", class_name, method);
+
+                let function = self
+                    .functions
+                    .get(&amp;fn_name)
+                    .cloned()
+                    .ok_or_else(|| format!("Undefined method: {}", fn_name))?;
+
+                // Build argument list: self first, then other args
+                let mut arg_values: Vec&lt;BasicMetadataValueEnum&gt; = vec![obj_ptr.into()];
+                for arg in args {
+                    arg_values.push(self.compile_expr(arg)?.into());
+                }
+
+                let call = self
+                    .builder
+                    .build_call(function, &amp;arg_values, "call")
+                    .unwrap();
+                Ok(call.try_as_basic_value().unwrap_basic())
+            }</code></pre>
+<h2 id="complete-example"><a class="header" href="#complete-example">Complete Example</a></h2>
+<p>Let us trace through compiling this class:</p>
+<pre><code>class Counter {
+    count: int
+
+    def __init__(self) {
+        self.count = 0
+    }
+
+    def increment(self) -&gt; int {
+        self.count = self.count + 1
+        return self.count
+    }
+}
+
+c = new Counter()
+c.increment()
+</code></pre>
+<h3 id="generated-llvm-ir"><a class="header" href="#generated-llvm-ir">Generated LLVM IR</a></h3>
+<pre><code>; Struct type
+%Counter = type { i64 }
+
+; Constructor
+define void @Counter____init__(ptr %self) {
+entry:
+    %count_ptr = getelementptr %Counter, ptr %self, i32 0, i32 0
+    store i64 0, ptr %count_ptr
+    ret void
+}
+
+; Increment method
+define i64 @Counter__increment(ptr %self) {
+entry:
+    ; self.count + 1
+    %count_ptr = getelementptr %Counter, ptr %self, i32 0, i32 0
+    %count = load i64, ptr %count_ptr
+    %new_count = add i64 %count, 1
+
+    ; self.count = new_count
+    store i64 %new_count, ptr %count_ptr
+
+    ; return self.count
+    %result = load i64, ptr %count_ptr
+    ret i64 %result
+}
+
+; Main function
+define i64 @__main() {
+entry:
+    ; c = new Counter()
+    %raw = call ptr @malloc(i64 8)
+    call void @Counter____init__(ptr %raw)
+
+    ; c.increment()
+    %result = call i64 @Counter__increment(ptr %raw)
+
+    ret i64 %result
+}
+</code></pre>
+<h2 id="jit-execution"><a class="header" href="#jit-execution">JIT Execution</a></h2>
+<pre><code class="language-rust ignore">/// JIT compile and run a program
+pub fn jit_run(program: &amp;Program, classes: ClassRegistry) -&gt; Result&lt;i64, String&gt; {
+    jit_run_with_opts(program, classes, None)
+}</code></pre>
+<p><a class="filename" href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/thirdlang/src/codegen.rs">thirdlang/src/codegen.rs</a></p>
+<p>Same pattern as Secondlang:</p>
+<ol>
+<li>Create code generator</li>
+<li>Compile program</li>
+<li>Create JIT engine</li>
+<li>Get <code>__main</code> function</li>
+<li>Call and return result</li>
+</ol>
+<h2 id="memory-layout-summary"><a class="header" href="#memory-layout-summary">Memory Layout Summary</a></h2>
+<div class="table-wrapper"><table><thead><tr><th>Thirdlang</th><th>LLVM IR</th><th>Notes</th></tr></thead><tbody>
+<tr><td><code>class Point { x: int }</code></td><td><code>%Point = type { i64 }</code></td><td>Struct type</td></tr>
+<tr><td><code>new Point(10)</code></td><td><code>call @malloc</code> + <code>call @Point____init__</code></td><td>Heap allocation</td></tr>
+<tr><td><code>p.x</code></td><td><code>getelementptr</code> + <code>load</code></td><td>Field read</td></tr>
+<tr><td><code>p.x = 5</code></td><td><code>getelementptr</code> + <code>store</code></td><td>Field write</td></tr>
+<tr><td><code>p.method()</code></td><td><code>call @Point__method(ptr %p)</code></td><td>Method call</td></tr>
+<tr><td><code>delete p</code></td><td><code>call @Point____del__</code> + <code>call @free</code></td><td>Destruction</td></tr>
+</tbody></table>
+</div>
+<h2 id="performance-considerations"><a class="header" href="#performance-considerations">Performance Considerations</a></h2>
+<p>Our implementation is straightforward but not optimal:</p>
+<h3 id="what-we-do"><a class="header" href="#what-we-do">What We Do</a></h3>
+<ul>
+<li>Direct field access via GEP (fast)</li>
+<li>Method calls are static (no vtable lookup)</li>
+<li>Objects are contiguous in memory</li>
+</ul>
+<h3 id="what-real-compilers-add"><a class="header" href="#what-real-compilers-add">What Real Compilers Add</a></h3>
+<ul>
+<li>Inline method calls when possible</li>
+<li>Escape analysis (stack allocate short-lived objects)</li>
+<li>Field alignment optimization</li>
+<li>Dead field elimination</li>
+</ul>
+<p>Our simple approach is sufficient for learning the concepts.</p>
+<h2 id="summary"><a class="header" href="#summary">Summary</a></h2>
+<div class="table-wrapper"><table><thead><tr><th>Concept</th><th>Implementation</th></tr></thead><tbody>
+<tr><td>Class</td><td>LLVM struct type</td></tr>
+<tr><td>Object</td><td>Pointer to struct on heap</td></tr>
+<tr><td>Field</td><td>Struct element (GEP access)</td></tr>
+<tr><td>Method</td><td>Function with self as first param</td></tr>
+<tr><td>Constructor</td><td><code>ClassName____init__</code> function</td></tr>
+<tr><td>Destructor</td><td><code>ClassName____del__</code> function</td></tr>
+<tr><td>new</td><td>malloc + constructor call</td></tr>
+<tr><td>delete</td><td>destructor call + free</td></tr>
+</tbody></table>
+</div><div class="checkpoint">
+<strong>Checkpoint</strong>
+<p>At this point, you should be able to:</p>
+<ul>
+<li>Run <code>cargo run --bin thirdlang -- --ir examples/point.tl</code> and see IR</li>
+<li>See <code>%Point</code> struct type in the output</li>
+<li>See <code>Point__init</code> and other method functions</li>
+</ul>
+</div>
+<div class="related-topics">
+<strong>Related Topics</strong>
+<ul>
+<li><a href="../03_secondlang/codegen.html">Secondlang Codegen</a> - The foundation we extended</li>
+<li><a href="../03_secondlang/ir.html">From AST to IR</a> - Understanding LLVM IR</li>
+<li><a href="memory.html">Memory Management</a> - How malloc/free work</li>
+<li><a href="optimization.html">Optimizing IR</a> - Making the IR efficient</li>
+</ul>
+</div>
+<p>In the final chapter, we <a href="running.html">run Thirdlang programs</a> and see everything working together.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../04_thirdlang/memory.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../04_thirdlang/optimization.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../04_thirdlang/memory.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../04_thirdlang/optimization.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../theme/force-theme.js"></script>
+
+
+
+    </div>
+    </body>
+</html>

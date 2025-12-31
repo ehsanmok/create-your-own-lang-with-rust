@@ -17,7 +17,6 @@
         <link rel="stylesheet" href="../css/variables.css">
         <link rel="stylesheet" href="../css/general.css">
         <link rel="stylesheet" href="../css/chrome.css">
-        <link rel="stylesheet" href="../css/print.css" media="print">
 
         <!-- Fonts -->
         <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
@@ -145,9 +144,6 @@
                     <h1 class="menu-title">Create Your Own Programming Language with Rust</h1>
 
                     <div class="right-buttons">
-                        <a href="../print.html" title="Print this book" aria-label="Print this book">
-                            <i id="print-button" class="fa fa-print"></i>
-                        </a>
                         <a href="https://github.com/ehsanmok/create-your-own-lang-with-rust" title="Git repository" aria-label="Git repository">
                             <i id="git-repository-button" class="fa fa-github"></i>
                         </a>
@@ -183,6 +179,9 @@
                 <div id="content" class="content">
                     <main>
                         <h2 id="abstract-syntax-tree-ast"><a class="header" href="#abstract-syntax-tree-ast">Abstract Syntax Tree (AST)</a></h2>
+<blockquote>
+<p>Think of source code as a <em>sentence</em> and the AST as its <em>diagram</em>. Just like “The cat sat on the mat” can be diagrammed into subject/verb/object, <code>1 + 2</code> can be diagrammed into left/operator/right. The AST is that diagram - it captures <em>structure</em>, not just text.</p>
+</blockquote>
 <p>AST comes into the picture when we want to go from the string representation of our program like <code>"-1"</code> or <code>"1 + 2"</code> to something more manageable and easier to work with. Since our program is not a random string (that’s what the grammar ensures), we can use the structure within the expressions <code>"-1"</code> and <code>"1 + 2"</code> to our advantage and come up with a <em>new representation</em> like a <a href="https://en.wikipedia.org/wiki/Tree_structure">tree</a>:</p>
 <p align="center">
   </br>
@@ -318,6 +317,24 @@ impl Compile for Interpreter {
 <p>Run such tests locally with</p>
 <pre><code class="language-bash">cargo test interpreter --tests
 </code></pre>
+<div class="checkpoint">
+<strong>Checkpoint</strong>
+<p>At this point, you should be able to:</p>
+<ul>
+<li>Parse <code>1 + 2</code> and build an AST with a <code>Binary</code> node</li>
+<li>Evaluate <code>1 + 2 - 3</code> and get <code>0</code></li>
+<li>Handle nested expressions like <code>-1 + (2 + 3)</code></li>
+</ul>
+</div>
+<div class="related-topics">
+<strong>Related Topics</strong>
+<ul>
+<li><a href="./grammar_lexer_parser.html">Grammar and Parser</a> - How input becomes tokens</li>
+<li><a href="./jit_intro.html">JIT Compilation</a> - Compile AST to machine code</li>
+<li><a href="./vm.html">Virtual Machine</a> - Compile AST to bytecode</li>
+<li><a href="../02_firstlang/functions.html">Firstlang AST</a> - AST for a full language</li>
+</ul>
+</div>
 
                     </main>
 

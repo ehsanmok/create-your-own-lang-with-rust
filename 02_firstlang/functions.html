@@ -17,7 +17,6 @@
         <link rel="stylesheet" href="../css/variables.css">
         <link rel="stylesheet" href="../css/general.css">
         <link rel="stylesheet" href="../css/chrome.css">
-        <link rel="stylesheet" href="../css/print.css" media="print">
 
         <!-- Fonts -->
         <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
@@ -145,9 +144,6 @@
                     <h1 class="menu-title">Create Your Own Programming Language with Rust</h1>
 
                     <div class="right-buttons">
-                        <a href="../print.html" title="Print this book" aria-label="Print this book">
-                            <i id="print-button" class="fa fa-print"></i>
-                        </a>
                         <a href="https://github.com/ehsanmok/create-your-own-lang-with-rust" title="Git repository" aria-label="Git repository">
                             <i id="git-repository-button" class="fa fa-github"></i>
                         </a>
@@ -191,7 +187,7 @@
 </ul>
 <h2 id="defining-functions"><a class="header" href="#defining-functions">Defining Functions</a></h2>
 <p>In Firstlang, we define functions with <code>def</code>:</p>
-<pre><code class="language-python">def add(a, b) {
+<pre><code>def add(a, b) {
     return a + b
 }
 </code></pre>
@@ -248,12 +244,15 @@
 }
 <span class="boring">}</span></code></pre></pre>
 <h2 id="the-call-stack"><a class="header" href="#the-call-stack">The Call Stack</a></h2>
+<blockquote>
+<p>The call stack is like a stack of sticky notes. Each function call writes its variables on a new note and puts it on top. When the function returns, you tear off the top note and throw it away. The note underneath becomes current again. This is why <code>inner()</code>’s <code>x</code> doesn’t overwrite <code>outer()</code>’s <code>x</code> - they’re on different notes.</p>
+</blockquote>
 <p>Each function call creates a new “frame” on the call stack. This is crucial for:</p>
 <ul>
 <li><strong>Local variables</strong> - Each call has its own <code>a</code> and <code>b</code></li>
 <li><strong>Recursion</strong> - Multiple calls can be “in flight” simultaneously</li>
 </ul>
-<pre><code class="language-python">def outer() {
+<pre><code>def outer() {
     x = 1
     return inner()
 }
@@ -266,34 +265,27 @@ def inner() {
 outer()
 </code></pre>
 <p>During execution:</p>
-<pre><code>Call Stack:
-┌─────────────┐
-│ inner       │  ← current frame (y = 2)
-│ x = 1, y = ?│
-├─────────────┤
-│ outer       │  ← previous frame (x = 1)
-│ x = 1       │
-├─────────────┤
-│ global      │
-└─────────────┘
-</code></pre>
+<p align="center">
+</br>
+    <a href><img alt="call stack" src="../img/call-stack.svg"> </a>
+</p>
 <h2 id="examples"><a class="header" href="#examples">Examples</a></h2>
 <h3 id="simple-function"><a class="header" href="#simple-function">Simple Function</a></h3>
-<pre><code class="language-python">def square(x) {
+<pre><code>def square(x) {
     return x * x
 }
 
 square(5)       # 25
 </code></pre>
 <h3 id="multiple-parameters"><a class="header" href="#multiple-parameters">Multiple Parameters</a></h3>
-<pre><code class="language-python">def area(width, height) {
+<pre><code>def area(width, height) {
     return width * height
 }
 
 area(4, 5)      # 20
 </code></pre>
 <h3 id="function-composition"><a class="header" href="#function-composition">Function Composition</a></h3>
-<pre><code class="language-python">def double(x) {
+<pre><code>def double(x) {
     return x * 2
 }
 

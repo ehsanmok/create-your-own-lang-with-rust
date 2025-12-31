@@ -17,7 +17,6 @@
         <link rel="stylesheet" href="../css/variables.css">
         <link rel="stylesheet" href="../css/general.css">
         <link rel="stylesheet" href="../css/chrome.css">
-        <link rel="stylesheet" href="../css/print.css" media="print">
 
         <!-- Fonts -->
         <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
@@ -145,9 +144,6 @@
                     <h1 class="menu-title">Create Your Own Programming Language with Rust</h1>
 
                     <div class="right-buttons">
-                        <a href="../print.html" title="Print this book" aria-label="Print this book">
-                            <i id="print-button" class="fa fa-print"></i>
-                        </a>
                         <a href="https://github.com/ehsanmok/create-your-own-lang-with-rust" title="Git repository" aria-label="Git repository">
                             <i id="git-repository-button" class="fa fa-github"></i>
                         </a>
@@ -186,7 +182,7 @@
 <p>Before we start adding types to our language, let us take a moment to understand <em>why</em> we would want types in the first place. After all, <a href="../02_firstlang/intro.html">Firstlang</a> works just fine without them.</p>
 <h2 id="the-problem-runtime-surprises"><a class="header" href="#the-problem-runtime-surprises">The Problem: Runtime Surprises</a></h2>
 <p>In Firstlang, we can write code like this:</p>
-<pre><code class="language-python">def add(a, b) {
+<pre><code>def add(a, b) {
     return a + b
 }
 
@@ -281,24 +277,10 @@ def isPositive(n: int) -&gt; bool { ... }
 <p>We write the types on function parameters and return values (the <em>boundaries</em>), and the compiler infers the rest. This gives us the safety of types without excessive verbosity. We cover this in detail in the <a href="./inference.html">Type Inference</a> chapter.</p>
 <h2 id="how-type-checking-works"><a class="header" href="#how-type-checking-works">How Type Checking Works</a></h2>
 <p>Here is the high-level flow:</p>
-<pre><code>Source Code: "def add(a: int, b: int) -&gt; int { return a + b }"
-                              |
-                          [Parser]
-                              |
-                Typed AST (some types are Unknown)
-                              |
-                        [Type Checker]
-                              |
-                Typed AST (all types filled in)
-                              |
-                      [Code Generator]
-                              |
-                          LLVM IR
-                              |
-                           [LLVM]
-                              |
-                        Native Code
-</code></pre>
+<p align="center">
+</br>
+    <a href><img alt="type checking pipeline" src="../img/type-checking-pipeline.svg"> </a>
+</p>
 <p>The <a href="https://en.wikipedia.org/wiki/Parsing">parser</a> creates an <a href="https://en.wikipedia.org/wiki/Abstract_syntax_tree">AST</a> where some types are marked as <code>Unknown</code> (we do not know them yet). The type checker walks through the AST, figures out all the unknown types, and checks that everything is consistent. If something is wrong (like <code>1 + true</code>), it reports an error. If everything is okay, we have a fully-typed AST ready for code generation.</p>
 <h2 id="implementation"><a class="header" href="#implementation">Implementation</a></h2>
 <p>Our type system is defined in <code>types.rs</code>:</p>

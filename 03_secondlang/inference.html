@@ -17,7 +17,6 @@
         <link rel="stylesheet" href="../css/variables.css">
         <link rel="stylesheet" href="../css/general.css">
         <link rel="stylesheet" href="../css/chrome.css">
-        <link rel="stylesheet" href="../css/print.css" media="print">
 
         <!-- Fonts -->
         <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
@@ -145,9 +144,6 @@
                     <h1 class="menu-title">Create Your Own Programming Language with Rust</h1>
 
                     <div class="right-buttons">
-                        <a href="../print.html" title="Print this book" aria-label="Print this book">
-                            <i id="print-button" class="fa fa-print"></i>
-                        </a>
                         <a href="https://github.com/ehsanmok/create-your-own-lang-with-rust" title="Git repository" aria-label="Git repository">
                             <i id="git-repository-button" class="fa fa-github"></i>
                         </a>
@@ -183,6 +179,9 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="type-inference"><a class="header" href="#type-inference">Type Inference</a></h1>
+<blockquote>
+<p>Type inference is like filling in a crossword puzzle. Some squares have letters (explicit annotations), others are blank (Unknown). You use the constraints - “this must be 5 letters”, “it crosses with CAT” - to fill in the blanks. Type inference uses constraints like “this is added to an int, so it must be int” to fill in Unknown types.</p>
+</blockquote>
 <p>In the <a href="./annotations.html">previous chapter</a>, we saw that the parser creates an AST with many <code>Type::Unknown</code> values. The type checker’s job is to figure out what those unknown types should be. This process is called <strong><a href="https://en.wikipedia.org/wiki/Type_inference">type inference</a></strong>.</p>
 <h2 id="what-kind-of-type-inference"><a class="header" href="#what-kind-of-type-inference">What Kind of Type Inference?</a></h2>
 <p>There are different approaches to type inference:</p>
@@ -495,7 +494,7 @@ Assignment { name: "is_big", value: Binary(...), ty: Bool }
 <ul>
 <li><code>doubled</code> is <code>Int</code>, <code>1</code> is <code>Int</code></li>
 <li><code>doubled + 1</code> is <code>Int</code></li>
-<li>Declared return type is <code>Int</code> ✓ matches</li>
+<li>Declared return type is <code>Int</code> - matches</li>
 </ul>
 </li>
 </ol>
@@ -745,10 +744,10 @@ let result = typecheck("add(1, true)");
 <p>For a simple language like Secondlang, this is fine. The annotation burden is low (just function boundaries), and the implementation is much simpler.</p>
 <h2 id="comparison-with-other-systems"><a class="header" href="#comparison-with-other-systems">Comparison with Other Systems</a></h2>
 <div class="table-wrapper"><table><thead><tr><th>Feature</th><th>Secondlang</th><th>TypeScript</th><th>Haskell</th></tr></thead><tbody>
-<tr><td>Variable inference</td><td>✓</td><td>✓</td><td>✓</td></tr>
-<tr><td>Function param inference</td><td>✗</td><td>Partial</td><td>✓</td></tr>
-<tr><td>Polymorphism</td><td>✗</td><td>✓ (generics)</td><td>✓ (parametric)</td></tr>
-<tr><td>Bidirectional</td><td>✗</td><td>✓</td><td>Partial</td></tr>
+<tr><td>Variable inference</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+<tr><td>Function param inference</td><td>No</td><td>Partial</td><td>Yes</td></tr>
+<tr><td>Polymorphism</td><td>No</td><td>Yes (generics)</td><td>Yes (parametric)</td></tr>
+<tr><td>Bidirectional</td><td>No</td><td>Yes</td><td>Partial</td></tr>
 </tbody></table>
 </div>
 <h2 id="summary"><a class="header" href="#summary">Summary</a></h2>
@@ -776,6 +775,24 @@ let result = typecheck("add(1, true)");
 <h2 id="testing"><a class="header" href="#testing">Testing</a></h2>
 <pre><code class="language-bash">cargo test typeck
 </code></pre>
+<div class="checkpoint">
+<strong>Checkpoint</strong>
+<p>At this point, you should be able to:</p>
+<ul>
+<li>Compile <code>x = 5</code> and have <code>x</code> inferred as <code>int</code></li>
+<li>Get an error for <code>x = 5 + true</code> (type mismatch)</li>
+<li>Compile functions without annotating local variable types</li>
+</ul>
+</div>
+<div class="related-topics">
+<strong>Related Topics</strong>
+<ul>
+<li><a href="./annotations.html">Type Annotations</a> - Where types come from</li>
+<li><a href="./why_types.html">Why Types Matter</a> - Motivation for static types</li>
+<li><a href="./codegen.html">Code Generation</a> - How types inform IR generation</li>
+<li><a href="../04_thirdlang/classes_syntax.html">Thirdlang Types</a> - Extending types for classes</li>
+</ul>
+</div>
 <p>In the next chapter, we look at <a href="./optimizations.html">optimizations</a> we can do on the typed AST before generating code.</p>
 
                     </main>

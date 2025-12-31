@@ -17,7 +17,6 @@
         <link rel="stylesheet" href="../css/variables.css">
         <link rel="stylesheet" href="../css/general.css">
         <link rel="stylesheet" href="../css/chrome.css">
-        <link rel="stylesheet" href="../css/print.css" media="print">
 
         <!-- Fonts -->
         <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
@@ -145,9 +144,6 @@
                     <h1 class="menu-title">Create Your Own Programming Language with Rust</h1>
 
                     <div class="right-buttons">
-                        <a href="../print.html" title="Print this book" aria-label="Print this book">
-                            <i id="print-button" class="fa fa-print"></i>
-                        </a>
                         <a href="https://github.com/ehsanmok/create-your-own-lang-with-rust" title="Git repository" aria-label="Git repository">
                             <i id="git-repository-button" class="fa fa-github"></i>
                         </a>
@@ -211,7 +207,7 @@ BoolType = { "bool" }
 <p>The type checker is the major new component. It walks the AST, infers types for expressions, and catches errors like <code>1 + true</code> at compile time instead of runtime.</p>
 <h2 id="why-types-enable-compilation"><a class="header" href="#why-types-enable-compilation">Why Types Enable Compilation</a></h2>
 <p>Without types, the interpreter must check types at runtime for every operation:</p>
-<pre><code class="language-python"># Firstlang interpreter
+<pre><code># Firstlang interpreter
 def eval_binary(left, right, op):
     if type(left) != type(right):
         raise TypeError("...")
@@ -220,7 +216,7 @@ def eval_binary(left, right, op):
     # ... many more checks
 </code></pre>
 <p>With static types, we know at compile time that <code>a</code> is an <code>int</code> and <code>b</code> is an <code>int</code>, so <code>a + b</code> is a single CPU instruction:</p>
-<pre><code class="language-llvm">%add = add i64 %a, %b
+<pre><code>%add = add i64 %a, %b
 </code></pre>
 <p>No runtime checks, no type dispatch, just a direct machine instruction.</p>
 <h2 id="feature-comparison"><a class="header" href="#feature-comparison">Feature Comparison</a></h2>
@@ -234,7 +230,7 @@ def eval_binary(left, right, op):
 </div>
 <h2 id="syntax-comparison"><a class="header" href="#syntax-comparison">Syntax Comparison</a></h2>
 <p>Firstlang (untyped):</p>
-<pre><code class="language-python">def fib(n) {
+<pre><code>def fib(n) {
     if (n &lt; 2) {
         return n
     } else {
@@ -322,7 +318,7 @@ rustup run nightly cargo run -- --check examples/fibonacci.sl
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../02_firstlang/fibonacci.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../transition_2_to_3.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
@@ -336,7 +332,7 @@ rustup run nightly cargo run -- --check examples/fibonacci.sl
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../02_firstlang/fibonacci.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../transition_2_to_3.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 

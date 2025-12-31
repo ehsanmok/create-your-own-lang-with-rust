@@ -17,7 +17,6 @@
         <link rel="stylesheet" href="../css/variables.css">
         <link rel="stylesheet" href="../css/general.css">
         <link rel="stylesheet" href="../css/chrome.css">
-        <link rel="stylesheet" href="../css/print.css" media="print">
 
         <!-- Fonts -->
         <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
@@ -145,9 +144,6 @@
                     <h1 class="menu-title">Create Your Own Programming Language with Rust</h1>
 
                     <div class="right-buttons">
-                        <a href="../print.html" title="Print this book" aria-label="Print this book">
-                            <i id="print-button" class="fa fa-print"></i>
-                        </a>
                         <a href="https://github.com/ehsanmok/create-your-own-lang-with-rust" title="Git repository" aria-label="Git repository">
                             <i id="git-repository-button" class="fa fa-github"></i>
                         </a>
@@ -225,16 +221,16 @@ Block = { "{" ~ Stmt* ~ "}" }
 </code></pre>
 <h2 id="examples"><a class="header" href="#examples">Examples</a></h2>
 <h3 id="simple-arithmetic"><a class="header" href="#simple-arithmetic">Simple Arithmetic</a></h3>
-<pre><code class="language-python">1 + 2 * 3       # = 7 (multiplication first)
+<pre><code>1 + 2 * 3       # = 7 (multiplication first)
 (1 + 2) * 3     # = 9 (parentheses override)
 -5 + 3          # = -2 (unary minus)
 </code></pre>
 <h3 id="variables"><a class="header" href="#variables">Variables</a></h3>
-<pre><code class="language-python">x = 10
+<pre><code>x = 10
 y = x + 5       # = 15
 </code></pre>
 <h3 id="functions"><a class="header" href="#functions">Functions</a></h3>
-<pre><code class="language-python">def greet() {
+<pre><code>def greet() {
     return 42
 }
 
@@ -245,7 +241,7 @@ def add(a, b) {
 add(3, 4)       # = 7
 </code></pre>
 <h3 id="conditionals"><a class="header" href="#conditionals">Conditionals</a></h3>
-<pre><code class="language-python">def max(a, b) {
+<pre><code>def max(a, b) {
     if (a &gt; b) {
         return a
     } else {
@@ -256,14 +252,14 @@ add(3, 4)       # = 7
 max(10, 20)     # = 20
 </code></pre>
 <h3 id="loops"><a class="header" href="#loops">Loops</a></h3>
-<pre><code class="language-python">x = 0
+<pre><code>x = 0
 while (x &lt; 5) {
     x = x + 1
 }
 x               # = 5
 </code></pre>
 <h3 id="recursion"><a class="header" href="#recursion">Recursion</a></h3>
-<pre><code class="language-python">def factorial(n) {
+<pre><code>def factorial(n) {
     if (n &lt;= 1) {
         return 1
     } else {

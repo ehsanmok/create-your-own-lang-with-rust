@@ -1,0 +1,512 @@
+<!DOCTYPE HTML>
+<html lang="en" class="rust sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Running Thirdlang - Create Your Own Programming Language with Rust</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/custom.css">
+        <link rel="stylesheet" href="../theme/highlight.css">
+
+        <!-- MathJax -->
+        <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "rust";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('rust')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Create Your Own Programming Language with Rust</h1>
+
+                    <div class="right-buttons">
+                        <a href="https://github.com/ehsanmok/create-your-own-lang-with-rust" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="running-thirdlang"><a class="header" href="#running-thirdlang">Running Thirdlang</a></h1>
+<p>We have built all the pieces. Now let us put them together and run some real programs. This mirrors <a href="../03_secondlang/jit_fibonacci.html">JIT Compiling Fibonacci</a> from Secondlang but with object-oriented features.</p>
+<h2 id="the-complete-pipeline"><a class="header" href="#the-complete-pipeline">The Complete Pipeline</a></h2>
+<p>Here is what happens when you run a Thirdlang program:</p>
+<p align="center">
+</br>
+    <a href><img alt="complete pipeline" src="../img/thirdlang-pipeline.svg"> </a>
+</p>
+<p>Each step transforms the program closer to executable code.</p>
+<h2 id="running-point-example"><a class="header" href="#running-point-example">Running Point Example</a></h2>
+<p>Create a file <code>examples/point.tl</code>:</p>
+<pre><code>class Point {
+    x: int
+    y: int
+
+    def __init__(self, x: int, y: int) {
+        self.x = x
+        self.y = y
+    }
+
+    def distance_squared(self, other: Point) -&gt; int {
+        dx = other.x - self.x
+        dy = other.y - self.y
+        return dx * dx + dy * dy
+    }
+}
+
+p1 = new Point(0, 0)
+p2 = new Point(3, 4)
+p1.distance_squared(p2)
+</code></pre>
+<p>Run it:</p>
+<pre><code class="language-bash">cd thirdlang
+rustup run nightly cargo run --bin thirdlang -- examples/point.tl
+</code></pre>
+<p>Output:</p>
+<pre><code>25
+</code></pre>
+<p>It works! We computed the distance squared from origin <code>(0,0)</code> to point <code>(3,4)</code>, which is <code>3² + 4² = 25</code>.</p>
+<h2 id="running-with-optimization"><a class="header" href="#running-with-optimization">Running with Optimization</a></h2>
+<p>Thirdlang supports LLVM optimization passes. Compare unoptimized and optimized IR:</p>
+<pre><code class="language-bash"># Unoptimized IR (verbose, many allocas)
+rustup run nightly cargo run --bin thirdlang -- --ir examples/point.tl
+
+# Optimized IR (clean, efficient)
+rustup run nightly cargo run --bin thirdlang -- --ir -O examples/point.tl
+</code></pre>
+<p>Run with optimization enabled:</p>
+<pre><code class="language-bash"># Default optimization (dce, mem2reg, instcombine, simplifycfg)
+rustup run nightly cargo run --bin thirdlang -- -O examples/point.tl
+
+# Custom pass pipeline
+rustup run nightly cargo run --bin thirdlang -- --passes "mem2reg,dce" examples/point.tl
+
+# LLVM's standard O2 optimization
+rustup run nightly cargo run --bin thirdlang -- --passes "default&lt;O2&gt;" examples/point.tl
+</code></pre>
+<p>See <a href="optimization.html">Optimizing LLVM IR</a> for details on how optimization works.</p>
+<h2 id="running-counter-example"><a class="header" href="#running-counter-example">Running Counter Example</a></h2>
+<pre><code>class Counter {
+    value: int
+
+    def __init__(self, start: int) {
+        self.value = start
+    }
+
+    def increment(self) -&gt; int {
+        self.value = self.value + 1
+        return self.value
+    }
+
+    def add(self, n: int) -&gt; int {
+        self.value = self.value + n
+        return self.value
+    }
+
+    def get(self) -&gt; int {
+        return self.value
+    }
+}
+
+c = new Counter(10)
+c.increment()    # 11
+c.increment()    # 12
+c.increment()    # 13
+c.add(5)         # 18
+c.get()          # 18 - this is the return value
+</code></pre>
+<pre><code class="language-bash">rustup run nightly cargo run --bin thirdlang -- examples/counter.tl
+</code></pre>
+<p>Output:</p>
+<pre><code>18
+</code></pre>
+<h2 id="running-destructor-example"><a class="header" href="#running-destructor-example">Running Destructor Example</a></h2>
+<pre><code>class Resource {
+    id: int
+    status: int  # 1 = active, 0 = released
+
+    def __init__(self, id: int) {
+        self.id = id
+        self.status = 1  # Mark as active
+    }
+
+    def is_active(self) -&gt; bool {
+        return self.status == 1
+    }
+
+    def __del__(self) {
+        self.status = 0  # Mark as released
+    }
+}
+
+r = new Resource(42)
+active = r.is_active()   # true (1)
+delete r                  # calls __del__, sets status = 0
+active                    # returns 1 (from before delete)
+</code></pre>
+<pre><code class="language-bash">rustup run nightly cargo run --bin thirdlang -- examples/destructor.tl
+</code></pre>
+<p>Output:</p>
+<pre><code>1
+</code></pre>
+<h2 id="running-all-examples"><a class="header" href="#running-all-examples">Running All Examples</a></h2>
+<pre><code class="language-bash">cd thirdlang
+
+# Point: distance calculation
+rustup run nightly cargo run --bin thirdlang -- examples/point.tl
+
+# Counter: stateful object
+rustup run nightly cargo run --bin thirdlang -- examples/counter.tl
+
+# Destructor: cleanup demo
+rustup run nightly cargo run --bin thirdlang -- examples/destructor.tl
+
+# Linked node: object references
+rustup run nightly cargo run --bin thirdlang -- examples/linked_node.tl
+</code></pre>
+<p>Or run them all:</p>
+<pre><code class="language-bash">for file in examples/*.tl; do
+    echo "=== $file ==="
+    rustup run nightly cargo run --bin thirdlang -q -- "$file"
+done
+</code></pre>
+<h2 id="running-tests"><a class="header" href="#running-tests">Running Tests</a></h2>
+<p>Thirdlang has comprehensive tests covering all stages:</p>
+<pre><code class="language-bash"># Run all tests
+rustup run nightly cargo test
+
+# Run with output
+rustup run nightly cargo test -- --nocapture
+
+# Run specific test
+rustup run nightly cargo test test_jit_point_distance
+</code></pre>
+<h3 id="test-categories"><a class="header" href="#test-categories">Test Categories</a></h3>
+<div class="table-wrapper"><table><thead><tr><th>Category</th><th>What It Tests</th></tr></thead><tbody>
+<tr><td>Parsing</td><td>Class syntax, methods, new/delete</td></tr>
+<tr><td>Type checking</td><td>Class types, method signatures, field access</td></tr>
+<tr><td>Code generation</td><td>LLVM struct creation, method compilation</td></tr>
+<tr><td>JIT execution</td><td>Running compiled code, getting results</td></tr>
+</tbody></table>
+</div>
+<p>Example test:</p>
+<pre><code class="language-rust ignore">#[test]
+fn test_jit_simple_class() {
+    let source = r#"
+        class Point {
+            x: int
+            def __init__(self, x: int) { self.x = x }
+            def get_x(self) -&gt; int { return self.x }
+        }
+        p = new Point(42)
+        result = p.get_x()
+        delete p
+        result
+    "#;
+    assert_eq!(run(source).unwrap(), 42);
+}</code></pre>
+<p><a class="filename" href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/thirdlang/tests/integration_tests.rs">thirdlang/tests/integration_tests.rs</a></p>
+<h2 id="what-we-built"><a class="header" href="#what-we-built">What We Built</a></h2>
+<p>Let us step back and appreciate what we accomplished:</p>
+<h3 id="grammar-140-lines"><a class="header" href="#grammar-140-lines">Grammar (~140 lines)</a></h3>
+<ul>
+<li>Class definitions with fields and methods</li>
+<li>Constructor and destructor syntax</li>
+<li><code>new</code> and <code>delete</code> expressions</li>
+<li>Field access and method calls</li>
+</ul>
+<h3 id="type-system-200-lines"><a class="header" href="#type-system-200-lines">Type System (~200 lines)</a></h3>
+<ul>
+<li><code>Type::Class(name)</code> variant</li>
+<li><code>ClassInfo</code> with fields and methods</li>
+<li>Method type checking</li>
+<li>Object type inference</li>
+</ul>
+<h3 id="parser-540-lines"><a class="header" href="#parser-540-lines">Parser (~540 lines)</a></h3>
+<ul>
+<li>Parse classes, fields, methods</li>
+<li>Parse <code>new</code>, <code>delete</code>, <code>self</code></li>
+<li>Parse field access, method calls</li>
+<li>Build typed AST</li>
+</ul>
+<h3 id="type-checker-640-lines"><a class="header" href="#type-checker-640-lines">Type Checker (~640 lines)</a></h3>
+<ul>
+<li>Class registration</li>
+<li>Method resolution</li>
+<li>Field type checking</li>
+<li>Constructor/destructor validation</li>
+</ul>
+<h3 id="code-generator-1050-lines"><a class="header" href="#code-generator-1050-lines">Code Generator (~1050 lines)</a></h3>
+<ul>
+<li>LLVM struct types for classes</li>
+<li>malloc/free integration</li>
+<li>Method compilation</li>
+<li>GEP for field access</li>
+<li>LLVM New Pass Manager for optimization</li>
+</ul>
+<h3 id="total-2600-lines-of-rust"><a class="header" href="#total-2600-lines-of-rust">Total: ~2600 lines of Rust</a></h3>
+<p>All in a manageable codebase that implements real object-oriented features.</p>
+<h2 id="comparing-all-four-languages"><a class="header" href="#comparing-all-four-languages">Comparing All Four Languages</a></h2>
+<div class="table-wrapper"><table><thead><tr><th>Feature</th><th><a href="../01_calculator/calc_intro.html">Calculator</a></th><th><a href="../02_firstlang/intro.html">Firstlang</a></th><th><a href="../03_secondlang/intro.html">Secondlang</a></th><th>Thirdlang</th></tr></thead><tbody>
+<tr><td>Grammar size</td><td>18 lines</td><td>70 lines</td><td>77 lines</td><td>140 lines</td></tr>
+<tr><td>Type System</td><td>None</td><td>Dynamic</td><td>Static</td><td>Static + Classes</td></tr>
+<tr><td>Variables</td><td>No</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+<tr><td>Functions</td><td>No</td><td>Yes</td><td>Yes</td><td>Yes + Methods</td></tr>
+<tr><td>Classes</td><td>No</td><td>No</td><td>No</td><td>Yes</td></tr>
+<tr><td>Memory</td><td>Stack</td><td>Stack</td><td>Stack</td><td>Stack + Heap</td></tr>
+<tr><td>Execution</td><td>Interpreter/VM/JIT</td><td>Interpreter</td><td>LLVM JIT</td><td>LLVM JIT</td></tr>
+</tbody></table>
+</div>
+<p>The progression is clear:</p>
+<ol>
+<li><strong>Calculator</strong> - Learn basics: parsing, AST, evaluation</li>
+<li><strong>Firstlang</strong> - Add programming: variables, functions, control flow</li>
+<li><strong>Secondlang</strong> - Add types: static checking, compilation</li>
+<li><strong>Thirdlang</strong> - Add OOP: classes, objects, memory management</li>
+</ol>
+<h2 id="what-next"><a class="header" href="#what-next">What Next?</a></h2>
+<p>You now have a foundation for building real languages. Ideas to explore:</p>
+<h3 id="language-features"><a class="header" href="#language-features">Language Features</a></h3>
+<ul>
+<li><strong>Inheritance</strong> - Virtual methods, vtables</li>
+<li><strong>Interfaces/Traits</strong> - Polymorphism without inheritance</li>
+<li><strong>Generics</strong> - Type parameters (<code>List&lt;T&gt;</code>)</li>
+<li><strong>Closures</strong> - Functions capturing variables</li>
+<li><strong>Pattern matching</strong> - Destructuring, exhaustive checks</li>
+</ul>
+<h3 id="type-system"><a class="header" href="#type-system">Type System</a></h3>
+<ul>
+<li><strong>Nullability</strong> - <code>Point?</code> vs <code>Point</code></li>
+<li><strong>Reference types</strong> - Distinguish owned vs borrowed</li>
+<li><strong>Algebraic data types</strong> - Enums with data</li>
+</ul>
+<h3 id="memory-management"><a class="header" href="#memory-management">Memory Management</a></h3>
+<ul>
+<li><strong>Garbage collection</strong> - Automatic memory</li>
+<li><strong>Reference counting</strong> - Deterministic cleanup</li>
+<li><strong>Ownership</strong> - Rust-style borrow checking</li>
+</ul>
+<h3 id="code-generation"><a class="header" href="#code-generation">Code Generation</a></h3>
+<ul>
+<li><strong>AOT compilation</strong> - Compile to executables</li>
+<li><strong>Optimizations</strong> - Inline methods, devirtualization</li>
+<li><strong>Debug info</strong> - Source maps, breakpoints</li>
+</ul>
+<h2 id="whats-next"><a class="header" href="#whats-next">What’s Next?</a></h2>
+<p>You have completed all four parts of the book. But this is just the beginning!</p>
+<p>Continue to <strong><a href="../whats_next.html">What’s Next: Your Journey Starts Here</a></strong> for:</p>
+<ul>
+<li>Ideas for extending Thirdlang (inheritance, generics, closures)</li>
+<li>New types to add (strings, arrays, algebraic data types)</li>
+<li>Different execution models (AOT compilation, bytecode VMs)</li>
+<li>Memory management approaches (GC, reference counting, ownership)</li>
+<li>Tooling (debuggers, formatters, language servers)</li>
+<li>Recommended reading and real languages to study</li>
+</ul>
+<p>The concepts you learned - grammars, ASTs, type systems, code generation - apply to any language you might build or use.</p>
+<p><strong>Your journey starts here!</strong></p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../04_thirdlang/optimization.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../04_thirdlang/exercises.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../04_thirdlang/optimization.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../04_thirdlang/exercises.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../theme/force-theme.js"></script>
+
+
+
+    </div>
+    </body>
+</html>

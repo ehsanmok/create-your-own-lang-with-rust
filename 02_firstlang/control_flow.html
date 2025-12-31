@@ -17,7 +17,6 @@
         <link rel="stylesheet" href="../css/variables.css">
         <link rel="stylesheet" href="../css/general.css">
         <link rel="stylesheet" href="../css/chrome.css">
-        <link rel="stylesheet" href="../css/print.css" media="print">
 
         <!-- Fonts -->
         <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
@@ -145,9 +144,6 @@
                     <h1 class="menu-title">Create Your Own Programming Language with Rust</h1>
 
                     <div class="right-buttons">
-                        <a href="../print.html" title="Print this book" aria-label="Print this book">
-                            <i id="print-button" class="fa fa-print"></i>
-                        </a>
                         <a href="https://github.com/ehsanmok/create-your-own-lang-with-rust" title="Git repository" aria-label="Git repository">
                             <i id="git-repository-button" class="fa fa-github"></i>
                         </a>
@@ -186,7 +182,7 @@
 <p>Control flow lets our programs make decisions and repeat operations.</p>
 <h2 id="conditionals-ifelse"><a class="header" href="#conditionals-ifelse">Conditionals: If/Else</a></h2>
 <p>The <code>if</code> expression evaluates a condition and executes one of two branches:</p>
-<pre><code class="language-python">if (x &gt; 0) {
+<pre><code>if (x &gt; 0) {
     return 1
 } else {
     return 0
@@ -208,7 +204,7 @@
 }
 <span class="boring">}</span></code></pre></pre>
 <h3 id="examples"><a class="header" href="#examples">Examples</a></h3>
-<pre><code class="language-python">def abs(x) {
+<pre><code>def abs(x) {
     if (x &lt; 0) {
         return x * -1
     } else {
@@ -219,7 +215,7 @@
 abs(-5)     # 5
 abs(3)      # 3
 </code></pre>
-<pre><code class="language-python">def max(a, b) {
+<pre><code>def max(a, b) {
     if (a &gt; b) {
         return a
     } else {
@@ -231,7 +227,7 @@ max(10, 20)  # 20
 </code></pre>
 <h2 id="loops-while"><a class="header" href="#loops-while">Loops: While</a></h2>
 <p>The <code>while</code> loop repeats while a condition is true:</p>
-<pre><code class="language-python">x = 0
+<pre><code>x = 0
 while (x &lt; 5) {
     x = x + 1
 }
@@ -255,7 +251,7 @@ x           # 5
 }
 <span class="boring">}</span></code></pre></pre>
 <h3 id="examples-1"><a class="header" href="#examples-1">Examples</a></h3>
-<pre><code class="language-python"># Sum 1 to 10
+<pre><code># Sum 1 to 10
 sum = 0
 i = 1
 while (i &lt;= 10) {
@@ -264,7 +260,7 @@ while (i &lt;= 10) {
 }
 sum         # 55
 </code></pre>
-<pre><code class="language-python"># Iterative factorial
+<pre><code># Iterative factorial
 def factorial(n) {
     result = 1
     while (n &gt; 1) {
@@ -278,7 +274,7 @@ factorial(5)  # 120
 </code></pre>
 <h2 id="control-flow-in-functions"><a class="header" href="#control-flow-in-functions">Control Flow in Functions</a></h2>
 <p>Control flow becomes powerful when combined with functions:</p>
-<pre><code class="language-python">def countdown(n) {
+<pre><code>def countdown(n) {
     while (n &gt; 0) {
         n = n - 1
     }
@@ -299,7 +295,7 @@ def fizzbuzz_check(n) {
 </code></pre>
 <h2 id="return-in-loops"><a class="header" href="#return-in-loops">Return in Loops</a></h2>
 <p><code>return</code> exits the function immediately, even from inside a loop:</p>
-<pre><code class="language-python">def find_first_even(n) {
+<pre><code>def find_first_even(n) {
     i = 1
     while (i &lt;= n) {
         if (i % 2 == 0) {
@@ -312,6 +308,23 @@ def fizzbuzz_check(n) {
 
 find_first_even(5)  # 2
 </code></pre>
+<div class="checkpoint">
+<strong>Checkpoint</strong>
+<p>At this point, you should be able to:</p>
+<ul>
+<li>Run <code>if (true) { 1 } else { 2 }</code> and get <code>1</code></li>
+<li>Run a <code>while</code> loop that counts to 10</li>
+<li>Combine if/else with functions</li>
+</ul>
+</div>
+<div class="related-topics">
+<strong>Related Topics</strong>
+<ul>
+<li><a href="./recursion.html">Recursion</a> - Functions calling themselves</li>
+<li><a href="./fibonacci.html">Fibonacci</a> - Using all constructs together</li>
+<li><a href="../03_secondlang/codegen.html">Secondlang Control Flow</a> - Compiling conditionals to IR</li>
+</ul>
+</div>
 <p>With control flow in place, we’re ready for the ultimate test: <a href="./recursion.html">recursion</a>!</p>
 
                     </main>

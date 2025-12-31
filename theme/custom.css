@@ -2,6 +2,8 @@
    Create Your Own Programming Language with Rust
    Custom Theme - "Compiler Craft"
    A clean, technical aesthetic inspired by terminal emulators and IDEs
+
+   NOTE: This book uses ONLY the Rust theme. All other themes are disabled.
    ============================================================================= */
 
 /* Import a distinctive font for headings */
@@ -17,7 +19,19 @@ html {
 }
 
 /* =============================================================================
-   ROOT VARIABLES - Cohesive Color Palette
+   HIDE THEME PICKER - Only Rust theme allowed
+   ============================================================================= */
+
+/* Hide the entire theme picker button and popup */
+#theme-toggle,
+.theme-popup {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+/* =============================================================================
+   ROOT VARIABLES - Rust Theme Color Palette
 
    Color Theory Applied:
    - Primary: Rust Orange (#c45b29) - warm, energetic, technical
@@ -26,7 +40,8 @@ html {
    - Neutral: Warm grays to tie the palette together
    ============================================================================= */
 
-:root {
+:root,
+.rust {
   /* Override mdbook defaults for wider content */
   --content-max-width: 1400px;
   --page-padding: 20px;
@@ -67,116 +82,12 @@ html {
 }
 
 /* =============================================================================
-   NAVY THEME - Dark Mode Variables
-   ============================================================================= */
-
-.navy {
-  /* Override mdbook defaults for wider content */
-  --content-max-width: 1400px;
-  --page-padding: 20px;
-
-  /* Primary Accent - Brighter for dark background */
-  --accent-color: #e07840;
-  --accent-hover: #f08850;
-  --accent-light: #f0a070;
-  --accent-subtle: rgba(224, 120, 64, 0.15);
-
-  /* Background colors */
-  --bg: #0d1117;
-  --sidebar-bg: #161b22;
-
-  /* Code Block Colors - Navy Dark */
-  --code-bg: #161b22;
-  --code-bg-light: #1c2128;
-  --code-border: #30363d;
-  --code-text: #c9d1d9;
-
-  /* Semantic Colors - Brighter for dark mode */
-  --success-color: #7ee787;
-  --warning-color: #f0c040;
-  --error-color: #f07070;
-  --info-color: #79c0ff;
-
-  /* Highlight */
-  --highlight-color: #ffe066;
-  --highlight-subtle: rgba(255, 224, 102, 0.12);
-
-  /* Text on Dark Background */
-  --text-primary: #c9d1d9;
-  --text-secondary: #8b949e;
-  --text-muted: #6e7681;
-}
-
-/* Navy theme inline code */
-.navy :not(pre)>code {
-  background: #21262d !important;
-  border-color: #30363d;
-  color: #c9d1d9;
-}
-
-/* Navy theme blockquotes */
-.navy blockquote {
-  background: linear-gradient(90deg, rgba(224, 120, 64, 0.1) 0%, transparent 100%);
-  border-left-color: var(--accent-color);
-}
-
-/* Navy theme tables */
-.navy table th {
-  background: linear-gradient(135deg, #e07840 0%, #c45b29 100%);
-  color: white;
-}
-
-.navy table td {
-  border-color: #30363d;
-}
-
-.navy table tr:nth-child(even) {
-  background: rgba(224, 120, 64, 0.05);
-}
-
-/* Navy theme details/summary */
-.navy details {
-  background: rgba(255, 255, 255, 0.03);
-  border-color: #30363d;
-}
-
-/* Navy theme strong text highlight */
-.navy .content strong {
-  background: linear-gradient(180deg, transparent 60%, rgba(224, 120, 64, 0.2) 60%);
-}
-
-/* Navy theme selection */
-.navy ::selection {
-  background: rgba(224, 120, 64, 0.4);
-}
-
-.navy ::-moz-selection {
-  background: rgba(224, 120, 64, 0.4);
-}
-
-/* =============================================================================
-   HIDE THEME PICKER - Using only Rust theme
-   ============================================================================= */
-
-/* Hide the entire theme picker button and popup */
-#theme-toggle,
-.theme-popup {
-  display: none !important;
-  visibility: hidden !important;
-}
-
-/* =============================================================================
    TYPOGRAPHY
    ============================================================================= */
 
 /* Use Source Serif for body text - elegant and readable */
-/* Consistent across ALL themes */
 .content,
-.light .content,
-.rust .content,
-.coal .content,
-.navy .content,
-.ayu .content {
+.rust .content {
   font-family: 'Source Serif 4', Georgia, 'Times New Roman', serif !important;
   font-size: 20px !important;
   line-height: 1.9 !important;
@@ -184,33 +95,20 @@ html {
 }
 
 /* JetBrains Mono for all code - the programmer's choice */
-/* Apply to ALL themes explicitly to prevent theme-specific overrides */
 code,
 pre,
 .hljs,
-.light code,
-.light pre,
 .rust code,
-.rust pre,
-.coal code,
-.coal pre,
-.navy code,
-.navy pre,
-.ayu code,
-.ayu pre {
+.rust pre {
   font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', Monaco, 'Courier New', monospace !important;
   font-size: 19px !important;
   font-feature-settings: "liga" 1, "calt" 1;
   line-height: 1.75 !important;
 }
 
-/* Code blocks - comfortable reading size for ALL themes */
+/* Code blocks - comfortable reading size */
 pre,
-.light pre,
-.rust pre,
-.coal pre,
-.navy pre,
-.ayu pre {
+.rust pre {
   font-size: 19px !important;
   padding: 1.4em 1.6em !important;
   line-height: 1.75 !important;
@@ -267,13 +165,9 @@ pre code {
    INLINE CODE - Must stay inline, not block!
    ============================================================================= */
 
-/* Inline code - consistent size across ALL themes */
+/* Inline code - consistent size */
 :not(pre)>code,
-.light :not(pre)>code,
-.rust :not(pre)>code,
-.coal :not(pre)>code,
-.navy :not(pre)>code,
-.ayu :not(pre)>code {
+.rust :not(pre)>code {
   display: inline !important;
   font-family: 'JetBrains Mono', monospace !important;
   font-size: 18px !important;
@@ -283,29 +177,13 @@ pre code {
   vertical-align: baseline;
 }
 
-/* Light theme inline code colors */
-:not(pre)>code {
-  background: #f7f5f3 !important;
-  border: 1px solid #e5e0da;
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.03);
-  color: var(--text-primary);
-}
-
 /* Rust theme inline code - warm tones matching accent */
+:not(pre)>code,
 .rust :not(pre)>code {
   background: #faf7f4 !important;
-  border-color: #e5ddd2;
+  border: 1px solid #e5ddd2;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.03);
   color: #5c4a38;
-}
-
-/* Dark theme inline code - cool complement to warm accent */
-.coal :not(pre)>code,
-.navy :not(pre)>code,
-.ayu :not(pre)>code {
-  background: #3a3f4b !important;
-  border-color: #4a5568;
-  color: #e2e8f0;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
 }
 
 /* =============================================================================
@@ -344,12 +222,6 @@ pre.language-python::before {
   content: "python";
   background: var(--info-color);
   color: #fff;
-}
-
-pre.language-llvm::before {
-  content: "llvm";
-  background: var(--complement-dark);
-  color: var(--success-color);
 }
 
 pre.language-text::before {
@@ -410,7 +282,7 @@ a.filename {
 }
 
 a.filename::before {
-  content: "📄 ";
+  content: "📄";
 }
 
 a.filename::after {
@@ -448,20 +320,13 @@ table th {
   letter-spacing: 0.05em;
   padding: 1em;
   text-align: left;
-}
-
-.rust table th {
   background: linear-gradient(135deg, #c45b29 0%, #a04520 100%);
   color: white;
 }
 
 table td {
   padding: 0.8em 1em;
-  border-bottom: 1px solid #e0e0e0;
-}
-
-.rust table td {
-  border-color: #e8e0d5;
+  border-bottom: 1px solid #e8e0d5;
 }
 
 table tr:last-child td {
@@ -469,10 +334,6 @@ table tr:last-child td {
 }
 
 table tr:nth-child(even) {
-  background: rgba(0, 0, 0, 0.02);
-}
-
-.rust table tr:nth-child(even) {
   background: rgba(196, 91, 41, 0.05);
 }
 
@@ -492,6 +353,7 @@ blockquote {
 blockquote p {
   margin: 0;
 }
+
 
 /* =============================================================================
    LICENSE NOTICE
@@ -628,11 +490,6 @@ blockquote p {
   color: var(--accent-color);
 }
 
-/* Checklist style for completed items */
-.content li:has(> :first-child:is(:contains("✅"))) {
-  list-style: none;
-}
-
 /* =============================================================================
    SPECIAL HIGHLIGHTS
    ============================================================================= */
@@ -656,20 +513,85 @@ blockquote p {
    ============================================================================= */
 
 pre:has(code:not([class])) {
-  background: linear-gradient(135deg, #fafbfc 0%, #f6f8fa 100%);
-  border: 1px solid #e5e7eb;
-}
-
-.rust pre:has(code:not([class])) {
   background: linear-gradient(135deg, #faf8f5 0%, #f5f0ea 100%);
-  border-color: #e5ddd2;
+  border: 1px solid #e5ddd2;
 }
 
-.coal pre:has(code:not([class])),
-.navy pre:has(code:not([class])),
-.ayu pre:has(code:not([class])) {
-  background: var(--code-bg);
-  border-color: var(--code-border);
+/* =============================================================================
+   DETAILS/SUMMARY - Collapsible sections
+   ============================================================================= */
+
+details {
+  margin: 1.5em 0;
+  border: 1px solid #e5ddd2;
+  border-radius: 8px;
+  padding: 0.5em 1em;
+  background: rgba(196, 91, 41, 0.03);
+}
+
+details summary {
+  cursor: pointer;
+  font-weight: 600;
+  padding: 0.5em 0;
+  list-style: none;
+  position: relative;
+  padding-left: 1.5em;
+}
+
+details summary::before {
+  content: "▶";
+  position: absolute;
+  left: 0;
+  color: var(--accent-color);
+  transition: transform 0.2s ease;
+  font-size: 0.8em;
+}
+
+details[open] summary::before {
+  transform: rotate(90deg);
+}
+
+details summary::-webkit-details-marker {
+  display: none;
+}
+
+/* =============================================================================
+   COPY BUTTON STYLING (for code blocks)
+   ============================================================================= */
+
+.clip-button {
+  background-color: var(--code-bg, #f1f1f1);
+  border: 1px solid var(--code-border, #ccc);
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 0.75em;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s ease, background-color 0.2s ease;
+}
+
+pre:hover .clip-button {
+  opacity: 0.8;
+}
+
+.clip-button:hover {
+  opacity: 1 !important;
+  background-color: var(--accent-color);
+  color: white;
+}
+
+/* =============================================================================
+   SELECTION STYLING
+   ============================================================================= */
+
+::selection {
+  background: rgba(196, 91, 41, 0.3);
+  color: inherit;
+}
+
+::-moz-selection {
+  background: rgba(196, 91, 41, 0.3);
+  color: inherit;
 }
 
 /* =============================================================================
@@ -769,85 +691,133 @@ pre:hover {
 }
 
 /* =============================================================================
-   SELECTION STYLING
+   CHECKPOINT BLOCKS - "At this point..." milestone markers
    ============================================================================= */
 
-::selection {
-  background: rgba(196, 91, 41, 0.3);
-  color: inherit;
-}
-
-::-moz-selection {
-  background: rgba(196, 91, 41, 0.3);
-  color: inherit;
-}
-
-/* =============================================================================
-   DETAILS/SUMMARY - Collapsible sections (inspired by Modular theme)
-   ============================================================================= */
-
-details {
-  margin: 1.5em 0;
-  border: 1px solid var(--code-border, #e5e7eb);
-  border-radius: 8px;
-  padding: 0.5em 1em;
-  background: rgba(0, 0, 0, 0.02);
-}
-
-.rust details {
-  background: rgba(196, 91, 41, 0.03);
-  border-color: #e5ddd2;
-}
-
-details summary {
-  cursor: pointer;
-  font-weight: 600;
-  padding: 0.5em 0;
-  list-style: none;
+.checkpoint {
+  margin: 2em 0;
+  padding: 1.2em 1.5em 1.2em 3.5em;
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+  border: 1px solid #86efac;
+  border-left: 5px solid #22c55e;
+  border-radius: 0 12px 12px 0;
   position: relative;
-  padding-left: 1.5em;
+  box-shadow: 0 2px 8px rgba(34, 197, 94, 0.1);
 }
 
-details summary::before {
-  content: "▶";
+.checkpoint::before {
+  content: "";
   position: absolute;
-  left: 0;
-  color: var(--accent-color);
-  transition: transform 0.2s ease;
-  font-size: 0.8em;
+  left: 0.6em;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1.2em;
+  height: 1.2em;
+  background: #22c55e;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(34, 197, 94, 0.2);
 }
 
-details[open] summary::before {
-  transform: rotate(90deg);
+.checkpoint strong {
+  display: block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85em;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #166534;
+  margin-bottom: 0.5em;
+  background: none !important;
 }
 
-details summary::-webkit-details-marker {
-  display: none;
+.checkpoint ul {
+  margin: 0.5em 0 0 0;
+  padding-left: 1.2em;
+}
+
+.checkpoint li {
+  margin: 0.3em 0;
+  color: #15803d;
+}
+
+.checkpoint li::marker {
+  color: #22c55e;
+}
+
+.checkpoint p {
+  margin: 0;
+  color: #166534;
+}
+
+/* Inline checkpoints for exercises - simpler, compact style */
+.checkpoint-inline {
+  display: inline-block;
+  margin: 0.5em 0;
+  padding: 0.4em 0.8em 0.4em 2.2em;
+  background: linear-gradient(90deg, #dcfce7 0%, #f0fdf4 100%);
+  border: 1px solid #86efac;
+  border-radius: 6px;
+  position: relative;
+  font-size: 0.95em;
+}
+
+.checkpoint-inline::before {
+  content: "";
+  position: absolute;
+  left: 0.6em;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0.8em;
+  height: 0.8em;
+  background: #22c55e;
+  border-radius: 50%;
+}
+
+.checkpoint-inline code {
+  background: rgba(255, 255, 255, 0.6) !important;
+  padding: 0.1em 0.3em;
 }
 
 /* =============================================================================
-   COPY BUTTON STYLING (for code blocks)
+   RELATED TOPICS BLOCKS - Cross-reference sections
    ============================================================================= */
 
-.clip-button {
-  background-color: var(--code-bg, #f1f1f1);
-  border: 1px solid var(--code-border, #ccc);
-  border-radius: 4px;
-  padding: 4px 8px;
-  font-size: 0.75em;
-  cursor: pointer;
-  opacity: 0;
-  transition: opacity 0.2s ease, background-color 0.2s ease;
+.related-topics {
+  margin: 1.5em 0;
+  padding: 1em 1.5em;
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  border: 1px solid #fbbf24;
+  border-left: 4px solid #f59e0b;
+  border-radius: 0 8px 8px 0;
 }
 
-pre:hover .clip-button {
-  opacity: 0.8;
+.related-topics strong {
+  display: block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8em;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #92400e;
+  margin-bottom: 0.5em;
+  background: none !important;
 }
 
-.clip-button:hover {
-  opacity: 1 !important;
-  background-color: var(--accent-color);
-  color: white;
+.related-topics ul {
+  margin: 0;
+  padding-left: 1.2em;
+}
+
+.related-topics li {
+  margin: 0.3em 0;
+  color: #78350f;
+}
+
+.related-topics a {
+  color: #b45309 !important;
+  font-weight: 500;
+}
+
+.related-topics a:hover {
+  color: #92400e !important;
 }
 
 /* =============================================================================

@@ -17,7 +17,6 @@
         <link rel="stylesheet" href="../css/variables.css">
         <link rel="stylesheet" href="../css/general.css">
         <link rel="stylesheet" href="../css/chrome.css">
-        <link rel="stylesheet" href="../css/print.css" media="print">
 
         <!-- Fonts -->
         <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
@@ -145,9 +144,6 @@
                     <h1 class="menu-title">Create Your Own Programming Language with Rust</h1>
 
                     <div class="right-buttons">
-                        <a href="../print.html" title="Print this book" aria-label="Print this book">
-                            <i id="print-button" class="fa fa-print"></i>
-                        </a>
                         <a href="https://github.com/ehsanmok/create-your-own-lang-with-rust" title="Git repository" aria-label="Git repository">
                             <i id="git-repository-button" class="fa fa-github"></i>
                         </a>
@@ -186,30 +182,10 @@
 <p>We have built all the pieces. Now let us put them together and run some real programs.</p>
 <h2 id="the-complete-pipeline"><a class="header" href="#the-complete-pipeline">The Complete Pipeline</a></h2>
 <p>Here is what happens when you run a Secondlang program:</p>
-<pre><code>Source Code: def fib(n: int) -&gt; int { ... }; fib(10)
-                              |
-                          [Parser]
-                              |
-              Typed AST (types are Unknown)
-                              |
-                        [Type Checker]
-                              |
-              Typed AST (all types filled in)
-                              |
-                    [Optimizer (optional)]
-                              |
-                      [Code Generator]
-                              |
-                          LLVM IR
-                              |
-                        [JIT Engine]
-                              |
-                      Native Machine Code
-                              |
-                          [Execute]
-                              |
-                         Result: 55
-</code></pre>
+<p align="center">
+</br>
+    <a href><img alt="JIT Fib pipeline" src="../img/jit-fib-pipeline.svg"> </a>
+</p>
 <p>Each step transforms the program into a different representation, getting closer and closer to something the CPU can execute.</p>
 <h2 id="running-fibonacci"><a class="header" href="#running-fibonacci">Running Fibonacci</a></h2>
 <p>Create a file <code>examples/fibonacci.sl</code>:</p>
@@ -238,7 +214,7 @@ rustup run nightly cargo run -- examples/fibonacci.sl
 <pre><code class="language-bash">rustup run nightly cargo run -- --ir examples/fibonacci.sl
 </code></pre>
 <p>You will see something like:</p>
-<pre><code class="language-llvm">; ModuleID = 'secondlang'
+<pre><code>; ModuleID = 'secondlang'
 source_filename = "secondlang"
 
 define i64 @fib(i64 %n) {
@@ -303,7 +279,7 @@ factorial(10)
 <p>Expected output: <code>3628800</code></p>
 <h3 id="type-inference-showcase"><a class="header" href="#type-inference-showcase">Type Inference Showcase</a></h3>
 <p>The <code>inference.sl</code> example demonstrates the compiler inferring types automatically:</p>
-<pre><code class="language-python">def complex_calc(x: int) -&gt; int {
+<pre><code>def complex_calc(x: int) -&gt; int {
     a = x + 1           # int (inferred from x + literal)
     b = a * a           # int (inferred from int * int)
     c = b - x           # int (inferred from int - int)
@@ -362,7 +338,7 @@ done
 <li><strong>JIT compilation</strong> - compiles IR to native code and runs it (see <a href="./ir.html">From AST to IR</a>)</li>
 </ol>
 <p>All in about 1500 lines of Rust.</p>
-<h2 id="comparing-the-three-languages"><a class="header" href="#comparing-the-three-languages">Comparing the Three Languages</a></h2>
+<h2 id="comparing-the-languages"><a class="header" href="#comparing-the-languages">Comparing the Languages</a></h2>
 <p>See how we progressed through each language:</p>
 <div class="table-wrapper"><table><thead><tr><th>Feature</th><th><a href="../01_calculator/calc_intro.html">Calculator</a></th><th><a href="../02_firstlang/intro.html">Firstlang</a></th><th>Secondlang</th></tr></thead><tbody>
 <tr><td>Grammar</td><td>18 lines</td><td>70 lines</td><td>77 lines</td></tr>
@@ -379,17 +355,16 @@ done
 <li><strong><a href="../02_firstlang/intro.html">Firstlang</a></strong> - Add programming constructs, understand interpretation</li>
 <li><strong>Secondlang</strong> - Add types, understand compilation</li>
 </ol>
-<h2 id="what-next"><a class="header" href="#what-next">What Next?</a></h2>
-<p>You now have the foundation to build real programming languages. Some ideas to explore:</p>
+<h2 id="whats-next-thirdlang"><a class="header" href="#whats-next-thirdlang">What’s Next: Thirdlang</a></h2>
+<p>Ready for more? In <strong><a href="../04_thirdlang/intro.html">Part IV: Thirdlang</a></strong>, we add <strong>object-oriented programming</strong>:</p>
 <ul>
-<li><strong>Add more types</strong>: strings, arrays, structs</li>
-<li><strong>Add closures</strong>: functions that capture variables</li>
-<li><strong>Add garbage collection</strong>: automatic memory management</li>
-<li><strong>AOT compilation</strong>: compile to executables instead of JIT</li>
-<li><strong>Better error messages</strong>: with source locations and suggestions</li>
+<li><strong>Classes</strong> - User-defined types with fields and methods</li>
+<li><strong>Objects</strong> - Heap-allocated instances</li>
+<li><strong>Constructors/Destructors</strong> - <code>__init__</code> and <code>__del__</code></li>
+<li><strong>Memory Management</strong> - <code>new</code> and <code>delete</code></li>
 </ul>
-<p>The concepts you learned here - grammars, parsing, ASTs, type checking, code generation - apply to any language you might want to build.</p>
-<p>Happy hacking.</p>
+<p>Thirdlang builds directly on what you learned here. The type system extends to support class types, and the code generator adds LLVM struct types and malloc/free.</p>
+<p>Continue to <strong><a href="../04_thirdlang/intro.html">Thirdlang: Adding Classes and Objects</a></strong> →</p>
 
                     </main>
 
@@ -399,7 +374,7 @@ done
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="../resources.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../03_secondlang/exercises.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -413,7 +388,7 @@ done
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="../resources.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../03_secondlang/exercises.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>

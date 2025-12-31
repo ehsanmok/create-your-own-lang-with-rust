@@ -17,7 +17,6 @@
         <link rel="stylesheet" href="../css/variables.css">
         <link rel="stylesheet" href="../css/general.css">
         <link rel="stylesheet" href="../css/chrome.css">
-        <link rel="stylesheet" href="../css/print.css" media="print">
 
         <!-- Fonts -->
         <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
@@ -145,9 +144,6 @@
                     <h1 class="menu-title">Create Your Own Programming Language with Rust</h1>
 
                     <div class="right-buttons">
-                        <a href="../print.html" title="Print this book" aria-label="Print this book">
-                            <i id="print-button" class="fa fa-print"></i>
-                        </a>
                         <a href="https://github.com/ehsanmok/create-your-own-lang-with-rust" title="Git repository" aria-label="Git repository">
                             <i id="git-repository-button" class="fa fa-github"></i>
                         </a>
@@ -234,6 +230,23 @@
         assert_eq!(add.call(x, y), x + y);
     }</code></pre>
 <p>Yes! all of this just to add two integers.</p>
+<div class="checkpoint">
+<strong>Checkpoint</strong>
+<p>At this point, you should be able to:</p>
+<ul>
+<li>Run the LLVM example with <code>rustup run nightly cargo run</code></li>
+<li>See the JIT execute and return <code>3</code> (for <code>1 + 2</code>)</li>
+<li>Understand the context → module → function → basic block hierarchy</li>
+</ul>
+</div>
+<div class="related-topics">
+<strong>Related Topics</strong>
+<ul>
+<li><a href="./ast_traversal.html">AST Traversal Patterns</a> - Compile full AST to LLVM</li>
+<li><a href="../03_secondlang/ir.html">LLVM IR Basics</a> - Understanding LLVM IR syntax</li>
+<li><a href="../03_secondlang/codegen.html">Secondlang Codegen</a> - Full compiler to LLVM</li>
+</ul>
+</div>
 
                     </main>
 

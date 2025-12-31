@@ -17,7 +17,6 @@
         <link rel="stylesheet" href="../css/variables.css">
         <link rel="stylesheet" href="../css/general.css">
         <link rel="stylesheet" href="../css/chrome.css">
-        <link rel="stylesheet" href="../css/print.css" media="print">
 
         <!-- Fonts -->
         <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
@@ -145,9 +144,6 @@
                     <h1 class="menu-title">Create Your Own Programming Language with Rust</h1>
 
                     <div class="right-buttons">
-                        <a href="../print.html" title="Print this book" aria-label="Print this book">
-                            <i id="print-button" class="fa fa-print"></i>
-                        </a>
                         <a href="https://github.com/ehsanmok/create-your-own-lang-with-rust" title="Git repository" aria-label="Git repository">
                             <i id="git-repository-button" class="fa fa-github"></i>
                         </a>
@@ -647,6 +643,24 @@ pub fn jit_run(program: &amp;Program) -&gt; Result&lt;i64, String&gt; {
 <h2 id="testing"><a class="header" href="#testing">Testing</a></h2>
 <pre><code class="language-bash">cargo test codegen
 </code></pre>
+<div class="checkpoint">
+<strong>Checkpoint</strong>
+<p>At this point, you should be able to:</p>
+<ul>
+<li>Run <code>cargo run -- --ir examples/simple.sl</code> and see LLVM IR output</li>
+<li>See functions like <code>@fib</code> in the IR</li>
+<li>Verify the IR compiles without errors</li>
+</ul>
+</div>
+<div class="related-topics">
+<strong>Related Topics</strong>
+<ul>
+<li><a href="./ir.html">From AST to IR</a> - Understanding LLVM IR syntax</li>
+<li><a href="./inference.html">Type Inference</a> - How types flow into codegen</li>
+<li><a href="./jit_fibonacci.html">JIT Compiling Fibonacci</a> - Running the compiled code</li>
+<li><a href="../04_thirdlang/codegen_classes.html">Thirdlang Codegen</a> - Extending codegen for classes</li>
+</ul>
+</div>
 <p>In the next chapter, we put it all together and run Fibonacci.</p>
 
                     </main>

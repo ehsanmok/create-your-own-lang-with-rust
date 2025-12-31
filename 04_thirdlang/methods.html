@@ -1,0 +1,726 @@
+<!DOCTYPE HTML>
+<html lang="en" class="rust sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Methods and Self - Create Your Own Programming Language with Rust</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/custom.css">
+        <link rel="stylesheet" href="../theme/highlight.css">
+
+        <!-- MathJax -->
+        <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "rust";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('rust')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Create Your Own Programming Language with Rust</h1>
+
+                    <div class="right-buttons">
+                        <a href="https://github.com/ehsanmok/create-your-own-lang-with-rust" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="methods-and-self"><a class="header" href="#methods-and-self">Methods and Self</a></h1>
+<blockquote>
+<p>If you have not read about <a href="../02_firstlang/functions.html">functions in Firstlang</a>, review that first. Methods are similar to functions but attached to objects.</p>
+</blockquote>
+<p>Methods are functions that belong to a class. They always receive the object as their first parameter, called <code>self</code>.</p>
+<h2 id="method-definition"><a class="header" href="#method-definition">Method Definition</a></h2>
+<p>Methods are defined inside a class using <code>def</code>:</p>
+<pre><code>class Counter {
+    count: int
+
+    def __init__(self) {
+        self.count = 0
+    }
+
+    def increment(self) -&gt; int {
+        self.count = self.count + 1
+        return self.count
+    }
+
+    def add(self, n: int) -&gt; int {
+        self.count = self.count + n
+        return self.count
+    }
+
+    def get(self) -&gt; int {
+        return self.count
+    }
+}
+</code></pre>
+<p>Every method:</p>
+<ol>
+<li>Starts with <code>def</code></li>
+<li>Has <code>self</code> as its first parameter</li>
+<li>Can have additional parameters after <code>self</code></li>
+<li>Can have a return type</li>
+</ol>
+<h2 id="the-self-parameter"><a class="header" href="#the-self-parameter">The <code>self</code> Parameter</a></h2>
+<p><code>self</code> is a reference to the object the method was called on:</p>
+<pre><code>c = new Counter()
+c.increment()   # Inside increment(), self == c
+</code></pre>
+<p>When you call <code>c.increment()</code>:</p>
+<ol>
+<li>The object <code>c</code> becomes <code>self</code></li>
+<li>The method body executes with that <code>self</code></li>
+<li><code>self.count</code> accesses <code>c</code>’s <code>count</code> field</li>
+</ol>
+<h3 id="self-is-explicit"><a class="header" href="#self-is-explicit">Self is Explicit</a></h3>
+<p>Unlike Java or C++ (where <code>this</code> is implicit), Thirdlang requires explicit <code>self</code>:</p>
+<pre><code># Thirdlang (explicit self)
+def get(self) -&gt; int {
+    return self.count    # Must write self.
+}
+
+# Java (implicit this)
+// int get() {
+//     return count;     // 'this.' is optional
+// }
+</code></pre>
+<p>Explicit <code>self</code> is clearer: you always know when you are accessing object state.</p>
+<h2 id="method-calls"><a class="header" href="#method-calls">Method Calls</a></h2>
+<p>Call a method using dot notation:</p>
+<pre><code>c = new Counter()
+c.increment()       # Call increment on c
+c.add(5)            # Call add with argument 5
+x = c.get()         # Get returns an int
+</code></pre>
+<h3 id="how-method-calls-work"><a class="header" href="#how-method-calls-work">How Method Calls Work</a></h3>
+<p>When you write <code>c.increment()</code>:</p>
+<p align="center">
+</br>
+    <a href><img alt="How method works" src="../img/how-method-works.svg"> </a>
+</p>
+<p>Methods are compiled as regular functions with a mangled name: <code>ClassName__methodName</code>.</p>
+<h2 id="type-checking-methods"><a class="header" href="#type-checking-methods">Type Checking Methods</a></h2>
+<p>The type checker verifies method calls:</p>
+<pre><code class="language-rust ignore">fn typecheck_expr(
+    ctx: &amp;mut TypeContext,
+    expr: &amp;mut TypedExpr,
+    env: &amp;TypeEnv,
+) -&gt; Result&lt;(), String&gt; {
+    match &amp;mut expr.expr {
+        Expr::Int(_) =&gt; {
+            expr.ty = Type::Int;
+        }
+
+        Expr::Bool(_) =&gt; {
+            expr.ty = Type::Bool;
+        }
+
+        Expr::Var(name) =&gt; {
+            if let Some(ty) = env.get(name) {
+                expr.ty = ty.clone();
+            } else {
+                return Err(format!("Undefined variable: {}", name));
+            }
+        }
+
+        Expr::SelfRef =&gt; {
+            if let Some(class_name) = &amp;ctx.current_class {
+                expr.ty = Type::Class(class_name.clone());
+            } else {
+                return Err("'self' can only be used inside a method".to_string());
+            }
+        }
+
+        Expr::Unary { op, expr: inner } =&gt; {
+            typecheck_expr(ctx, inner, env)?;
+            match op {
+                UnaryOp::Neg =&gt; {
+                    if inner.ty != Type::Int {
+                        return Err(format!("Cannot negate non-integer type: {}", inner.ty));
+                    }
+                    expr.ty = Type::Int;
+                }
+                UnaryOp::Not =&gt; {
+                    if inner.ty != Type::Bool {
+                        return Err(format!("Cannot negate non-boolean type: {}", inner.ty));
+                    }
+                    expr.ty = Type::Bool;
+                }
+            }
+        }
+
+        Expr::Binary { op, left, right } =&gt; {
+            typecheck_expr(ctx, left, env)?;
+            typecheck_expr(ctx, right, env)?;
+
+            match op {
+                BinaryOp::Add | BinaryOp::Sub | BinaryOp::Mul | BinaryOp::Div | BinaryOp::Mod =&gt; {
+                    if left.ty != Type::Int || right.ty != Type::Int {
+                        return Err(format!(
+                            "Arithmetic operation requires int operands, got {} and {}",
+                            left.ty, right.ty
+                        ));
+                    }
+                    expr.ty = Type::Int;
+                }
+                BinaryOp::Lt | BinaryOp::Gt | BinaryOp::Le | BinaryOp::Ge =&gt; {
+                    if left.ty != Type::Int || right.ty != Type::Int {
+                        return Err(format!(
+                            "Comparison requires int operands, got {} and {}",
+                            left.ty, right.ty
+                        ));
+                    }
+                    expr.ty = Type::Bool;
+                }
+                BinaryOp::Eq | BinaryOp::Ne =&gt; {
+                    let _ = left.ty.unify(&amp;right.ty)?;
+                    expr.ty = Type::Bool;
+                }
+            }
+        }
+
+        Expr::Call { name, args } =&gt; {
+            // Look up function type
+            let func_type = env
+                .get(name)
+                .or_else(|| ctx.global_env.get(name))
+                .ok_or_else(|| format!("Undefined function: {}", name))?
+                .clone();
+
+            if let Type::Function { params, ret } = func_type {
+                if args.len() != params.len() {
+                    return Err(format!(
+                        "Function {} expects {} arguments, got {}",
+                        name,
+                        params.len(),
+                        args.len()
+                    ));
+                }
+
+                for (arg, param_type) in args.iter_mut().zip(params.iter()) {
+                    typecheck_expr(ctx, arg, env)?;
+                    let _ = arg.ty.unify(param_type)?;
+                }
+
+                expr.ty = *ret;
+            } else {
+                return Err(format!("{} is not a function", name));
+            }
+        }
+
+        Expr::MethodCall {
+            object,
+            method,
+            args,
+        } =&gt; {
+            typecheck_expr(ctx, object, env)?;
+
+            // Get the class info
+            let class_name = object
+                .ty
+                .class_name()
+                .ok_or_else(|| format!("Cannot call method on non-class type: {}", object.ty))?;
+
+            let class_info = ctx
+                .classes
+                .get(class_name)
+                .ok_or_else(|| format!("Unknown class: {}", class_name))?
+                .clone();
+
+            let method_info = class_info
+                .get_method(method)
+                .ok_or_else(|| format!("Unknown method {} on class {}", method, class_name))?
+                .clone();
+
+            // Check argument count
+            if args.len() != method_info.params.len() {
+                return Err(format!(
+                    "Method {}.{} expects {} arguments, got {}",
+                    class_name,
+                    method,
+                    method_info.params.len(),
+                    args.len()
+                ));
+            }
+
+            // Type check arguments
+            for (arg, (_, param_type)) in args.iter_mut().zip(method_info.params.iter()) {
+                typecheck_expr(ctx, arg, env)?;
+                let _ = arg.ty.unify(param_type)?;
+            }
+
+            expr.ty = method_info.return_type.clone();
+        }
+
+        Expr::FieldAccess { object, field } =&gt; {
+            typecheck_expr(ctx, object, env)?;
+
+            // Get the class info
+            let class_name = object
+                .ty
+                .class_name()
+                .ok_or_else(|| format!("Cannot access field on non-class type: {}", object.ty))?;
+
+            let class_info = ctx
+                .classes
+                .get(class_name)
+                .ok_or_else(|| format!("Unknown class: {}", class_name))?;
+
+            let field_type = class_info
+                .get_field(field)
+                .ok_or_else(|| format!("Unknown field {} on class {}", field, class_name))?;
+
+            expr.ty = field_type.clone();
+        }
+
+        Expr::New { class, args } =&gt; {
+            // Get the class info
+            let class_info = ctx
+                .classes
+                .get(class)
+                .ok_or_else(|| format!("Unknown class: {}", class))?
+                .clone();
+
+            // Get constructor if exists
+            if let Some(ctor) = class_info.get_method("__init__") {
+                if args.len() != ctor.params.len() {
+                    return Err(format!(
+                        "Constructor for {} expects {} arguments, got {}",
+                        class,
+                        ctor.params.len(),
+                        args.len()
+                    ));
+                }
+
+                for (arg, (_, param_type)) in args.iter_mut().zip(ctor.params.iter()) {
+                    typecheck_expr(ctx, arg, env)?;
+                    let _ = arg.ty.unify(param_type)?;
+                }
+            } else if !args.is_empty() {
+                return Err(format!(
+                    "Class {} has no constructor but {} arguments provided",
+                    class,
+                    args.len()
+                ));
+            }
+
+            expr.ty = Type::Class(class.clone());
+        }
+
+        Expr::If {
+            cond,
+            then_branch,
+            else_branch,
+        } =&gt; {
+            typecheck_expr(ctx, cond, env)?;
+            if cond.ty != Type::Bool {
+                return Err(format!("If condition must be bool, got {}", cond.ty));
+            }
+
+            let mut then_env = env.clone();
+            let mut then_type = Type::Unit;
+            for stmt in then_branch.iter_mut() {
+                then_type = typecheck_stmt(ctx, stmt, &amp;mut then_env)?;
+            }
+
+            let mut else_env = env.clone();
+            let mut else_type = Type::Unit;
+            for stmt in else_branch.iter_mut() {
+                else_type = typecheck_stmt(ctx, stmt, &amp;mut else_env)?;
+            }
+
+            expr.ty = then_type.unify(&amp;else_type)?;
+        }
+
+        Expr::While { cond, body } =&gt; {
+            typecheck_expr(ctx, cond, env)?;
+            if cond.ty != Type::Bool {
+                return Err(format!("While condition must be bool, got {}", cond.ty));
+            }
+
+            let mut body_env = env.clone();
+            for stmt in body.iter_mut() {
+                typecheck_stmt(ctx, stmt, &amp;mut body_env)?;
+            }
+
+            expr.ty = Type::Unit;
+        }
+
+        Expr::Block(stmts) =&gt; {
+            let mut block_env = env.clone();
+            let mut last_type = Type::Unit;
+            for stmt in stmts.iter_mut() {
+                last_type = typecheck_stmt(ctx, stmt, &amp;mut block_env)?;
+            }
+            expr.ty = last_type;
+        }
+    }
+
+    Ok(())
+}</code></pre>
+<p><a class="filename" href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/thirdlang/src/typeck.rs">thirdlang/src/typeck.rs</a></p>
+<p>For <code>object.method(args)</code>:</p>
+<ol>
+<li><strong>Type check object</strong> - Get the object’s type</li>
+<li><strong>Verify it is a class</strong> - Cannot call methods on <code>int</code> or <code>bool</code></li>
+<li><strong>Find the method</strong> - Look up method name in the class</li>
+<li><strong>Check arguments</strong> - Verify argument types match parameters</li>
+<li><strong>Return method’s return type</strong> - The expression’s type</li>
+</ol>
+<h3 id="example-type-checks"><a class="header" href="#example-type-checks">Example Type Checks</a></h3>
+<pre><code>class Point {
+    x: int
+    y: int
+    def __init__(self, x: int, y: int) { ... }
+    def distance_squared(self, other: Point) -&gt; int { ... }
+}
+
+p1 = new Point(0, 0)
+p2 = new Point(3, 4)
+
+p1.distance_squared(p2)      # OK: Point method, Point argument
+p1.distance_squared(5)       # ERROR: expected Point, got int
+p1.nonexistent()             # ERROR: method not found
+</code></pre>
+<h2 id="methods-with-parameters"><a class="header" href="#methods-with-parameters">Methods with Parameters</a></h2>
+<p>Methods can take additional parameters after <code>self</code>:</p>
+<pre><code>class Point {
+    x: int
+    y: int
+
+    def __init__(self, x: int, y: int) {
+        self.x = x
+        self.y = y
+    }
+
+    def distance_squared(self, other: Point) -&gt; int {
+        dx = other.x - self.x
+        dy = other.y - self.y
+        return dx * dx + dy * dy
+    }
+
+    def translate(self, dx: int, dy: int) {
+        self.x = self.x + dx
+        self.y = self.y + dy
+    }
+}
+</code></pre>
+<p>The <code>distance_squared</code> method takes another <code>Point</code> and returns <code>int</code>. The <code>translate</code> method takes two integers and has no explicit return type - this means it returns <code>Unit</code> (nothing useful), it just modifies the object in place.</p>
+<h3 id="classes-as-parameters"><a class="header" href="#classes-as-parameters">Classes as Parameters</a></h3>
+<p>Notice <code>other: Point</code> - methods can take objects of any class as parameters:</p>
+<pre><code>def distance_squared(self, other: Point) -&gt; int { ... }
+#                          ^^^^^^^^^^^^
+#                          Parameter is a Point!
+</code></pre>
+<p><strong>Important</strong>: When you pass an object as a parameter, you are passing a <strong>pointer</strong> (reference), not a copy. Both <code>self</code> and <code>other</code> point to actual objects in memory. If you modify <code>other.x</code> inside the method, you are modifying the original object!</p>
+<p>This is called <strong>reference semantics</strong> and is common in OOP languages (Java, Python, etc.).</p>
+<h2 id="field-access"><a class="header" href="#field-access">Field Access</a></h2>
+<p>Methods can read and write fields using <code>self.field</code>:</p>
+<pre><code>def get_x(self) -&gt; int {
+    return self.x        # Read field
+}
+
+def set_x(self, x: int) {
+    self.x = x           # Write field
+}
+</code></pre>
+<h3 id="field-access-compiles-to-struct-gep"><a class="header" href="#field-access-compiles-to-struct-gep">Field Access Compiles to Struct GEP</a></h3>
+<p>In LLVM IR, <code>self.x</code> becomes a GEP (Get Element Pointer) instruction. GEP is one of LLVM’s most important instructions - it calculates the memory address of a struct field without actually reading memory. Think of it as “pointer arithmetic” that knows about struct layouts:</p>
+<pre><code>; self.x = 42
+%field_ptr = getelementptr %Point, ptr %self, i32 0, i32 0  ; Get pointer to field 0
+store i64 42, ptr %field_ptr                                 ; Store value
+
+; return self.x
+%field_ptr = getelementptr %Point, ptr %self, i32 0, i32 0
+%value = load i64, ptr %field_ptr
+ret i64 %value
+</code></pre>
+<h2 id="method-compilation"><a class="header" href="#method-compilation">Method Compilation</a></h2>
+<p>Methods compile to regular functions with a special naming convention:</p>
+<pre><code>class Point {
+    def get_x(self) -&gt; int {
+        return self.x
+    }
+}
+</code></pre>
+<p>Becomes:</p>
+<pre><code>define i64 @Point__get_x(ptr %self) {
+    %x_ptr = getelementptr %Point, ptr %self, i32 0, i32 0
+    %x = load i64, ptr %x_ptr
+    ret i64 %x
+}
+</code></pre>
+<p>The naming pattern <code>ClassName__methodName</code>:</p>
+<ul>
+<li>Avoids conflicts between classes</li>
+<li>Makes it clear which class owns the method</li>
+<li>Allows us to find the right function at call sites</li>
+</ul>
+<h2 id="calling-methods-on-self"><a class="header" href="#calling-methods-on-self">Calling Methods on Self</a></h2>
+<p>Inside a method, you can call other methods on <code>self</code>:</p>
+<pre><code>class Calculator {
+    value: int
+
+    def __init__(self) {
+        self.value = 0
+    }
+
+    def add(self, n: int) {
+        self.value = self.value + n
+    }
+
+    def double(self) {
+        self.add(self.value)   # Call add on self
+    }
+}
+</code></pre>
+<p>This is just <code>self.methodName(args)</code> - same as any other method call.</p>
+<h2 id="methods-returning-selfs-type"><a class="header" href="#methods-returning-selfs-type">Methods Returning Self’s Type</a></h2>
+<p>Methods can return their own class type:</p>
+<pre><code>class Builder {
+    value: int
+
+    def __init__(self) { self.value = 0 }
+
+    def set_value(self, v: int) -&gt; Builder {
+        self.value = v
+        return self   # Return the same object
+    }
+}
+
+b = new Builder()
+b.set_value(10)
+</code></pre>
+<p>Returning <code>self</code> enables method chaining (though we do not support it syntactically yet).</p>
+<h2 id="special-methods"><a class="header" href="#special-methods">Special Methods</a></h2>
+<h3 id="constructor-__init__"><a class="header" href="#constructor-__init__">Constructor: <code>__init__</code></a></h3>
+<p>Called automatically when you use <code>new</code>:</p>
+<pre><code>def __init__(self, x: int) {
+    self.x = x
+}
+</code></pre>
+<h3 id="destructor-__del__"><a class="header" href="#destructor-__del__">Destructor: <code>__del__</code></a></h3>
+<p>Called automatically when you use <code>delete</code>:</p>
+<pre><code>def __del__(self) {
+    # Cleanup code (if any)
+}
+</code></pre>
+<p>We cover destructors in detail in the <a href="memory.html">memory management</a> chapter.</p>
+<h2 id="summary"><a class="header" href="#summary">Summary</a></h2>
+<div class="table-wrapper"><table><thead><tr><th>Concept</th><th>Syntax</th><th>Description</th></tr></thead><tbody>
+<tr><td>Method definition</td><td><code>def name(self, ...)</code></td><td>Function belonging to a class</td></tr>
+<tr><td>Method call</td><td><code>obj.method(args)</code></td><td>Call method on an object</td></tr>
+<tr><td>Self reference</td><td><code>self</code></td><td>The object being operated on</td></tr>
+<tr><td>Field read</td><td><code>self.field</code></td><td>Access object’s field</td></tr>
+<tr><td>Field write</td><td><code>self.field = x</code></td><td>Modify object’s field</td></tr>
+</tbody></table>
+</div>
+<p>Methods are the <em>behavior</em> half of object-oriented programming. Fields are data; methods are actions.</p>
+<p>Next, let us look at <a href="memory.html">memory management</a> - how objects are allocated and freed.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../04_thirdlang/constructors.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../04_thirdlang/memory.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../04_thirdlang/constructors.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../04_thirdlang/memory.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../theme/force-theme.js"></script>
+
+
+
+    </div>
+    </body>
+</html>
