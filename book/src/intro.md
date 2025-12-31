@@ -10,56 +10,6 @@
 
 ---
 
-## Getting Started
-
-This book assumes basic knowledge of Rust. If you're new to Rust, start with the official [Rust book](https://doc.rust-lang.org/book/).
-
-The code and materials are available on [GitHub](https://github.com/ehsanmok/create-your-own-lang-with-rust). To follow along:
-
-```bash
-# Clone the repository
-git clone https://github.com/ehsanmok/create-your-own-lang-with-rust
-cd create-your-own-lang-with-rust
-```
-
-### What Works with Stable Rust
-
-| Project | Command |
-|---------|---------|
-| Calculator (interpreter/VM) | `cargo run` |
-| Firstlang (interpreter) | `cargo run` |
-
-### What Requires Nightly Rust + LLVM
-
-| Project | Command |
-|---------|---------|
-| Calculator JIT | `rustup run nightly cargo run --features jit` |
-| Secondlang | `rustup run nightly cargo run` |
-| Thirdlang | `rustup run nightly cargo run` |
-
-### LLVM Setup
-
-```bash
-# Install nightly Rust
-rustup toolchain install nightly
-
-# Install LLVM
-# macOS:
-brew install llvm
-
-# Debian/Ubuntu: see https://apt.llvm.org/
-```
-
-Check your LLVM version with `llvm-config --version` and update `Cargo.toml`:
-
-| LLVM | inkwell feature |
-|------|-----------------|
-| 20.x | `llvm20-1` |
-| 19.x | `llvm19-1` |
-| 18.x | `llvm18-1` |
-
----
-
 ## Motivations and Goals
 
 This book arises from my frustration of not finding modern, clear, and concise teaching materials that are readily accessible to beginners like me who want to learn how to create their own programming language.
@@ -69,6 +19,77 @@ This book arises from my frustration of not finding modern, clear, and concise t
 > *"If you can't explain something in simple terms, you don't understand it"* <sup>[2](https://skeptics.stackexchange.com/questions/8742/did-einstein-say-if-you-cant-explain-it-simply-you-dont-understand-it-well-en)</sup>
 
 <span style="font-family:Trebuchet MS">Pedagogically, one of the most effective methods of teaching is co-creating interactively. Introducing the core aspects around the *simplest example* (here, our calculator language) helps build knowledge and confidence. We use mature technologies instead of reinventing the wheel.</span>
+
+---
+
+## Getting Started
+
+This book assumes basic knowledge of Rust. If you're new to Rust, start with the official [Rust book](https://doc.rust-lang.org/book/).
+
+The code and materials are available on [GitHub](https://github.com/ehsanmok/create-your-own-lang-with-rust). To follow along:
+
+```bash
+git clone https://github.com/ehsanmok/create-your-own-lang-with-rust
+cd create-your-own-lang-with-rust
+```
+
+### Calculator and Firstlang (stable Rust)
+
+These projects work with stable Rust 1.70+ and require no external dependencies:
+
+```bash
+# Calculator - interpreter mode
+cd calculator
+cargo run --bin main examples/simple.calc
+
+# Calculator - VM mode
+cargo run --bin main --features vm examples/simple.calc
+
+# Firstlang - interpreter
+cd firstlang
+cargo run -- examples/fibonacci.fl
+cargo run  # REPL
+```
+
+### Secondlang and Thirdlang (nightly Rust + LLVM)
+
+These projects require nightly Rust and LLVM for JIT compilation:
+
+```bash
+# Install nightly Rust
+rustup toolchain install nightly
+
+# Install LLVM (macOS)
+brew install llvm
+
+# Install LLVM (Debian/Ubuntu) - see https://apt.llvm.org/
+```
+
+Check your LLVM version with `llvm-config --version` and update the `inkwell` dependency in `Cargo.toml` to match:
+
+| LLVM Version | inkwell feature |
+|--------------|-----------------|
+| 20.x | `llvm20-1` |
+| 19.x | `llvm19-1` |
+| 18.x | `llvm18-1` |
+
+For example, with LLVM 20:
+
+```toml
+inkwell = { version = "0.7", features = ["llvm20-1"] }
+```
+
+```bash
+# Secondlang
+cd secondlang
+rustup run nightly cargo run -- examples/fibonacci.sl
+rustup run nightly cargo run -- --ir examples/fibonacci.sl  # view LLVM IR
+
+# Thirdlang
+cd thirdlang
+rustup run nightly cargo run --bin thirdlang -- examples/point.tl
+rustup run nightly cargo run --bin thirdlang -- examples/counter.tl
+```
 
 ---
 
