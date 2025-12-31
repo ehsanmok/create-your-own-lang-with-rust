@@ -182,17 +182,21 @@
 <blockquote>
 <p>Think of source code as a <em>sentence</em> and the AST as its <em>diagram</em>. Just like “The cat sat on the mat” can be diagrammed into subject/verb/object, <code>1 + 2</code> can be diagrammed into left/operator/right. The AST is that diagram - it captures <em>structure</em>, not just text.</p>
 </blockquote>
-<p>AST comes into the picture when we want to go from the string representation of our program like <code>"-1"</code> or <code>"1 + 2"</code> to something more manageable and easier to work with. Since our program is not a random string (that’s what the grammar ensures), we can use the structure within the expressions <code>"-1"</code> and <code>"1 + 2"</code> to our advantage and come up with a <em>new representation</em> like a <a href="https://en.wikipedia.org/wiki/Tree_structure">tree</a>:</p>
+<p>We’ve parsed our source code into pest’s representation. But pest gives us a generic tree of “pairs” - it doesn’t know that <code>+</code> means addition or that <code>1</code> is a number we want to compute with. We need our own data structure that captures <em>meaning</em>, not just syntax.</p>
+<h2 id="from-string-to-tree"><a class="header" href="#from-string-to-tree">From String to Tree</a></h2>
+<p>AST comes into the picture when we want to go from the string representation of our program like <code>"-1"</code> or <code>"1 + 2"</code> to something more manageable. Since our program is not a random string (that’s what the grammar ensures), we can use its structure to our advantage.</p>
+<p>Here’s what <code>1 + 2</code> looks like as a tree:</p>
 <p align="center">
   </br>
     <a href><img  alt="ast" src="../img/ast.svg"> </a>
 </p>
-<p>One thing to note here is that the <em>kinds</em> of nodes in our tree are not the same—the <code>+</code> node is different from the <code>1</code> node. In fact, <code>+</code> has an <strong>Operator</strong> type and <code>1</code> is an integer <strong>Int</strong> type:</p>
+<p>Notice something important: the nodes in our tree are <em>different kinds</em> of things. The <code>+</code> node is an <strong>operator</strong> - it tells us what to do. The <code>1</code> and <code>2</code> nodes are <strong>values</strong> - they’re the things we operate on.</p>
 <p align="center">
   </br>
     <a href><img  alt="ast" src="../img/ast-typed.svg"> </a>
 </p>
-<p>so we define our AST nodes as</p>
+<h2 id="defining-the-ast-in-rust"><a class="header" href="#defining-the-ast-in-rust">Defining the AST in Rust</a></h2>
+<p>In Rust, we represent “different kinds of things” with enums. Let’s start simple:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>pub enum Operator {
@@ -204,26 +208,26 @@ pub enum Node {
     Int(i32),
 }
 <span class="boring">}</span></code></pre></pre>
-<p>Referring back to our grammar, we actually have different kinds of <em>recursive</em> expressions:</p>
-<ul>
-<li>
-<p><strong>unary</strong> grammar</p>
+<p>This says: an <code>Operator</code> is either <code>Plus</code> or <code>Minus</code>. A <code>Node</code> is an integer that holds an <code>i32</code> value.</p>
+<p>But wait - this only handles numbers! What about expressions like <code>1 + 2</code>? We need nodes that can contain other nodes.</p>
+<h2 id="recursive-expressions"><a class="header" href="#recursive-expressions">Recursive Expressions</a></h2>
+<p>Looking back at our grammar, we have two recursive patterns:</p>
+<p><strong>Unary expressions</strong> - An operator applied to one thing:</p>
 <pre><code>UnaryExpr = { Operator ~ Term }
 </code></pre>
-</li>
-<li>
-<p><strong>binary</strong> grammar</p>
+<p>This handles <code>-1</code> (minus applied to 1) or <code>-(2 + 3)</code> (minus applied to a whole expression).</p>
+<p><strong>Binary expressions</strong> - An operator between two things:</p>
 <pre><code>BinaryExpr = { Term ~ (Operator ~ Term)* }
 </code></pre>
-</li>
-</ul>
-<p>So for example, the expression <code>"-1 + (2 + 3)"</code> has this recursive structure</p>
+<p>This handles <code>1 + 2</code> (plus between 1 and 2) or <code>1 + 2 + 3</code> (chained additions).</p>
+<p>Here’s a complex example: <code>"-1 + (2 + 3)"</code> forms this tree:</p>
 <p align="center">
 </br>
     <a href><img alt="compiler" src="../img/ast-recursive.svg"> </a>
 </p>
-<p>To include those into our AST to make it an actual <a href="https://en.wikipedia.org/wiki/Binary_tree">tree data structure</a>,
-we complete our AST definition as follows</p>
+<p>See how it’s nested? The outer <code>+</code> has children, and one child is itself a <code>+</code> expression. Trees let us represent this nesting naturally.</p>
+<h2 id="the-complete-ast"><a class="header" href="#the-complete-ast">The Complete AST</a></h2>
+<p>Now we can define our full AST:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>pub enum Operator {
@@ -245,7 +249,15 @@ pub enum Node {
 }
 <span class="boring">}</span></code></pre></pre>
 <p><a class="filename" href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/calculator/src/ast.rs">calculator/src/ast.rs</a></p>
-<p>Now, we can use the <code>pest</code> generated <code>CalcParser::parse</code> to map the Rules of our <code>Calc</code> language string to our AST.</p>
+<p>Let’s understand each variant:</p>
+<ul>
+<li><strong><code>Int(i32)</code></strong> - A literal number like <code>42</code> or <code>-7</code></li>
+<li><strong><code>UnaryExpr { op, child }</code></strong> - An operator with one operand, like <code>-5</code>. The <code>child</code> is another <code>Node</code>, which is how we handle <code>-(-5)</code>.</li>
+<li><strong><code>BinaryExpr { op, lhs, rhs }</code></strong> - An operator with two operands (left-hand side, right-hand side). The <code>lhs</code> and <code>rhs</code> are <code>Node</code>s, so we can nest: <code>(1 + 2) + 3</code>.</li>
+</ul>
+<p>The <code>Box&lt;Node&gt;</code> is Rust’s way of saying “this field contains another node, stored on the heap.” Without <code>Box</code>, Rust couldn’t calculate the size of <code>Node</code> (it would be infinite - a Node containing a Node containing a Node…).</p>
+<h2 id="building-the-ast-from-pest"><a class="header" href="#building-the-ast-from-pest">Building the AST from pest</a></h2>
+<p>Now we connect pest’s output to our AST. The <code>parse_source</code> function walks through pest’s pairs and constructs our <code>Node</code> tree:</p>
 <pre><code class="language-rust ignore">
 pub fn parse(source: &amp;str) -&gt; std::result::Result&lt;Vec&lt;Node&gt;, pest::error::Error&lt;Rule&gt;&gt; {
     let mut ast = vec![];
@@ -257,11 +269,20 @@ pub fn parse(source: &amp;str) -&gt; std::result::Result&lt;Vec&lt;Node&gt;, pes
     }
     Ok(ast)
 }</code></pre>
-<p>Checkout <a href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/calculator/src/parser.rs">calculator/src/parser.rs</a>.</p>
-<p>Note that <code>CalcParser::parse</code> takes care of the AST traversal and correctly maps it to <code>Vec&lt;Node&gt;</code> for easier access
-in later stages of compilation.</p>
+<p>This function is doing something subtle: it’s <em>translating</em> between two representations. pest says “I found a <code>BinaryExpr</code> rule with these children.” We say “Great, make a <code>BinaryExpr</code> node with this operator and these operands.”</p>
+<p>Checkout <a href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/calculator/src/parser.rs">calculator/src/parser.rs</a> for the full implementation.</p>
+<p>The result is a <code>Vec&lt;Node&gt;</code> - a list of AST nodes ready for the next stage.</p>
 <h2 id="interpreter"><a class="header" href="#interpreter">Interpreter</a></h2>
-<p>The CPU is the <em>ultimate interpreter</em>—it executes opcodes as it goes. After we have changed the representation (a.k.a. <em>lowered</em>) of our source code <code>&amp;str</code> to AST <code>Node</code>, a basic interpreter looks at each node of the AST (via any <a href="https://en.wikipedia.org/wiki/Tree_traversal">tree traversal method</a>) and simply <strong>evaluates</strong> it <em>recursively</em>:</p>
+<p>Now comes the payoff. We have a tree representing our program. How do we actually <em>compute</em> the result?</p>
+<p>The CPU is the <em>ultimate interpreter</em> - it executes opcodes one at a time. Our interpreter does the same thing at a higher level: it walks the tree and evaluates each node.</p>
+<p>The core insight is <strong>recursion</strong>. To evaluate <code>1 + 2</code>:</p>
+<ol>
+<li>Evaluate the left side (<code>1</code>) → get <code>1</code></li>
+<li>Evaluate the right side (<code>2</code>) → get <code>2</code></li>
+<li>Apply the operator (<code>+</code>) → get <code>3</code></li>
+</ol>
+<p>If the left side were <code>(3 + 4)</code> instead of <code>1</code>, we’d recursively evaluate that first. This is why trees are so powerful - the structure tells us the order of operations.</p>
+<p>Here’s the evaluation function:</p>
 <pre><code class="language-rust ignore">    pub fn eval(&amp;self, node: &amp;Node) -&gt; i32 {
         match node {
             Node::Int(n) =&gt; *n,
@@ -283,7 +304,15 @@ in later stages of compilation.</p>
             }
         }
     }</code></pre>
-<p>To sum up, we define a <code>Compile</code> trait that we will use throughout this chapter</p>
+<p>Read this carefully. For each node type:</p>
+<ul>
+<li><strong>Int</strong> - Just return the value. Nothing to compute.</li>
+<li><strong>UnaryExpr</strong> - Recursively evaluate the child, then apply the operator (negate for minus).</li>
+<li><strong>BinaryExpr</strong> - Recursively evaluate both sides, then combine with the operator.</li>
+</ul>
+<p>The recursion handles arbitrary nesting automatically. <code>1 + 2 + 3 + 4</code>? No problem - the tree structure determines the order, and each call handles one level.</p>
+<h2 id="putting-it-together"><a class="header" href="#putting-it-together">Putting It Together</a></h2>
+<p>We define a <code>Compile</code> trait so all our backends (interpreter, VM, JIT) share the same interface:</p>
 <pre><code class="language-rust ignore">pub trait Compile {
     type Output;
 
@@ -296,7 +325,7 @@ in later stages of compilation.</p>
         Self::from_ast(ast)
     }
 }</code></pre>
-<p>and we can now implement our interpreter</p>
+<p>And implement our interpreter:</p>
 <pre><code class="language-rust ignore">pub struct Interpreter;
 
 impl Compile for Interpreter {
@@ -312,16 +341,23 @@ impl Compile for Interpreter {
     }
 }</code></pre>
 <p><a class="filename" href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/calculator/src/compiler/interpreter.rs">calculator/src/compiler/interpreter.rs</a></p>
-<p>and test</p>
+<p>Now we can test it:</p>
 <pre><code class="language-rust ignore">assert_eq!(Interpreter::from_source("1 + 2").unwrap(), 3);</code></pre>
-<p>Run such tests locally with</p>
+<p>Run tests locally with:</p>
 <pre><code class="language-bash">cargo test interpreter --tests
 </code></pre>
+<h2 id="why-this-pattern-matters"><a class="header" href="#why-this-pattern-matters">Why This Pattern Matters</a></h2>
+<p>The pattern we just learned - parse to AST, recursively evaluate - is the foundation of <em>every</em> interpreter. Python, Ruby, JavaScript interpreters all do this (with more node types, of course).</p>
+<p>In the next sections, we’ll see two other ways to execute the same AST:</p>
+<ul>
+<li><strong>JIT compilation</strong> - Convert the AST to machine code, then run it</li>
+<li><strong>Bytecode VM</strong> - Convert to simpler instructions, then interpret those</li>
+</ul>
+<p>Same AST, three different backends. That’s the power of separating parsing from execution.</p>
 <div class="checkpoint">
-<strong>Checkpoint</strong>
 <p>At this point, you should be able to:</p>
 <ul>
-<li>Parse <code>1 + 2</code> and build an AST with a <code>Binary</code> node</li>
+<li>Parse <code>1 + 2</code> and build an AST with a <code>BinaryExpr</code> node</li>
 <li>Evaluate <code>1 + 2 - 3</code> and get <code>0</code></li>
 <li>Handle nested expressions like <code>-1 + (2 + 3)</code></li>
 </ul>

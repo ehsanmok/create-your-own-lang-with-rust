@@ -179,28 +179,50 @@
                 <div id="content" class="content">
                     <main>
                         <h2 id="addition"><a class="header" href="#addition">Addition</a></h2>
+<p>So far, we’ve interpreted the AST directly - walking the tree and computing as we go. That works, but it’s slow. Every time we evaluate <code>1 + 2</code>, we have to:</p>
+<ol>
+<li>Look at the node type (it’s a BinaryExpr)</li>
+<li>Recursively evaluate the left side</li>
+<li>Recursively evaluate the right side</li>
+<li>Check the operator (it’s Plus)</li>
+<li>Add the numbers</li>
+</ol>
+<p>For <code>fib(35)</code>, which does millions of additions, all this checking adds up.</p>
+<p>What if, instead, we generated native machine code? The CPU could just execute <code>ADD</code> instructions directly - no interpretation overhead. That’s what <strong>JIT (Just-In-Time) compilation</strong> gives us.</p>
+<p>We’ll use <strong><a href="https://llvm.org/">LLVM</a></strong> as our code generation backend. LLVM is a compiler infrastructure used by Rust, Swift, and many other languages. We write LLVM IR (an intermediate representation), and LLVM compiles it to native code for whatever CPU we’re running on.</p>
 <h3 id="setup"><a class="header" href="#setup">Setup</a></h3>
-<p>The code is available in <a href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/calculator/examples/llvm/src/main.rs"><code>calculator/examples/llvm/src/main.rs</code></a>. Update the <code>inkwell</code> feature flag to match your LLVM version (check with <code>llvm-config --version</code>):</p>
+<p>The code is available in <a href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/calculator/examples/llvm/src/main.rs"><code>calculator/examples/llvm/src/main.rs</code></a>.</p>
+<p>First, make sure the <code>inkwell</code> feature flag matches your LLVM version. Check with <code>llvm-config --version</code>, then update:</p>
 <pre><code class="language-toml">inkwell = { version = "0.7.1", features = ["llvm20-1"] }  # For LLVM 20.x
 </code></pre>
-<p>This example requires nightly Rust. Go to <a href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/calculator/examples/llvm/"><code>calculator/examples/llvm</code></a> sub-crate and run:</p>
+<p>This example requires nightly Rust. Navigate to the <a href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/calculator/examples/llvm/"><code>calculator/examples/llvm</code></a> sub-crate and run:</p>
 <pre><code class="language-bash">rustup run nightly cargo run
 </code></pre>
-<h3 id="add-function"><a class="header" href="#add-function">Add Function</a></h3>
-<p>We want to define an add function like</p>
+<h3 id="our-goal-a-simple-add-function"><a class="header" href="#our-goal-a-simple-add-function">Our Goal: A Simple Add Function</a></h3>
+<p>Let’s start with the simplest possible example - a function that adds two numbers:</p>
 <pre><code>add(x: i32, y: i32) -&gt; i32 { x + y }
 </code></pre>
-<p>but using the <strong>LLVM language</strong> and JIT it. For that, we need to define <em>every</em> bit of what makes up a function through LLVM basic constructs such as context, module, function signature setups, argument types, basic block, etc.</p>
-<p>Here is how to <em>stitch</em> our add function in LLVM</p>
-<ol>
-<li>We start by creating a <code>context</code>, adding the <code>addition</code> module and setting up the data type we want to use <code>i32_type</code> of type <a href="https://thedan64.github.io/inkwell/inkwell/types/struct.IntType.html"><code>IntType</code></a></li>
-</ol>
+<p>In LLVM IR, this looks like:</p>
+<pre><code class="language-llvm">define i32 @add(i32 %x, i32 %y) {
+entry:
+  %result = add i32 %x, %y
+  ret i32 %result
+}
+</code></pre>
+<p>Our job is to construct this IR using inkwell (Rust bindings for LLVM), then JIT compile and execute it.</p>
+<h3 id="step-1-create-the-foundation"><a class="header" href="#step-1-create-the-foundation">Step 1: Create the Foundation</a></h3>
+<p>LLVM organizes code in a hierarchy: <strong>Context</strong> contains <strong>Modules</strong>, which contain <strong>Functions</strong>, which contain <strong>Basic Blocks</strong>. Think of it like a project structure: the context is your workspace, modules are files, functions are… functions.</p>
 <pre><code class="language-rust ignore">    let context = Context::create();
     let module = context.create_module("addition");
     let i32_type = context.i32_type();</code></pre>
-<ol>
-<li>We define the signature of <code>add(i32, i32) -&gt; i32</code>, add the function to our module, create a <a href="https://thedan64.github.io/inkwell/inkwell/basic_block/index.html">basic block</a> entry point and a builder to add later parts</li>
-</ol>
+<p>Let’s break this down:</p>
+<ul>
+<li><strong><code>Context::create()</code></strong> - The top-level container. All LLVM objects belong to a context. It manages memory and ensures thread safety.</li>
+<li><strong><code>context.create_module("addition")</code></strong> - Creates a module (like a compilation unit). Our <code>add</code> function will live here.</li>
+<li><strong><code>context.i32_type()</code></strong> - Gets the 32-bit integer type. LLVM is explicitly typed - we need to declare that our function works with <code>i32</code>.</li>
+</ul>
+<h3 id="step-2-define-the-function-signature"><a class="header" href="#step-2-define-the-function-signature">Step 2: Define the Function Signature</a></h3>
+<p>Now we tell LLVM what our function looks like - its name, parameter types, and return type:</p>
 <pre><code class="language-rust ignore">
     let fn_type = i32_type.fn_type(&amp;[i32_type.into(), i32_type.into()], false);
     let fn_val = module.add_function("add", fn_type, None);
@@ -208,17 +230,31 @@
 
     let builder = context.create_builder();
     builder.position_at_end(entry_basic_block);</code></pre>
-<ol>
-<li>We create the arguments <code>x</code> and <code>y</code> and add them to the <code>builder</code> to make up the return instruction</li>
-</ol>
+<p>Walking through this:</p>
+<ul>
+<li><strong><code>i32_type.fn_type(&amp;[i32_type.into(), i32_type.into()], false)</code></strong> - Creates a function type: returns <code>i32</code>, takes two <code>i32</code> parameters. The <code>false</code> means it’s not variadic (doesn’t take variable arguments like <code>printf</code>).</li>
+<li><strong><code>module.add_function("add", fn_type, None)</code></strong> - Adds a function called “add” with this signature to our module.</li>
+<li><strong><code>context.append_basic_block(add_fn, "entry")</code></strong> - Creates a basic block named “entry”. A basic block is a sequence of instructions with no branches in the middle - execution flows straight through.</li>
+<li><strong><code>context.create_builder()</code></strong> - The builder is our “cursor” for adding instructions. We position it at a basic block, then build instructions there.</li>
+<li><strong><code>builder.position_at_end(entry)</code></strong> - Point the builder at our entry block. New instructions will go here.</li>
+</ul>
+<h3 id="step-3-build-the-function-body"><a class="header" href="#step-3-build-the-function-body">Step 3: Build the Function Body</a></h3>
+<p>Now the fun part - generating the actual addition:</p>
 <pre><code class="language-rust ignore">    let x = fn_val.get_nth_param(0).unwrap().into_int_value();
     let y = fn_val.get_nth_param(1).unwrap().into_int_value();
 
     let ret = builder.build_int_add(x, y, "add").unwrap();
     let return_instruction = builder.build_return(Some(&amp;ret)).unwrap();</code></pre>
-<ol>
-<li>Finally, we create a JIT execution engine (with no optimization for now) and let LLVM handle rest of the work for us</li>
-</ol>
+<p>Here’s what’s happening:</p>
+<ul>
+<li><strong><code>add_fn.get_nth_param(0)</code></strong> - Get the first parameter. LLVM functions have an array of parameters, indexed from 0.</li>
+<li><strong><code>.unwrap().into_int_value()</code></strong> - Parameters come as generic “basic values.” We know ours are integers, so we convert them.</li>
+<li><strong><code>builder.build_int_add(x, y, "result")</code></strong> - The magic! This emits an <code>add</code> instruction. The <code>"result"</code> is just a name for the output (helps when reading IR).</li>
+<li><strong><code>builder.build_return(Some(&amp;sum))</code></strong> - Emit a <code>ret</code> instruction to return our sum.</li>
+</ul>
+<p>That’s it! We’ve built a complete LLVM function. But it’s just IR in memory - we haven’t run it yet.</p>
+<h3 id="step-4-jit-compile-and-execute"><a class="header" href="#step-4-jit-compile-and-execute">Step 4: JIT Compile and Execute</a></h3>
+<p>Time to turn our IR into machine code and run it:</p>
 <pre><code class="language-rust ignore">    let execution_engine = module
         .create_jit_execution_engine(OptimizationLevel::None)
         .unwrap();
@@ -229,9 +265,24 @@
         let y = 2;
         assert_eq!(add.call(x, y), x + y);
     }</code></pre>
-<p>Yes! all of this just to add two integers.</p>
+<p>This is where it gets real:</p>
+<ul>
+<li><strong><code>module.create_jit_execution_engine(OptimizationLevel::None)</code></strong> - Creates a JIT compiler. LLVM takes our IR and compiles it to native x86/ARM code <em>right now</em>, in memory.</li>
+<li><strong><code>execution_engine.get_function::&lt;unsafe extern "C" fn(i32, i32) -&gt; i32&gt;("add")</code></strong> - Look up our compiled function. The type signature tells Rust how to call it.</li>
+<li><strong><code>add.call(1, 2)</code></strong> - Call the native function! This jumps directly to machine code - no interpretation, no overhead.</li>
+</ul>
+<p><strong>The result: <code>3</code>.</strong></p>
+<h3 id="why-all-this-complexity"><a class="header" href="#why-all-this-complexity">Why All This Complexity?</a></h3>
+<p>You might be thinking: “That’s a lot of code just to add two numbers!” And you’re right. For simple addition, the interpreter is simpler.</p>
+<p>But consider what we just built:</p>
+<ol>
+<li><strong>Native speed</strong> - That <code>add</code> instruction is real x86 <code>ADD</code>. No interpretation overhead.</li>
+<li><strong>Platform portable</strong> - We wrote generic IR. LLVM handles x86, ARM, WebAssembly, whatever.</li>
+<li><strong>Optimizable</strong> - Set <code>OptimizationLevel::Aggressive</code> and LLVM will optimize our code for free.</li>
+<li><strong>Foundation for more</strong> - This same pattern scales to full languages. Rust uses LLVM. Swift uses LLVM. Now we do too.</li>
+</ol>
+<p>In the <a href="./ast_traversal.html">next section</a>, we’ll compile our full calculator AST to LLVM - not just a hardcoded function, but dynamic code generation from any input expression.</p>
 <div class="checkpoint">
-<strong>Checkpoint</strong>
 <p>At this point, you should be able to:</p>
 <ul>
 <li>Run the LLVM example with <code>rustup run nightly cargo run</code></li>

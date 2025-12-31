@@ -179,14 +179,18 @@
                 <div id="content" class="content">
                     <main>
                         <h2 id="ast-traversal-patterns"><a class="header" href="#ast-traversal-patterns">AST Traversal Patterns</a></h2>
-<p>Recall from the previous section that JITing our <a href="./basic_llvm.html">add function</a> was very detailed and cumbersome to write. Fortunately, there are some useful patterns for traversing complicated ASTs (and IRs)</p>
+<p>In the <a href="./basic_llvm.html">previous section</a>, we handcrafted every LLVM instruction for a simple <code>add</code> function. That worked, but it was tedious - imagine doing that for every possible expression! We need a systematic way to turn <em>any</em> AST into LLVM IR.</p>
+<p>The answer is <strong>recursive tree traversal</strong>. We already do this in the interpreter - walk the tree, evaluate each node. For code generation, we walk the tree and <em>emit instructions</em> for each node instead of computing values.</p>
+<p>Two common patterns help structure this:</p>
 <ul>
-<li><strong>Builder pattern</strong></li>
-<li><strong>Visitor pattern</strong> (Will be introduced in chapter 4)</li>
+<li><strong>Builder pattern</strong> - Used here for LLVM IR generation</li>
+<li><strong>Visitor pattern</strong> - Introduced in <a href="../03_secondlang/optimizations.html">Secondlang Optimizations</a> for AST transformations</li>
 </ul>
 <h3 id="builder-pattern"><a class="header" href="#builder-pattern">Builder Pattern</a></h3>
-<p>Recall how we have interpreted our AST by traversing recursively and evaluating the nodes</p>
-<pre><code class="language-rust  no_run  noplaypen">struct Eval;
+<p>Think of the LLVM builder like a cursor in a text editor. You position it somewhere in your code, then “type” instructions at that position. The builder keeps track of where you are and ensures instructions are added in the right place.</p>
+<p>Let’s compare our interpreter’s recursive evaluation to the new JIT approach.</p>
+<p><strong>Interpreter</strong>: Walk tree, compute values</p>
+<pre><code class="language-rust no_run noplaypen">struct Eval;
 
 impl Eval {
     pub fn new() -&gt; Self {
@@ -215,8 +219,9 @@ impl Eval {
     }
 }</code></pre>
 <p><a class="filename" href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/calculator/src/compiler/interpreter.rs">calculator/src/compiler/interpreter.rs</a></p>
-<p>but instead, we can take advantage of the <a href="https://thedan64.github.io/inkwell/inkwell/builder/struct.Builder.html">inkwell Builder</a> and recursively traverse our <code>Calc</code> AST as follows</p>
-<pre><code class="language-rust  no_run  noplaypen">struct RecursiveBuilder&lt;'a&gt; {
+<p>The interpreter looks at each node and returns a computed integer. For <code>Int(5)</code>, it returns <code>5</code>. For <code>Binary { op: Add, left: Int(1), right: Int(2) }</code>, it recursively evaluates both sides and adds them.</p>
+<p><strong>JIT</strong>: Walk tree, emit LLVM instructions</p>
+<pre><code class="language-rust no_run noplaypen">struct RecursiveBuilder&lt;'a&gt; {
     i32_type: IntType&lt;'a&gt;,
     builder: &amp;'a Builder&lt;'a&gt;,
 }
@@ -253,8 +258,22 @@ impl&lt;'a&gt; RecursiveBuilder&lt;'a&gt; {
         }
     }
 }</code></pre>
-<p>and similar to our addition example, we can JIT the builder output</p>
-<pre><code class="language-rust  no_run  noplaypen">pub struct Jit;
+<p>The structure is identical! We still match on node types and recurse. But instead of computing values directly, we build LLVM instructions:</p>
+<ul>
+<li>
+<p><strong><code>Int(n)</code></strong> - Create an LLVM integer constant. This doesn’t “do” anything at compile time - it creates a value that will exist when the code runs.</p>
+</li>
+<li>
+<p><strong><code>UnaryExpr</code></strong> - For negation, we recursively compile the inner expression (getting an LLVM value), then emit a subtraction from zero. In LLVM, <code>-x</code> is typically represented as <code>0 - x</code>.</p>
+</li>
+<li>
+<p><strong><code>BinaryExpr</code></strong> - Recursively compile both sides, then emit the appropriate arithmetic instruction (<code>build_int_add</code>, <code>build_int_sub</code>). The <code>"add"</code> and <code>"sub"</code> strings are just names for debugging - they show up when you print the IR.</p>
+</li>
+</ul>
+<p>The key insight: <code>recursive_builder</code> returns LLVM <em>values</em>, not Rust integers. These values represent computation that will happen when the JIT-compiled code runs.</p>
+<h3 id="putting-it-together"><a class="header" href="#putting-it-together">Putting It Together</a></h3>
+<p>Now we wire up the complete JIT pipeline:</p>
+<pre><code class="language-rust no_run noplaypen">pub struct Jit;
 
 impl Compile for Jit {
     type Output = Result&lt;i32&gt;;
@@ -295,11 +314,47 @@ impl Compile for Jit {
     }
 }</code></pre>
 <p><a class="filename" href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/calculator/src/compiler/jit.rs">calculator/src/compiler/jit.rs</a></p>
-<p>Finally, we can test it</p>
+<p>Let’s trace through what happens when we JIT <code>1 + 2</code>:</p>
+<ol>
+<li>
+<p><strong>Parse</strong> - Turn <code>"1 + 2"</code> into AST: <code>Binary { op: Add, left: Int(1), right: Int(2) }</code></p>
+</li>
+<li>
+<p><strong>Setup LLVM</strong> - Create context, module, builder</p>
+</li>
+<li>
+<p><strong>Create wrapper function</strong> - We need a function to call, so we create <code>__jit</code> with signature <code>() -&gt; i64</code></p>
+</li>
+<li>
+<p><strong>Compile AST</strong> - <code>recursive_builder</code> walks the tree:</p>
+<ul>
+<li>Compile <code>Int(1)</code> → creates i64 constant <code>1</code></li>
+<li>Compile <code>Int(2)</code> → creates i64 constant <code>2</code></li>
+<li>Compile <code>Add</code> → creates <code>add i64 1, 2</code> instruction, returns the result</li>
+</ul>
+</li>
+<li>
+<p><strong>Return result</strong> - <code>build_return</code> emits a <code>ret</code> instruction with our computed value</p>
+</li>
+<li>
+<p><strong>JIT compile</strong> - LLVM turns our IR into native machine code</p>
+</li>
+<li>
+<p><strong>Execute</strong> - Call the function, get <code>3</code></p>
+</li>
+</ol>
+<h3 id="why-this-matters"><a class="header" href="#why-this-matters">Why This Matters</a></h3>
+<p>The recursive builder pattern scales to any expression, no matter how complex:</p>
+<pre><code>-((1 + 2) * (3 - 4))
+</code></pre>
+<p>This parses to a nested tree, and <code>recursive_builder</code> handles each level automatically. Each call compiles its children first, then emits its own instruction using those children as operands.</p>
+<p>This is the foundation of every LLVM-based compiler. Rust, Swift, Julia - they all use this pattern (with many more node types and optimizations).</p>
+<h3 id="testing"><a class="header" href="#testing">Testing</a></h3>
 <pre><code class="language-rust ignore">assert_eq!(Jit::from_source("1 + 2").unwrap(), 3)</code></pre>
-<p>Run such tests locally with</p>
+<p>Run tests locally:</p>
 <pre><code class="language-bash">cargo test jit --tests
 </code></pre>
+<p>In the <a href="./vm.html">next section</a>, we’ll see an alternative approach: compiling to bytecode for a virtual machine, which trades some speed for portability.</p>
 
                     </main>
 

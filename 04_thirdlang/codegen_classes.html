@@ -892,19 +892,31 @@ entry:
 }
 </code></pre>
 <h2 id="jit-execution"><a class="header" href="#jit-execution">JIT Execution</a></h2>
+<p>Now that we can generate IR for classes, let’s actually run it. Here’s how we take our Thirdlang program from source code to executed result:</p>
 <pre><code class="language-rust ignore">/// JIT compile and run a program
 pub fn jit_run(program: &amp;Program, classes: ClassRegistry) -&gt; Result&lt;i64, String&gt; {
     jit_run_with_opts(program, classes, None)
 }</code></pre>
 <p><a class="filename" href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/thirdlang/src/codegen.rs">thirdlang/src/codegen.rs</a></p>
-<p>Same pattern as Secondlang:</p>
+<p>This follows the same pattern as Secondlang, but now with class support. Let’s walk through what happens:</p>
 <ol>
-<li>Create code generator</li>
-<li>Compile program</li>
-<li>Create JIT engine</li>
-<li>Get <code>__main</code> function</li>
-<li>Call and return result</li>
+<li>
+<p><strong>Create the code generator</strong> - This sets up our LLVM context, module, and builder. Think of it as preparing our workspace.</p>
+</li>
+<li>
+<p><strong>Compile the program</strong> - We walk through the AST and emit LLVM IR for each class, method, and statement. When we encounter <code>new Counter()</code>, we emit malloc + constructor calls. When we see <code>c.increment()</code>, we emit a method call with <code>c</code> passed as <code>self</code>.</p>
+</li>
+<li>
+<p><strong>Create the JIT engine</strong> - LLVM takes our IR and compiles it to native machine code for your CPU. This happens at runtime, hence “Just-In-Time”.</p>
+</li>
+<li>
+<p><strong>Get the <code>__main</code> function</strong> - Remember how we wrapped top-level code in a <code>__main</code> function? We look it up in the compiled code.</p>
+</li>
+<li>
+<p><strong>Call it and return</strong> - We execute the native code. When it calls <code>malloc</code>, it’s calling the real C malloc. When it calls our constructor, it’s running the native x86/ARM code we generated. Fast!</p>
+</li>
 </ol>
+<p>The magic is that the code we’re running isn’t being interpreted - it’s real compiled code, just like if you wrote it in C or Rust. Objects really live on the heap. Methods really jump to function addresses. It’s all native.</p>
 <h2 id="memory-layout-summary"><a class="header" href="#memory-layout-summary">Memory Layout Summary</a></h2>
 <div class="table-wrapper"><table><thead><tr><th>Thirdlang</th><th>LLVM IR</th><th>Notes</th></tr></thead><tbody>
 <tr><td><code>class Point { x: int }</code></td><td><code>%Point = type { i64 }</code></td><td>Struct type</td></tr>
@@ -943,7 +955,6 @@ pub fn jit_run(program: &amp;Program, classes: ClassRegistry) -&gt; Result&lt;i6
 <tr><td>delete</td><td>destructor call + free</td></tr>
 </tbody></table>
 </div><div class="checkpoint">
-<strong>Checkpoint</strong>
 <p>At this point, you should be able to:</p>
 <ul>
 <li>Run <code>cargo run --bin thirdlang -- --ir examples/point.tl</code> and see IR</li>

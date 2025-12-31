@@ -179,27 +179,34 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="recursion"><a class="header" href="#recursion">Recursion</a></h1>
-<p><a href="https://en.wikipedia.org/wiki/Recursion_(computer_science)">Recursion</a> is when a function calls itself. It’s a powerful technique for solving problems that have a recursive structure.</p>
+<p><a href="https://en.wikipedia.org/wiki/Recursion_(computer_science)">Recursion</a> is when a function calls itself. At first, this seems like a paradox - how can a function call itself when it’s still running? But with the call stack we built in the <a href="./functions.html">functions</a> chapter, it works beautifully.</p>
+<p>Think of recursion like Russian nesting dolls (matryoshka). Each doll contains a smaller version of itself, until you reach the smallest doll that contains nothing. To solve a problem recursively, you solve a smaller version of the same problem, until you reach a problem so small it’s trivial to solve.</p>
 <h2 id="the-key-insight"><a class="header" href="#the-key-insight">The Key Insight</a></h2>
-<p>A recursive function has two parts:</p>
+<p>A recursive function has two essential parts:</p>
 <ol>
-<li><strong>Base case</strong> - A condition where we return directly (no recursion)</li>
-<li><strong>Recursive case</strong> - We call ourselves with a “smaller” problem</li>
+<li>
+<p><strong>Base case</strong> - A condition where we return directly, without recursion. This is our “smallest doll” - the problem we can solve without any more work.</p>
+</li>
+<li>
+<p><strong>Recursive case</strong> - We call ourselves with a “smaller” problem, then combine the result with our current work.</p>
+</li>
 </ol>
-<p>Every recursive function must have both. Without a base case, the recursion never stops (infinite loop). Without a recursive case, there is no recursion at all.</p>
+<p>Every recursive function must have both. Without a base case, the recursion never stops - you keep opening dolls forever, eventually crashing (stack overflow). Without a recursive case, there’s no recursion at all - just a regular function.</p>
 <h2 id="classic-example-factorial"><a class="header" href="#classic-example-factorial">Classic Example: Factorial</a></h2>
-<p>The <a href="https://en.wikipedia.org/wiki/Factorial">factorial function</a> is the “hello world” of recursion. Mathematically:</p>
+<p>The <a href="https://en.wikipedia.org/wiki/Factorial">factorial function</a> is the “hello world” of recursion. You’ve seen it in math:</p>
 <p>$$ n! = n \times (n-1) \times (n-2) \times \cdots \times 1 $$</p>
-<p>Or recursively:</p>
+<p>So (5! = 5 \times 4 \times 3 \times 2 \times 1 = 120).</p>
+<p>Here’s the beautiful insight: (5! = 5 \times 4!), and (4! = 4 \times 3!), and so on. We can define factorial in terms of itself:</p>
 <p>$$
 n! = \begin{cases}
 1 &amp; \text{if } n \leq 1 \\
 n \times (n-1)! &amp; \text{otherwise}
 \end{cases}
 $$</p>
+<p>In Firstlang:</p>
 <pre><code>def factorial(n) {
     if (n &lt;= 1) {
-        return 1        # Base case
+        return 1        # Base case: 0! = 1! = 1
     } else {
         return n * factorial(n - 1)  # Recursive case
     }
@@ -207,37 +214,36 @@ $$</p>
 
 factorial(5)  # 5 * 4 * 3 * 2 * 1 = 120
 </code></pre>
-<h2 id="how-it-works"><a class="header" href="#how-it-works">How It Works</a></h2>
-<p>Let’s trace <code>factorial(4)</code>:</p>
-<pre><code>factorial(4)
-  → 4 * factorial(3)
-      → 3 * factorial(2)
-          → 2 * factorial(1)
-              → 1  (base case!)
-          ← 2 * 1 = 2
-      ← 3 * 2 = 6
-  ← 4 * 6 = 24
-</code></pre>
-<h2 id="the-call-stack"><a class="header" href="#the-call-stack">The Call Stack</a></h2>
-<p>Each recursive call creates a new <a href="https://en.wikipedia.org/wiki/Call_stack">stack frame</a>:</p>
-<pre><code>factorial(4) → frame: {n: 4}
-factorial(3) → frame: {n: 3}
-factorial(2) → frame: {n: 2}
-factorial(1) → frame: {n: 1}  ← hits base case, starts returning
-</code></pre>
-<p>This is why our interpreter needs a call stack - to keep track of each call’s local variables.</p>
-<h2 id="why-recursion-works-in-firstlang"><a class="header" href="#why-recursion-works-in-firstlang">Why Recursion Works in Firstlang</a></h2>
-<p>Our interpreter properly handles recursion because:</p>
+<p>The function calls itself with a smaller <code>n</code> until <code>n</code> reaches 1. Then the results bubble back up, multiplied together.</p>
+<h2 id="the-call-stack-in-action"><a class="header" href="#the-call-stack-in-action">The Call Stack in Action</a></h2>
+<p>Here’s where the call stack from <a href="./functions.html">Functions</a> becomes crucial. Each recursive call creates a new stack frame with its own <code>n</code>. When we call <code>factorial(4)</code>:</p>
 <ol>
-<li><strong>Functions are stored globally</strong> - <code>factorial</code> can look itself up</li>
-<li><strong>Each call gets its own frame</strong> - Local <code>n</code> is different in each call</li>
-<li><strong>Return propagates values</strong> - Results bubble up through the stack</li>
+<li><code>factorial(4)</code> starts, pushing a frame with <code>n = 4</code></li>
+<li>It calls <code>factorial(3)</code>, pushing another frame with <code>n = 3</code></li>
+<li>This continues until <code>factorial(1)</code> hits the base case and returns <code>1</code></li>
+<li>Then frames pop off one by one, each multiplying its <code>n</code> by the returned value</li>
 </ol>
-<h2 id="more-examples"><a class="header" href="#more-examples">More Examples</a></h2>
+<p>The stack grows as we dive deeper, then shrinks as we return. Each frame has its own <code>n</code>, so <code>n</code> in <code>factorial(4)</code> is completely separate from <code>n</code> in <code>factorial(3)</code>. This is exactly why we built the call stack the way we did.</p>
+<h2 id="why-recursion-works-in-firstlang"><a class="header" href="#why-recursion-works-in-firstlang">Why Recursion Works in Firstlang</a></h2>
+<p>Our interpreter properly handles recursion because of three design decisions:</p>
+<ol>
+<li>
+<p><strong>Functions are stored globally</strong> - When <code>factorial</code> runs, it can look up <code>factorial</code> by name and find itself. This lookup returns the function definition, which we can then call.</p>
+</li>
+<li>
+<p><strong>Each call gets its own frame</strong> - When we call <code>factorial(3)</code> from inside <code>factorial(4)</code>, we push a new frame. The <code>n</code> in the new frame is 3, completely independent of the <code>n = 4</code> in the outer frame.</p>
+</li>
+<li>
+<p><strong>Return propagates values correctly</strong> - When <code>factorial(1)</code> returns <code>1</code>, that value goes back to <code>factorial(2)</code>, which uses it in <code>2 * 1 = 2</code>, and so on up the stack.</p>
+</li>
+</ol>
+<p>If we had used a single global <code>n</code> variable instead of stack frames, recursion would fail miserably - each call would overwrite <code>n</code>.</p>
+<h2 id="more-recursive-examples"><a class="header" href="#more-recursive-examples">More Recursive Examples</a></h2>
 <h3 id="sum-of-numbers"><a class="header" href="#sum-of-numbers">Sum of Numbers</a></h3>
+<p>Add up all numbers from 1 to n:</p>
 <pre><code>def sum_to(n) {
     if (n &lt;= 0) {
-        return 0
+        return 0        # Base: sum to 0 is 0
     } else {
         return n + sum_to(n - 1)
     }
@@ -245,10 +251,12 @@ factorial(1) → frame: {n: 1}  ← hits base case, starts returning
 
 sum_to(5)  # 5 + 4 + 3 + 2 + 1 + 0 = 15
 </code></pre>
+<p>The insight: <code>sum(5) = 5 + sum(4)</code>. Each call adds one number and delegates the rest.</p>
 <h3 id="power-function"><a class="header" href="#power-function">Power Function</a></h3>
+<p>Calculate <code>base^exp</code>:</p>
 <pre><code>def power(base, exp) {
     if (exp == 0) {
-        return 1
+        return 1        # Base: x^0 = 1
     } else {
         return base * power(base, exp - 1)
     }
@@ -256,11 +264,12 @@ sum_to(5)  # 5 + 4 + 3 + 2 + 1 + 0 = 15
 
 power(2, 10)  # 1024
 </code></pre>
+<p>The insight: <code>2^10 = 2 * 2^9</code>. We multiply by the base once and compute a smaller power.</p>
 <h3 id="mutual-recursion"><a class="header" href="#mutual-recursion">Mutual Recursion</a></h3>
 <p>Functions can call each other recursively. This is called <a href="https://en.wikipedia.org/wiki/Mutual_recursion">mutual recursion</a>:</p>
 <pre><code>def is_even(n) {
     if (n == 0) {
-        return true
+        return true     # 0 is even
     } else {
         return is_odd(n - 1)
     }
@@ -268,7 +277,7 @@ power(2, 10)  # 1024
 
 def is_odd(n) {
     if (n == 0) {
-        return false
+        return false    # 0 is not odd
     } else {
         return is_even(n - 1)
     }
@@ -277,13 +286,33 @@ def is_odd(n) {
 is_even(4)  # true
 is_odd(7)   # true
 </code></pre>
-<h2 id="a-note-on-stack-overflow"><a class="header" href="#a-note-on-stack-overflow">A Note on Stack Overflow</a></h2>
-<p>Recursion uses memory for each call. Very deep recursion can cause a <a href="https://en.wikipedia.org/wiki/Stack_overflow">stack overflow</a>:</p>
-<pre><code>factorial(100000)  # Too deep! Runs out of stack space.
+<p>How does <code>is_even(4)</code> work? It asks “is 3 odd?” which asks “is 2 even?” which asks “is 1 odd?” which asks “is 0 even?” which returns <code>true</code>. The logic ping-pongs between the two functions, but each call reduces <code>n</code> by 1, eventually reaching 0.</p>
+<h2 id="a-warning-stack-overflow"><a class="header" href="#a-warning-stack-overflow">A Warning: Stack Overflow</a></h2>
+<p>Every recursive call uses memory for its stack frame. Very deep recursion exhausts available stack space:</p>
+<pre><code>factorial(100000)  # Too deep! Crashes with stack overflow.
 </code></pre>
-<p>The iterative version using a <code>while</code> loop (from the <a href="./control_flow.html">control flow</a> chapter) does not have this problem. Some languages optimize <a href="https://en.wikipedia.org/wiki/Tail_call">tail calls</a> to avoid this issue.</p>
+<p>The iterative version using a <code>while</code> loop (from <a href="./control_flow.html">control flow</a>) doesn’t have this problem - it uses constant memory regardless of how many iterations:</p>
+<pre><code>def factorial_iter(n) {
+    result = 1
+    while (n &gt; 1) {
+        result = result * n
+        n = n - 1
+    }
+    return result
+}
+</code></pre>
+<p>Some languages implement <a href="https://en.wikipedia.org/wiki/Tail_call">tail call optimization</a> to make certain recursive functions use constant stack space. We won’t implement that here, but it’s a fascinating optimization.</p>
+<h2 id="when-to-use-recursion"><a class="header" href="#when-to-use-recursion">When to Use Recursion</a></h2>
+<p>Recursion is natural for problems with recursive structure:</p>
+<ul>
+<li>Trees (each subtree is a smaller tree)</li>
+<li>Mathematical sequences (Fibonacci, factorial)</li>
+<li>Divide-and-conquer algorithms (merge sort, quicksort)</li>
+<li>Parsing nested structures (JSON, HTML, our AST!)</li>
+</ul>
+<p>For simple loops, iteration is usually clearer. But for inherently recursive problems, recursion can be elegant and expressive.</p>
 <h2 id="the-ultimate-test-fibonacci"><a class="header" href="#the-ultimate-test-fibonacci">The Ultimate Test: Fibonacci</a></h2>
-<p>Now we’re ready for <a href="./fibonacci.html">Fibonacci</a> - the culmination of everything we’ve built!</p>
+<p>Now we’re ready for <a href="./fibonacci.html">Fibonacci</a> - the culmination of everything we’ve built! It’s more complex than factorial (two recursive calls!), but our interpreter handles it beautifully.</p>
 
                     </main>
 

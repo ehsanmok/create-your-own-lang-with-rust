@@ -179,21 +179,30 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="functions"><a class="header" href="#functions">Functions</a></h1>
-<p>Functions are the heart of any programming language. They let us:</p>
+<p>Functions are the heart of any programming language. Without them, we’d have to copy-paste code every time we wanted to reuse it. With functions, we can:</p>
 <ul>
-<li><strong>Name</strong> a piece of computation</li>
-<li><strong>Parameterize</strong> it with inputs</li>
-<li><strong>Reuse</strong> it multiple times</li>
+<li><strong>Name</strong> a piece of computation (so we can refer to it later)</li>
+<li><strong>Parameterize</strong> it with inputs (so it can work with different values)</li>
+<li><strong>Reuse</strong> it multiple times (write once, call anywhere)</li>
 </ul>
+<p>Functions are also the key to <em>abstraction</em> - hiding complexity behind a simple name. When you call <code>fibonacci(10)</code>, you don’t need to think about how Fibonacci is computed. The function encapsulates that knowledge.</p>
 <h2 id="defining-functions"><a class="header" href="#defining-functions">Defining Functions</a></h2>
 <p>In Firstlang, we define functions with <code>def</code>:</p>
 <pre><code>def add(a, b) {
     return a + b
 }
 </code></pre>
-<p>This creates a function named <code>add</code> that takes two parameters <code>a</code> and <code>b</code>, and returns their sum.</p>
+<p>Let’s break this down:</p>
+<ul>
+<li><strong><code>def</code></strong> - Keyword that starts a function definition</li>
+<li><strong><code>add</code></strong> - The function’s name (how we’ll call it later)</li>
+<li><strong><code>(a, b)</code></strong> - Parameters: names for the inputs this function expects</li>
+<li><strong><code>{ ... }</code></strong> - The body: code that runs when the function is called</li>
+<li><strong><code>return a + b</code></strong> - What the function gives back to its caller</li>
+</ul>
+<p>When we call <code>add(3, 4)</code>, the parameters <code>a</code> and <code>b</code> get bound to the values <code>3</code> and <code>4</code>, the body executes, and the result <code>7</code> is returned.</p>
 <h2 id="the-ast"><a class="header" href="#the-ast">The AST</a></h2>
-<p>Functions are represented in our AST as:</p>
+<p>In our AST, functions are statements (they’re declarations, not expressions):</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>enum Stmt {
@@ -205,53 +214,77 @@
     // ...
 }
 <span class="boring">}</span></code></pre></pre>
+<p>Let’s understand each field:</p>
+<ul>
+<li><strong><code>name: String</code></strong> - The function’s name, like <code>"add"</code> or <code>"fibonacci"</code></li>
+<li><strong><code>params: Vec&lt;String&gt;</code></strong> - List of parameter names: <code>["a", "b"]</code> for <code>add(a, b)</code></li>
+<li><strong><code>body: Vec&lt;Stmt&gt;</code></strong> - The statements inside the function body</li>
+</ul>
+<p>When we parse <code>def add(a, b) { return a + b }</code>, we create:</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>Stmt::Function {
+    name: "add".to_string(),
+    params: vec!["a".to_string(), "b".to_string()],
+    body: vec![
+        Stmt::Return(Expr::Binary {
+            op: BinaryOp::Add,
+            lhs: Box::new(Expr::Var("a".to_string())),
+            rhs: Box::new(Expr::Var("b".to_string())),
+        })
+    ],
+}
+<span class="boring">}</span></code></pre></pre>
 <h2 id="how-function-calls-work"><a class="header" href="#how-function-calls-work">How Function Calls Work</a></h2>
-<p>When we call <code>add(3, 4)</code>:</p>
+<p>When we evaluate a function call like <code>add(3, 4)</code>, several things happen in sequence. Understanding this sequence is crucial for understanding how programming languages work.</p>
+<p>Here’s the process:</p>
 <ol>
-<li><strong>Look up</strong> the function by name</li>
-<li><strong>Evaluate</strong> the arguments (3 and 4)</li>
-<li><strong>Create a new frame</strong> for this call</li>
-<li><strong>Bind parameters</strong> to argument values (<code>a = 3, b = 4</code>)</li>
-<li><strong>Execute</strong> the function body</li>
-<li><strong>Return</strong> the result and pop the frame</li>
+<li><strong>Look up</strong> the function by name - Find the <code>Function</code> value we stored when we defined <code>add</code></li>
+<li><strong>Evaluate</strong> the arguments - Compute <code>3</code> and <code>4</code> (trivial here, but could be complex expressions)</li>
+<li><strong>Create a new frame</strong> - Make a fresh environment for this call’s local variables</li>
+<li><strong>Bind parameters</strong> - Associate parameter names with argument values (<code>a = 3, b = 4</code>)</li>
+<li><strong>Execute</strong> the function body - Run the statements in the function</li>
+<li><strong>Return</strong> the result - Pop the frame and give the result back to the caller</li>
 </ol>
-<p>Here’s the key interpreter code:</p>
+<p>Here’s how this looks in code:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>Expr::Call { name, args } =&gt; {
-    // Look up function
+    // Step 1: Look up the function by name
     let func = self.lookup_var(name)?;
 
     if let Value::Function { params, body } = func {
-        // Evaluate arguments
-        let arg_values = args.iter()
+        // Step 2: Evaluate all arguments
+        // If we have add(1 + 2, 3 * 4), we compute 3 and 12 first
+        let arg_values: Vec&lt;Value&gt; = args.iter()
             .map(|a| self.eval_expr(a))
-            .collect();
+            .collect::&lt;Result&lt;_, _&gt;&gt;()?;
 
-        // Create new frame with parameter bindings
+        // Step 3 &amp; 4: Create new frame with parameter bindings
+        // This is like creating a fresh "scratch pad" for this call
         let mut frame = Frame::new();
         for (param, arg) in params.iter().zip(arg_values) {
             frame.locals.insert(param.clone(), arg);
         }
 
-        // Push frame, execute, pop frame
+        // Step 5: Push frame, execute body
         self.call_stack.push(frame);
         let result = self.execute_body(&amp;body)?;
-        self.call_stack.pop();
 
+        // Step 6: Pop frame, return result
+        self.call_stack.pop();
         Ok(result)
+    } else {
+        Err(format!("{} is not a function", name))
     }
 }
 <span class="boring">}</span></code></pre></pre>
+<p>The key insight here is that each function call gets its <em>own</em> environment. When we call <code>add(3, 4)</code>, we create <code>a = 3, b = 4</code> in a fresh frame. This frame is destroyed when the function returns. That’s why local variables are local - they only exist in their frame.</p>
 <h2 id="the-call-stack"><a class="header" href="#the-call-stack">The Call Stack</a></h2>
 <blockquote>
-<p>The call stack is like a stack of sticky notes. Each function call writes its variables on a new note and puts it on top. When the function returns, you tear off the top note and throw it away. The note underneath becomes current again. This is why <code>inner()</code>’s <code>x</code> doesn’t overwrite <code>outer()</code>’s <code>x</code> - they’re on different notes.</p>
+<p>The call stack is like a stack of sticky notes. Each function call writes its variables on a new note and puts it on top. When the function returns, you tear off the top note and throw it away. The note underneath becomes current again. This is why <code>inner()</code>’s variables don’t overwrite <code>outer()</code>’s - they’re on different notes.</p>
 </blockquote>
-<p>Each function call creates a new “frame” on the call stack. This is crucial for:</p>
-<ul>
-<li><strong>Local variables</strong> - Each call has its own <code>a</code> and <code>b</code></li>
-<li><strong>Recursion</strong> - Multiple calls can be “in flight” simultaneously</li>
-</ul>
+<p>The call stack is what makes function calls work. Each “frame” on the stack represents one function call in progress. Here’s a visual example:</p>
 <pre><code>def outer() {
     x = 1
     return inner()
@@ -264,11 +297,31 @@ def inner() {
 
 outer()
 </code></pre>
-<p>During execution:</p>
+<p>When we call <code>outer()</code>:</p>
+<ol>
+<li>Create a frame for <code>outer</code>, set <code>x = 1</code></li>
+<li>Call <code>inner()</code> - create a new frame on top</li>
+<li>In <code>inner</code>, set <code>y = 2</code></li>
+<li><code>inner</code> returns 2, pop its frame</li>
+<li>Back in <code>outer</code>, receive <code>2</code> as the result</li>
+<li><code>outer</code> returns 2, pop its frame</li>
+</ol>
 <p align="center">
 </br>
     <a href><img alt="call stack" src="../img/call-stack.svg"> </a>
 </p>
+<p>The stack grows when functions are called and shrinks when they return. This is why we call it a <em>stack</em> - last in, first out.</p>
+<h2 id="why-frames-matter"><a class="header" href="#why-frames-matter">Why Frames Matter</a></h2>
+<p>Consider this code:</p>
+<pre><code>def foo(x) {
+    return x + 1
+}
+
+foo(5)    # x = 5 here
+foo(10)   # x = 10 here
+</code></pre>
+<p>Each call to <code>foo</code> has its own <code>x</code>. The first call’s <code>x = 5</code> doesn’t interfere with the second call’s <code>x = 10</code> because they’re in different frames.</p>
+<p>This becomes especially important for recursion, which we’ll see in the <a href="./recursion.html">recursion chapter</a>. In recursive calls, the <em>same</em> function is on the stack multiple times, each with its own set of variables.</p>
 <h2 id="examples"><a class="header" href="#examples">Examples</a></h2>
 <h3 id="simple-function"><a class="header" href="#simple-function">Simple Function</a></h3>
 <pre><code>def square(x) {
@@ -277,6 +330,7 @@ outer()
 
 square(5)       # 25
 </code></pre>
+<p>This defines <code>square</code> that takes one number and returns its square. When we call <code>square(5)</code>, a frame is created with <code>x = 5</code>, the body computes <code>5 * 5 = 25</code>, and that’s returned.</p>
 <h3 id="multiple-parameters"><a class="header" href="#multiple-parameters">Multiple Parameters</a></h3>
 <pre><code>def area(width, height) {
     return width * height
@@ -284,7 +338,8 @@ square(5)       # 25
 
 area(4, 5)      # 20
 </code></pre>
-<h3 id="function-composition"><a class="header" href="#function-composition">Function Composition</a></h3>
+<p>Parameters are bound in order: <code>width = 4</code>, <code>height = 5</code>. The body computes <code>4 * 5 = 20</code>.</p>
+<h3 id="functions-calling-functions"><a class="header" href="#functions-calling-functions">Functions Calling Functions</a></h3>
 <pre><code>def double(x) {
     return x * 2
 }
@@ -295,7 +350,18 @@ def quadruple(x) {
 
 quadruple(5)    # 20
 </code></pre>
-<p>Next, we’ll add <a href="./control_flow.html">control flow</a> to make our functions more powerful.</p>
+<p>This shows <strong>function composition</strong>. <code>quadruple(5)</code> calls <code>double(5)</code> which returns <code>10</code>, then calls <code>double(10)</code> which returns <code>20</code>.</p>
+<p>The call stack during <code>quadruple(5)</code>:</p>
+<ol>
+<li>Frame for <code>quadruple</code>: <code>x = 5</code></li>
+<li>Call <code>double(5)</code>: new frame with <code>x = 5</code></li>
+<li><code>double</code> returns <code>10</code>, pop its frame</li>
+<li>Call <code>double(10)</code>: new frame with <code>x = 10</code></li>
+<li><code>double</code> returns <code>20</code>, pop its frame</li>
+<li><code>quadruple</code> returns <code>20</code>, pop its frame</li>
+</ol>
+<p>Notice how <code>x</code> has different values in different frames, even though they’re all named <code>x</code>.</p>
+<p>Next, we’ll add <a href="./control_flow.html">control flow</a> to make our functions more powerful - the ability to make decisions and repeat actions.</p>
 
                     </main>
 

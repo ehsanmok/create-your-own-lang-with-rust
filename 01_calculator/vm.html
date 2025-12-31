@@ -179,20 +179,26 @@
                 <div id="content" class="content">
                     <main>
                         <h2 id="virtual-machine"><a class="header" href="#virtual-machine">Virtual Machine</a></h2>
-<p>Recall from the <a href="../crash_course.html#virtual-machine-vm">crash course</a> that a (process) VM abstracts away hardware-specific instructions so that its Bytecodes (abstract instructions) can be executed in any environment that has Bytecode runtime support. To create our VM and its runtime, we need to define our:</p>
+<p>We’ve seen two ways to execute code: interpret the AST directly, or JIT compile to native machine code. There’s a third approach that sits in between: <strong>compile to bytecode, then interpret that</strong>.</p>
+<p>Why would we do this?</p>
 <ul>
-<li>Opcodes (new encoding atoms)</li>
-<li>Bytecode representation and</li>
-<li><strong>Runtime model</strong>  as <a href="../crash_course.html#stack-machine">Stack Machine</a></li>
+<li><strong>Simpler than JIT</strong> - No LLVM dependency, works everywhere</li>
+<li><strong>Faster than AST interpretation</strong> - Bytecode is more compact and cache-friendly</li>
+<li><strong>Portable</strong> - Same bytecode runs on any machine with our VM</li>
 </ul>
-<h3 id="opcode"><a class="header" href="#opcode">Opcode</a></h3>
-<p>Since our expression-based <code>Calc</code> language is made up of:</p>
-<ul>
-<li><em>constant</em> integers</li>
-<li><em>unary</em> (plus, minus sign) operators and</li>
-<li><em>binary</em> (addition, subtraction) operators</li>
-</ul>
-<p>we can define our new opcode encodings like</p>
+<p>This is how Python, Java, Ruby, and many other languages work. You compile source code to bytecode once, then run the bytecode interpreter wherever you need it.</p>
+<h3 id="what-is-bytecode"><a class="header" href="#what-is-bytecode">What Is Bytecode?</a></h3>
+<p>Think of bytecode as a <em>simplified assembly language</em> designed for our VM. Real assembly has hundreds of instructions. Our bytecode has just four:</p>
+<div class="table-wrapper"><table><thead><tr><th>Opcode</th><th>What it does</th></tr></thead><tbody>
+<tr><td><code>OpConstant(index)</code></td><td>Push a constant onto the stack</td></tr>
+<tr><td><code>OpAdd</code></td><td>Pop two values, push their sum</td></tr>
+<tr><td><code>OpSub</code></td><td>Pop two values, push their difference</td></tr>
+<tr><td><code>OpPop</code></td><td>Pop and discard the top value</td></tr>
+</tbody></table>
+</div>
+<p>That’s it! With just these four operations, we can evaluate any arithmetic expression.</p>
+<h2 id="step-1-define-opcodes"><a class="header" href="#step-1-define-opcodes">Step 1: Define Opcodes</a></h2>
+<p>We represent opcodes as bytes. This makes bytecode compact and fast to decode:</p>
 <pre><code class="language-rust ignore">pub enum OpCode {
     OpConstant(u16), // pointer to constant table
     OpPop,           // pop is needed for execution
@@ -202,33 +208,55 @@
     OpMinus,
 }</code></pre>
 <p><a class="filename" href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/calculator/src/compiler/vm/opcode.rs">calculator/src/compiler/vm/opcode.rs</a></p>
-<p>We choose the simplest form of encoding—encoding the ops as bytes <code>u8</code> (in hex format):</p>
+<p>Each opcode is assigned a unique byte value. When the VM sees <code>0x03</code>, it knows to add. When it sees <code>0x01</code>, it knows to load a constant.</p>
+<p>We also need a way to construct these bytes:</p>
 <pre><code class="language-rust ignore">        OpCode::OpConstant(arg) =&gt; make_three_byte_op(0x01, arg),
         OpCode::OpPop =&gt; vec![0x02],  // decimal repr is 2
         OpCode::OpAdd =&gt; vec![0x03],  // decimal repr is 3
         OpCode::OpSub =&gt; vec![0x04],  // decimal repr is 4
         OpCode::OpPlus =&gt; vec![0x0A], // decimal repr is 10
         OpCode::OpMinus =&gt; vec![0x0B], // decimal repr is 11</code></pre>
-<p>For ease of access, we store constant <code>Node::Int(i32)</code> nodes in a separate memory, and <code>OpConstant(arg)</code> tracks these values.
-In a unary expression like <code>"1"</code>, we encode <code>Node::Int(1)</code> as the opcode <code>[1, 0, 0]</code> as the first constant. (<strong>0x01</strong> in decimal is <strong>1</strong>).</p>
-<h3 id="bytecode"><a class="header" href="#bytecode">Bytecode</a></h3>
-<p>We define</p>
+<p><code>OpConstant</code> is special - it takes an <em>argument</em> (which constant to load). We encode this as two bytes following the opcode, giving us up to 65,536 constants.</p>
+<h2 id="step-2-define-bytecode-structure"><a class="header" href="#step-2-define-bytecode-structure">Step 2: Define Bytecode Structure</a></h2>
+<p>Our bytecode consists of two parts:</p>
 <pre><code class="language-rust ignore">pub struct Bytecode {
     pub instructions: Vec&lt;u8&gt;,
     pub constants: Vec&lt;Node&gt;,
 }</code></pre>
 <p><a class="filename" href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/calculator/src/compiler/vm/bytecode.rs">calculator/src/compiler/vm/bytecode.rs</a></p>
-<p>and pictorially, here is how <code>"1 + 2"</code> AST to Bytecode conversion would look like</p>
+<ul>
+<li><strong><code>instructions</code></strong> - A flat array of bytes. Opcodes and their arguments, all mixed together.</li>
+<li><strong><code>constants</code></strong> - A table of literal values. Instead of encoding <code>42</code> in the instruction stream, we store it in the constants table and reference it by index.</li>
+</ul>
+<h3 id="example-compiling-1--2"><a class="header" href="#example-compiling-1--2">Example: Compiling <code>1 + 2</code></a></h3>
+<p>Let’s trace through what happens when we compile <code>1 + 2</code>:</p>
 <p align="center">
 </br>
     <a href><img alt="ast bytecode" src="../img/ast-bytecode.svg"> </a>
 </p>
-<p>and in Rust</p>
-<pre><code class="language-rust  ignore">ByteCode {
+<p>The AST has three nodes: <code>Int(1)</code>, <code>Int(2)</code>, and <code>BinaryExpr(+)</code>. We walk the tree and emit bytecode:</p>
+<ol>
+<li><strong>Visit <code>1</code></strong> - Add <code>Int(1)</code> to constants table (index 0). Emit <code>OpConstant(0)</code>.</li>
+<li><strong>Visit <code>2</code></strong> - Add <code>Int(2)</code> to constants table (index 1). Emit <code>OpConstant(1)</code>.</li>
+<li><strong>Visit <code>+</code></strong> - Emit <code>OpAdd</code>.</li>
+<li><strong>Done</strong> - Emit <code>OpPop</code> to clean up.</li>
+</ol>
+<p>The result:</p>
+<pre><code class="language-rust ignore">ByteCode {
     instructions: [1, 0, 0, 1, 0, 1, 3, 2],
+    //             ^-----^  ^-----^  ^  ^
+    //             OpConstant(0)  OpAdd  OpPop
+    //                    OpConstant(1)
     constants: [Int(1), Int(2)]
 }</code></pre>
-<p>Now, we can implement our Bytecode interpreter</p>
+<p>Let’s decode those bytes:</p>
+<ul>
+<li><code>[1, 0, 0]</code> = OpConstant with index 0 (two bytes: 0x00, 0x00)</li>
+<li><code>[1, 0, 1]</code> = OpConstant with index 1</li>
+<li><code>[3]</code> = OpAdd</li>
+<li><code>[2]</code> = OpPop</li>
+</ul>
+<p>Now we implement the compiler that generates this bytecode:</p>
 <pre><code class="language-rust ignore">pub struct Interpreter {
     bytecode: Bytecode,
 }
@@ -251,20 +279,10 @@ impl Compile for Interpreter {
     }
 }</code></pre>
 <p><a class="filename" href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/calculator/src/compiler/vm/bytecode.rs">calculator/src/compiler/vm/bytecode.rs</a></p>
-<h3 id="runtime"><a class="header" href="#runtime">Runtime</a></h3>
-<p>From the previous example, our interpreter goes through the bytecode instructions and executes them.</p>
-<p>Continuing our <code>"1 + 2"</code> Bytecode example,</p>
-<pre><code class="language-text">instructions: [1, 0, 0, 1, 0, 1,   3,   2],
-              -------- --------    -    -
-                 |         |       |    |
-constants: [  Int(1),   Int(2)]  OpAdd  OpPop
-
-[1, 0, 0] points to the first element in the constants table, i.e., Int(1)
-[1, 0, 1] points to Int(2)
-[3] (or [0x03]) corresponding to the Opcode *OpAdd*, performs the addition operation Int(1 + 2)
-[2] (or [0x02]) corresponding to the Opcode *OpPop* pops out the computed Bytecodes
-</code></pre>
-<p>Since we want to model our runtime as a Stack Machine, we define our VM as a struct with Bytecode, stack memory (in Stack Machine), and a stack pointer to the next free space:</p>
+<p>Notice how similar this is to the AST interpreter - we still recurse through the tree. The difference is that instead of <em>computing</em> results, we <em>emit</em> instructions.</p>
+<h2 id="step-3-the-virtual-machine"><a class="header" href="#step-3-the-virtual-machine">Step 3: The Virtual Machine</a></h2>
+<p>Now we need a machine to execute our bytecode. Our VM is a <strong>stack machine</strong> - it keeps intermediate values on a stack.</p>
+<p>Here’s the structure:</p>
 <pre><code class="language-rust ignore">const STACK_SIZE: usize = 512;
 
 pub struct VM {
@@ -272,7 +290,14 @@ pub struct VM {
     stack: [Node; STACK_SIZE],
     stack_ptr: usize, // points to the next free space
 }</code></pre>
-<p>and with the help of <em>instruction pointer (IP)</em>, we execute the Bytecodes as follows</p>
+<ul>
+<li><strong><code>bytecode</code></strong> - The program to execute</li>
+<li><strong><code>stack</code></strong> - Where we store intermediate values (a fixed-size array for speed)</li>
+<li><strong><code>sp</code></strong> - Stack pointer: points to the next free slot</li>
+</ul>
+<h3 id="how-execution-works"><a class="header" href="#how-execution-works">How Execution Works</a></h3>
+<p>The VM reads instructions left-to-right with an <strong>instruction pointer (IP)</strong>. For <code>1 + 2</code>, it processes <code>OpConstant(0)</code> (push 1), <code>OpConstant(1)</code> (push 2), <code>OpAdd</code> (pop both, push 3), and <code>OpPop</code> (return 3). Each opcode manipulates the stack accordingly.</p>
+<p>Here’s the execution loop:</p>
 <pre><code class="language-rust ignore">    pub fn run(&amp;mut self) {
         let mut ip = 0; // instruction pointer
         while ip &lt; self.bytecode.instructions.len() {
@@ -339,16 +364,35 @@ pub struct VM {
         node
     }</code></pre>
 <p><a class="filename" href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/calculator/src/compiler/vm/vm.rs">calculator/src/compiler/vm/vm.rs</a></p>
-<p>To examine the generated Bytecodes and run our VM, we can do</p>
+<p>This is a <strong>fetch-decode-execute</strong> loop:</p>
+<ol>
+<li><strong>Fetch</strong> - Read the next byte (<code>self.bytecode.instructions[ip]</code>)</li>
+<li><strong>Decode</strong> - Match on the opcode to determine what operation to perform</li>
+<li><strong>Execute</strong> - Manipulate the stack accordingly</li>
+<li><strong>Repeat</strong> - Increment IP and continue until we’re out of instructions</li>
+</ol>
+<h3 id="why-stacks"><a class="header" href="#why-stacks">Why Stacks?</a></h3>
+<p>You might wonder: why use a stack? Why not just have named variables?</p>
+<p>Stacks are elegant because they handle <em>any</em> nesting automatically. For <code>(1 + 2) * (3 + 4)</code>, we first compute <code>1 + 2 = 3</code> (leaving 3 on the stack), then <code>3 + 4 = 7</code> (now stack has <code>[3, 7]</code>), then multiply to get 21. Each operation just pops its inputs and pushes its output. The stack naturally tracks what’s “in progress.”</p>
+<h2 id="running-the-vm"><a class="header" href="#running-the-vm">Running the VM</a></h2>
+<p>To compile and run code through our VM:</p>
 <pre><code class="language-rust ignore">let byte_code = Interpreter::from_source(source);
 println!("byte code: {:?}", byte_code);
 let mut vm = VM::new(byte_code);
 vm.run();
 println!("{}", vm.pop_last());</code></pre>
-<p>Run tests locally for our VM with</p>
+<p>Run tests locally:</p>
 <pre><code class="language-bash">cargo test vm --tests
 </code></pre>
-<p>Checkout the <a href="./repl.html">next section</a> on how to create a REPL for our <code>Calc</code> to compare different compilation paths.</p>
+<h2 id="trade-offs-vm-vs-jit-vs-interpreter"><a class="header" href="#trade-offs-vm-vs-jit-vs-interpreter">Trade-offs: VM vs JIT vs Interpreter</a></h2>
+<div class="table-wrapper"><table><thead><tr><th>Approach</th><th>Startup</th><th>Execution</th><th>Complexity</th><th>Portability</th></tr></thead><tbody>
+<tr><td>AST Interpreter</td><td>Fast</td><td>Slow</td><td>Simple</td><td>Everywhere</td></tr>
+<tr><td>Bytecode VM</td><td>Medium</td><td>Medium</td><td>Medium</td><td>Everywhere</td></tr>
+<tr><td>JIT (LLVM)</td><td>Slow</td><td>Fast</td><td>Complex</td><td>LLVM platforms</td></tr>
+</tbody></table>
+</div>
+<p>The VM hits a sweet spot for many use cases. It’s why Python and Ruby use bytecode VMs - fast enough for most code, simple enough to implement everywhere.</p>
+<p>Checkout the <a href="./repl.html">next section</a> to see how to create a REPL for our <code>Calc</code> to compare different compilation paths interactively.</p>
 
                     </main>
 

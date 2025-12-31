@@ -179,31 +179,47 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="control-flow-ifelse-and-while"><a class="header" href="#control-flow-ifelse-and-while">Control Flow: If/Else and While</a></h1>
-<p>Control flow lets our programs make decisions and repeat operations.</p>
+<p>So far, our programs execute every statement in order, from top to bottom. That’s like following a recipe that says “do step 1, then step 2, then step 3” - no thinking required, just execute.</p>
+<p>But real programs need to <em>think</em>. They need to make decisions: “if the user is logged in, show the dashboard; otherwise, show the login page.” They need to repeat: “while there are items in the cart, add up their prices.”</p>
+<p>Control flow gives our language these abilities. Without it, we can only write straight-line code. With it, we can write programs that respond to their inputs.</p>
 <h2 id="conditionals-ifelse"><a class="header" href="#conditionals-ifelse">Conditionals: If/Else</a></h2>
-<p>The <code>if</code> expression evaluates a condition and executes one of two branches:</p>
+<p>The <code>if</code> expression evaluates a condition and chooses which code to run:</p>
 <pre><code>if (x &gt; 0) {
     return 1
 } else {
     return 0
 }
 </code></pre>
-<h3 id="implementation"><a class="header" href="#implementation">Implementation</a></h3>
-<p>In our interpreter:</p>
+<p>This reads naturally: “if x is greater than 0, return 1; else, return 0.”</p>
+<h3 id="how-it-works"><a class="header" href="#how-it-works">How It Works</a></h3>
+<p>The interpreter needs to:</p>
+<ol>
+<li><strong>Evaluate the condition</strong> - Compute <code>x &gt; 0</code> to get <code>true</code> or <code>false</code></li>
+<li><strong>Choose a branch</strong> - If true, execute the <code>then</code> branch; if false, execute the <code>else</code> branch</li>
+<li><strong>Return the result</strong> - Whatever the chosen branch produces</li>
+</ol>
+<p>Here’s the implementation:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>Expr::If { cond, then_branch, else_branch } =&gt; {
+    // Step 1: Evaluate the condition
     let cond_val = self.eval_expr(cond)?;
+
+    // Step 2: The condition must be a boolean
     if let Value::Bool(b) = cond_val {
+        // Step 3: Choose and execute the appropriate branch
         let branch = if b { then_branch } else { else_branch };
-        // Execute the chosen branch
         for stmt in branch {
-            // ...
+            self.execute_stmt(stmt)?;
         }
+    } else {
+        return Err("Condition must be a boolean".to_string());
     }
 }
 <span class="boring">}</span></code></pre></pre>
+<p>Notice we require the condition to be a boolean. In some languages, <code>if (0)</code> is valid (0 is “falsy”). In Firstlang, we’re explicit: <code>if (x == 0)</code> is the way to check for zero.</p>
 <h3 id="examples"><a class="header" href="#examples">Examples</a></h3>
+<p><strong>Absolute value</strong> - Returns the non-negative version of a number:</p>
 <pre><code>def abs(x) {
     if (x &lt; 0) {
         return x * -1
@@ -215,6 +231,9 @@
 abs(-5)     # 5
 abs(3)      # 3
 </code></pre>
+<p>When <code>x = -5</code>, the condition <code>x &lt; 0</code> is <code>true</code>, so we return <code>-5 * -1 = 5</code>.
+When <code>x = 3</code>, the condition is <code>false</code>, so we return <code>3</code> as-is.</p>
+<p><strong>Maximum of two values</strong> - Returns the larger one:</p>
 <pre><code>def max(a, b) {
     if (a &gt; b) {
         return a
@@ -224,35 +243,49 @@ abs(3)      # 3
 }
 
 max(10, 20)  # 20
+max(20, 10)  # 20
 </code></pre>
+<p>The condition <code>a &gt; b</code> determines which value to return. Simple, but powerful.</p>
 <h2 id="loops-while"><a class="header" href="#loops-while">Loops: While</a></h2>
-<p>The <code>while</code> loop repeats while a condition is true:</p>
+<p>A <code>while</code> loop repeats its body as long as a condition is true:</p>
 <pre><code>x = 0
 while (x &lt; 5) {
     x = x + 1
 }
 x           # 5
 </code></pre>
-<h3 id="implementation-1"><a class="header" href="#implementation-1">Implementation</a></h3>
+<p>This reads as: “while x is less than 5, increment x.” The loop runs 5 times: when x is 0, 1, 2, 3, and 4. When x becomes 5, the condition <code>x &lt; 5</code> is false, and the loop stops.</p>
+<h3 id="how-it-works-1"><a class="header" href="#how-it-works-1">How It Works</a></h3>
+<p>The interpreter uses an actual loop - Rust’s <code>loop</code> construct - and checks the condition at the start of each iteration:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>Expr::While { cond, body } =&gt; {
     loop {
+        // Step 1: Evaluate the condition
         let cond_val = self.eval_expr(cond)?;
+
         if let Value::Bool(b) = cond_val {
+            // Step 2: If false, exit the loop
             if !b { break; }
-            // Execute body
+
+            // Step 3: If true, execute the body
             for stmt in body {
-                // ...
+                self.execute_stmt(stmt)?;
             }
+            // Step 4: Go back to step 1
+        } else {
+            return Err("While condition must be a boolean".to_string());
         }
     }
+
+    // Loops don't return a meaningful value
     Ok(Value::Unit)
 }
 <span class="boring">}</span></code></pre></pre>
+<p>The key insight: after executing the body, we go back to the top and check the condition again. This creates the repetition.</p>
 <h3 id="examples-1"><a class="header" href="#examples-1">Examples</a></h3>
-<pre><code># Sum 1 to 10
-sum = 0
+<p><strong>Sum of 1 to 10</strong> - Classic loop example:</p>
+<pre><code>sum = 0
 i = 1
 while (i &lt;= 10) {
     sum = sum + i
@@ -260,8 +293,18 @@ while (i &lt;= 10) {
 }
 sum         # 55
 </code></pre>
-<pre><code># Iterative factorial
-def factorial(n) {
+<p>Let’s trace through the first few iterations:</p>
+<div class="table-wrapper"><table><thead><tr><th>Iteration</th><th><code>i</code></th><th><code>sum</code> before</th><th><code>sum</code> after</th></tr></thead><tbody>
+<tr><td>1</td><td>1</td><td>0</td><td>1</td></tr>
+<tr><td>2</td><td>2</td><td>1</td><td>3</td></tr>
+<tr><td>3</td><td>3</td><td>3</td><td>6</td></tr>
+<tr><td>…</td><td>…</td><td>…</td><td>…</td></tr>
+<tr><td>10</td><td>10</td><td>45</td><td>55</td></tr>
+</tbody></table>
+</div>
+<p>After iteration 10, <code>i</code> becomes 11, the condition <code>i &lt;= 10</code> is false, and the loop exits.</p>
+<p><strong>Iterative factorial</strong> - Computing 5! = 120:</p>
+<pre><code>def factorial(n) {
     result = 1
     while (n &gt; 1) {
         result = result * n
@@ -272,44 +315,66 @@ def factorial(n) {
 
 factorial(5)  # 120
 </code></pre>
+<p>This computes <code>1 * 5 * 4 * 3 * 2 = 120</code>. The loop counts down from <code>n</code> to <code>2</code>, multiplying as it goes.</p>
+<p>Compare this to the recursive version we’ll see later:</p>
+<pre><code>def factorial_recursive(n) {
+    if (n &lt;= 1) {
+        return 1
+    } else {
+        return n * factorial_recursive(n - 1)
+    }
+}
+</code></pre>
+<p>Same result, different approach. Loops and recursion are often interchangeable.</p>
 <h2 id="control-flow-in-functions"><a class="header" href="#control-flow-in-functions">Control Flow in Functions</a></h2>
-<p>Control flow becomes powerful when combined with functions:</p>
+<p>The real power comes from combining everything. Here’s a more complex example:</p>
 <pre><code>def countdown(n) {
     while (n &gt; 0) {
         n = n - 1
     }
     return n
 }
-
-def fizzbuzz_check(n) {
-    if (n % 3 == 0) {
-        return 1    # Divisible by 3
+</code></pre>
+<p>The function takes <code>n</code>, decrements it until it hits 0, then returns 0.</p>
+<p><strong>Nested conditionals</strong> - When one condition isn’t enough:</p>
+<pre><code>def classify(n) {
+    if (n &lt; 0) {
+        return -1    # Negative
     } else {
-        if (n % 5 == 0) {
-            return 2    # Divisible by 5
+        if (n == 0) {
+            return 0    # Zero
         } else {
-            return 0    # Neither
+            return 1    # Positive
         }
     }
 }
 </code></pre>
+<p>The outer <code>if</code> checks for negative numbers. If not negative, we go to the <code>else</code> branch, which contains another <code>if</code> to distinguish zero from positive.</p>
 <h2 id="return-in-loops"><a class="header" href="#return-in-loops">Return in Loops</a></h2>
-<p><code>return</code> exits the function immediately, even from inside a loop:</p>
+<p><code>return</code> exits the function immediately, even from deep inside a loop. This is useful for “search” patterns:</p>
 <pre><code>def find_first_even(n) {
     i = 1
     while (i &lt;= n) {
         if (i % 2 == 0) {
-            return i    # Exit immediately
+            return i    # Found one! Exit immediately
         }
         i = i + 1
     }
-    return 0    # Not found
+    return 0    # Checked all numbers, none were even (only reached if n &lt; 2)
 }
 
 find_first_even(5)  # 2
 </code></pre>
+<p>When <code>i = 2</code>, the condition <code>i % 2 == 0</code> is true, and we return immediately. The loop doesn’t continue to <code>i = 3, 4, 5</code>. This “early return” pattern is common and efficient.</p>
+<h2 id="what-happens-under-the-hood"><a class="header" href="#what-happens-under-the-hood">What Happens Under the Hood</a></h2>
+<p>Both <code>if</code> and <code>while</code> are about <em>changing the flow of execution</em>. Without them, we execute line by line. With them, we can:</p>
+<ul>
+<li><strong>Skip code</strong> (the branch not taken in <code>if</code>)</li>
+<li><strong>Repeat code</strong> (the body of <code>while</code>)</li>
+<li><strong>Exit early</strong> (<code>return</code> from inside a loop)</li>
+</ul>
+<p>In compiled languages, these become <strong>branch instructions</strong> - the CPU actually jumps to different locations in memory. We’ll see this when we compile to LLVM IR in Secondlang, where <code>if</code> becomes <code>br</code> (branch) instructions.</p>
 <div class="checkpoint">
-<strong>Checkpoint</strong>
 <p>At this point, you should be able to:</p>
 <ul>
 <li>Run <code>if (true) { 1 } else { 2 }</code> and get <code>1</code></li>
@@ -325,7 +390,7 @@ find_first_even(5)  # 2
 <li><a href="../03_secondlang/codegen.html">Secondlang Control Flow</a> - Compiling conditionals to IR</li>
 </ul>
 </div>
-<p>With control flow in place, we’re ready for the ultimate test: <a href="./recursion.html">recursion</a>!</p>
+<p>With control flow in place, we’re ready for the ultimate test: <a href="./recursion.html">recursion</a> - functions that call themselves!</p>
 
                     </main>
 

@@ -178,13 +178,71 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h2 id="exercise"><a class="header" href="#exercise">Exercise</a></h2>
-<p>To get most out of this chapter, it is recommended to at least try the first exercise below</p>
+                        <h2 id="exercises"><a class="header" href="#exercises">Exercises</a></h2>
+<p>Congratulations on completing the Calculator! You’ve learned the fundamentals of language implementation. Now it’s time to solidify that knowledge through practice.</p>
+<p>These exercises are ordered by difficulty. Try at least the first one to reinforce what you’ve learned.</p>
+<h3 id="exercise-1-multiplication-division-and-floats-recommended"><a class="header" href="#exercise-1-multiplication-division-and-floats-recommended">Exercise 1: Multiplication, Division, and Floats (Recommended)</a></h3>
+<p>Extend the calculator to support <code>*</code>, <code>/</code>, and floating-point numbers.</p>
+<p><strong>New grammar rules needed:</strong></p>
+<pre><code class="language-pest">Operator = { "+" | "-" | "*" | "/" }
+Float = @{ ASCII_DIGIT+ ~ "." ~ ASCII_DIGIT+ }
+</code></pre>
+<p><strong>Challenges:</strong></p>
+<ul>
+<li><strong>Operator precedence</strong>: <code>2 + 3 * 4</code> should be <code>14</code>, not <code>20</code>. Multiplication binds tighter than addition.</li>
+<li><strong>Mixed types</strong>: What happens with <code>2 + 3.5</code>? Do you support implicit conversion or require explicit types?</li>
+<li><strong>Division by zero</strong>: Do you check at parse time, compile time, or runtime?</li>
+</ul>
+<p><strong>Hints:</strong></p>
+<ul>
+<li>pest has built-in support for precedence climbing. Look at the <code>@{ ... }</code> operator in the pest docs.</li>
+<li>For LLVM, use <code>build_float_add</code>, <code>build_float_mul</code>, etc.</li>
+<li>For the VM, add new opcodes: <code>OpMul</code>, <code>OpDiv</code>, <code>OpFloatAdd</code>, etc.</li>
+</ul>
+<h3 id="exercise-2-new-jit-backend-with-cranelift"><a class="header" href="#exercise-2-new-jit-backend-with-cranelift">Exercise 2: New JIT Backend with Cranelift</a></h3>
+<p>Implement a third JIT backend using <a href="https://docs.rs/cranelift-simplejit/">Cranelift</a>.</p>
+<p><strong>Why Cranelift?</strong></p>
+<ul>
+<li>Written in pure Rust (no LLVM dependency)</li>
+<li>Faster compilation than LLVM</li>
+<li>Used by Wasmtime (WebAssembly runtime)</li>
+</ul>
+<p><strong>Steps:</strong></p>
 <ol>
-<li>Add support for multiplication and division to the calculator and allow computations on floating numbers <code>f32</code>. Can you include standard operator precedence?</li>
-<li>JIT with <a href="https://docs.rs/cranelift-simplejit/0.64.0/cranelift_simplejit/">cranelift-simplejit</a></li>
-<li>JIT with <a href="https://github.com/swgillespie/gccjit.rs">gcc-jit</a></li>
+<li>Add <code>cranelift-simplejit</code> to <code>Cargo.toml</code></li>
+<li>Create <code>src/compiler/cranelift_jit.rs</code></li>
+<li>Follow the Cranelift tutorial to:
+<ul>
+<li>Create a JIT module</li>
+<li>Define a function signature</li>
+<li>Translate your AST to Cranelift IR</li>
+<li>Compile and execute</li>
+</ul>
+</li>
 </ol>
+<p><strong>Resources:</strong></p>
+<ul>
+<li><a href="https://docs.rs/cranelift-simplejit/">Cranelift docs</a></li>
+<li><a href="https://cranelift.readthedocs.io/">Cranelift tutorial</a></li>
+</ul>
+<h3 id="exercise-3-gcc-jit-backend"><a class="header" href="#exercise-3-gcc-jit-backend">Exercise 3: GCC JIT Backend</a></h3>
+<p>Implement JIT compilation using <a href="https://github.com/swgillespie/gccjit.rs">gccjit.rs</a>, a Rust wrapper around libgccjit.</p>
+<p><strong>Why GCC JIT?</strong></p>
+<ul>
+<li>Mature optimization infrastructure</li>
+<li>Cross-platform support</li>
+<li>Simpler API than LLVM for simple cases</li>
+</ul>
+<p><strong>Note:</strong> This requires <code>libgccjit</code> to be installed on your system:</p>
+<pre><code class="language-bash"># Ubuntu/Debian
+sudo apt install libgccjit-10-dev
+
+# macOS
+brew install gcc
+</code></pre>
+<p><strong>Challenge:</strong> Compare compilation speed and runtime performance between LLVM, Cranelift, and GCC JIT for computing <code>(1 + 2) * 3 - 4 / 2</code> in a loop 1 million times.</p>
+<hr />
+<p class="checkpoint-inline"><strong>Checkpoint:</strong> After completing Exercise 1, you should be able to compile and run <code>3.14 * 2.0 + 1.5 / 3.0</code> and get <code>6.78</code>.</p>
 
                     </main>
 

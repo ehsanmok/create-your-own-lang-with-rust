@@ -179,9 +179,33 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="from-interpreted-to-compiled"><a class="header" href="#from-interpreted-to-compiled">From Interpreted to Compiled</a></h1>
-<p>You’ve built Firstlang - a complete interpreted language with variables, functions, control flow, and recursion. You can compute Fibonacci!</p>
-<p>But there’s a problem: <strong>it’s slow</strong>.</p>
-<p>Try <code>fib(35)</code> in Firstlang. It takes seconds. A compiled version takes milliseconds.</p>
+<p>You’ve built Firstlang - a complete interpreted language with variables, functions, control flow, and recursion. You can compute Fibonacci recursively, implement factorial, and even write a greatest common divisor algorithm. It works, it’s correct, and you understand exactly how it executes.</p>
+<p>But there’s a problem: <strong>it’s painfully slow</strong>.</p>
+<p>Try computing <code>fib(35)</code> in Firstlang. On a modern CPU, it takes several seconds - maybe 5-10 seconds depending on your machine. That’s for a function that makes millions of recursive calls, but each call just does a few additions and comparisons.</p>
+<p>Now try the same computation in a compiled language like C or Rust. It takes <em>milliseconds</em> - roughly 1000x faster.</p>
+<h2 id="why-is-interpretation-so-slow"><a class="header" href="#why-is-interpretation-so-slow">Why Is Interpretation So Slow?</a></h2>
+<p>Let’s trace what happens when Firstlang evaluates <code>fib(n - 1)</code>:</p>
+<ol>
+<li><strong>Parse</strong> the subtraction expression from the AST</li>
+<li><strong>Look up</strong> <code>n</code> in the current environment (HashMap lookup)</li>
+<li><strong>Pattern match</strong> on the left operand type to get its value</li>
+<li><strong>Pattern match</strong> on the right operand type (<code>Int(1)</code>)</li>
+<li><strong>Check</strong> that both are integers (runtime type check)</li>
+<li><strong>Perform</strong> the subtraction</li>
+<li><strong>Wrap</strong> the result back into an <code>Int</code> enum</li>
+<li><strong>Parse</strong> the function call expression</li>
+<li><strong>Look up</strong> <code>fib</code> in the global environment</li>
+<li><strong>Check</strong> it’s a function (runtime check)</li>
+<li><strong>Create</strong> a new stack frame (allocate HashMap)</li>
+<li><strong>Bind</strong> the parameter</li>
+<li><strong>Recurse</strong> into the function body</li>
+</ol>
+<p>That’s 13 steps <em>per operation</em>, and most involve HashMap lookups, pattern matching, and heap allocations. For <code>fib(35)</code>, which does roughly 30 million function calls, that’s hundreds of millions of operations.</p>
+<p>Compare to compiled code:</p>
+<pre><code class="language-assembly">sub $1, %rdi      ; n - 1 directly in register
+call fib          ; Direct jump, no lookup
+</code></pre>
+<p>Two CPU instructions. No lookups, no checks, no allocations.</p>
 <h2 id="why-interpretation-is-slow"><a class="header" href="#why-interpretation-is-slow">Why Interpretation is Slow</a></h2>
 <blockquote>
 <p>Imagine reading a recipe in French. An <em>interpreter</em> translates each word as you cook - slow, but you can start immediately. A <em>compiler</em> translates the whole recipe to English first, then you cook from the translation - upfront cost, but much faster execution.</p>
@@ -229,14 +253,33 @@
 </tbody></table>
 </div>
 <h2 id="the-payoff"><a class="header" href="#the-payoff">The Payoff</a></h2>
-<p>Same Fibonacci, but now:</p>
+<p>The exact same Fibonacci algorithm, but with type annotations:</p>
 <pre><code>def fib(n: int) -&gt; int {
     if (n &lt; 2) { return n }
     return fib(n - 1) + fib(n - 2)
 }
 
-fib(35)  # Milliseconds, not seconds!
+fib(35)  # Milliseconds instead of seconds!
 </code></pre>
+<p>Adding <code>int</code> types and <code>-&gt;</code> return types might seem like a small syntactic change - just a few extra characters. But they unlock an entirely different execution model.</p>
+<p><strong>The numbers:</strong></p>
+<div class="table-wrapper"><table><thead><tr><th>Implementation</th><th><code>fib(35)</code> Time</th><th>Speedup</th></tr></thead><tbody>
+<tr><td>Firstlang interpreter</td><td>~8 seconds</td><td>1x (baseline)</td></tr>
+<tr><td>Secondlang JIT</td><td>~8 milliseconds</td><td>~1000x faster</td></tr>
+</tbody></table>
+</div>
+<p>Same algorithm. Same logic. Different execution model.</p>
+<h2 id="what-youll-learn"><a class="header" href="#what-youll-learn">What You’ll Learn</a></h2>
+<p>The journey from Firstlang to Secondlang teaches you how modern languages work:</p>
+<ol>
+<li><strong>Type Systems</strong> - How types catch errors at compile time</li>
+<li><strong>Type Inference</strong> - Deducing types automatically (like Rust, TypeScript)</li>
+<li><strong>LLVM IR</strong> - The intermediate representation powering Swift, Rust, Julia</li>
+<li><strong>Code Generation</strong> - Transforming high-level concepts to machine instructions</li>
+<li><strong>Optimization</strong> - Constant folding, algebraic simplification</li>
+<li><strong>JIT Compilation</strong> - Compiling and running code on the fly</li>
+</ol>
+<p>These are the same techniques used in production compilers. After Secondlang, you’ll understand how <code>rustc</code>, <code>swiftc</code>, and <code>clang</code> actually work under the hood.</p>
 <h2 id="ready"><a class="header" href="#ready">Ready?</a></h2>
 <p>Let’s add types and compile to native code.</p>
 

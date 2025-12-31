@@ -179,15 +179,26 @@
                 <div id="content" class="content">
                     <main>
                         <h2 id="grammar-lexer-parser-pipeline"><a class="header" href="#grammar-lexer-parser-pipeline">Grammar-Lexer-Parser Pipeline</a></h2>
-<p>Here is a high-level view of a compiler <em>frontend</em> pipeline</p>
+<p>Before we can execute code, we need to understand it. A compiler’s first job is to transform messy text into something structured. Here’s how that happens:</p>
 <p align="center">
 </br>
     <a href><img alt="grammar, lexer, parser" src="../img/grammar-lexer-parser.svg"> </a>
 </p>
-<p>Every language needs a (formal) grammar to describe its syntax and semantics. Once a program adheres to the rules of the grammar in <em>Source Code</em> (for example, as an input string or file), it is <em>tokenized</em>. The <em>lexer</em> then adds metadata to each token—for example, where each token starts and finishes in the original source code. Lastly, the <em>parser</em> reshapes or restructures the lexed outputs into an <a href="./ast.html">Abstract Syntax Tree</a>.</p>
+<p>Let’s walk through this pipeline with a simple example. Say the user types <code>1 + 2</code>:</p>
+<ol>
+<li>
+<p><strong>Grammar</strong> - The rules that define what valid code looks like. Our grammar says “an expression can be a number, or two numbers with an operator between them.” The string <code>1 + 2</code> matches this pattern. The string <code>+ + 1</code> doesn’t.</p>
+</li>
+<li>
+<p><strong>Lexer (Tokenizer)</strong> - Breaks the text into meaningful chunks. <code>"1 + 2"</code> becomes three tokens: <code>[1, +, 2]</code>. The lexer also tracks where each token appears in the source code, which helps with error messages later.</p>
+</li>
+<li>
+<p><strong>Parser</strong> - Builds a tree structure from the tokens. <code>[1, +, 2]</code> becomes a tree with <code>+</code> at the top and <code>1</code> and <code>2</code> as children. This tree is the <strong>Abstract Syntax Tree (AST)</strong>.</p>
+</li>
+</ol>
 <h2 id="grammar"><a class="header" href="#grammar">Grammar</a></h2>
-<p>While there are varieties of ways to define the grammar, in this book we will use the <a href="https://en.wikipedia.org/wiki/Parsing_expression_grammar">Parsing Expression Grammar (PEG)</a>.</p>
-<p>Here is how the grammar for our simple calculator language <code>Calc</code> (supporting addition and subtraction) looks in PEG:</p>
+<p>While there are many ways to define a grammar (regular expressions, context-free grammars, etc.), we’ll use <strong><a href="https://en.wikipedia.org/wiki/Parsing_expression_grammar">Parsing Expression Grammar (PEG)</a></strong>. PEG grammars are easy to read and reason about.</p>
+<p>Here’s the complete grammar for our calculator:</p>
 <pre><code class="language-text">Program = _{ SOI ~ Expr ~ EOF }
 
 Expr = { BinaryExpr | UnaryExpr | Term }
@@ -208,23 +219,29 @@ WHITESPACE = _{ " " | "\t" | "\r" | "\n" }
 EOF = _{ EOI | ";" }
 </code></pre>
 <p><a class="filename" href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/calculator/src/grammar.pest">calculator/src/grammar.pest</a></p>
-<p>This grammar basically defines the syntax and semantics where</p>
-<ul>
-<li>each <code>Program</code> consists of expressions (<code>Expr</code>)</li>
-<li>expressions are either unary (<code>-1</code>), binary (<code>1 + 2</code>), or a simple term</li>
-<li>binary expressions can start with a unary expression (e.g., <code>-1 + 2</code>)</li>
-<li>unary and binary expressions are made of <code>Term</code> and <code>Operator</code> (<code>"+"</code> and <code>"-"</code>)</li>
-<li>the only <em>atom</em> is integer <code>Int</code></li>
-<li><code>WHITESPACE</code> includes spaces, tabs, and newlines for flexible formatting</li>
-</ul>
-<p>Given our grammar, we will use <a href="https://pest.rs/">pest</a>, which is a powerful <em>parser generator</em> for PEG grammars. (For more details on pest, check out the <a href="https://pest.rs/book/">pest book</a>.)</p>
-<p><code>pest</code> <em>derives</em> the parser <code>CalcParser::parse</code> from our grammar</p>
+<p>Don’t let this overwhelm you - let’s break it down line by line:</p>
+<p><strong><code>Program = _{ SOI ~ Expr ~ EOF }</code></strong> - A program is an expression, surrounded by “start of input” (<code>SOI</code>) and “end of file” (<code>EOF</code>). The <code>_{ }</code> means we don’t create a node for <code>Program</code> itself - it’s just a wrapper.</p>
+<p><strong><code>Expr = { UnaryExpr | BinaryExpr | Term }</code></strong> - An expression is either unary (<code>-1</code>), binary (<code>1 + 2</code>), or a simple term (just a number). The <code>|</code> means “or” - try each alternative in order.</p>
+<p><strong><code>Term = _{ Int | "(" ~ Expr ~ ")" }</code></strong> - A term is either a number or a parenthesized expression. This is how we handle <code>(1 + 2) * 3</code> - the parenthesized part becomes a single term.</p>
+<p><strong><code>UnaryExpr = { Operator ~ Term }</code></strong> - A unary expression is an operator followed by a term, like <code>-1</code> or <code>+5</code>.</p>
+<p><strong><code>BinaryExpr = { (UnaryExpr | Term) ~ (Operator ~ Term)+ }</code></strong> - A binary expression is something followed by one or more operator-term pairs. This handles <code>1 + 2</code>, <code>1 + 2 + 3</code>, and even <code>-1 + 2</code> (unary expression followed by operator-term).</p>
+<p><strong><code>Operator = { "+" | "-" }</code></strong> - Our operators are just plus and minus for now.</p>
+<p><strong><code>Int = @{ ASCII_DIGIT+ }</code></strong> - An integer is one or more digits. The <code>@</code> makes it “atomic” - no whitespace inside.</p>
+<p><strong><code>WHITESPACE = _{ " " | "\t" | "\r" | "\n" }</code></strong> - pest automatically skips these between tokens, so <code>1+2</code> and <code>1 + 2</code> both work.</p>
+<h2 id="from-grammar-to-parser"><a class="header" href="#from-grammar-to-parser">From Grammar to Parser</a></h2>
+<p>We use <strong><a href="https://pest.rs/">pest</a></strong> to turn this grammar into a working parser. The magic happens with a derive macro:</p>
 <pre><code class="language-rust ignore">#[derive(pest_derive::Parser)]
 #[grammar = "grammar.pest"]
 struct CalcParser;</code></pre>
 <p><a class="filename" href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/calculator/src/parser.rs">calculator/src/parser.rs</a></p>
-<p>and does all the steps of the frontend pipeline that we mentioned so that we can start parsing any <code>Calc</code> source code (<code>source: &amp;str</code>) via the <code>Rule</code>s of our grammar</p>
+<p>That’s it! This one annotation tells Rust: “Read <code>grammar.pest</code>, generate a parser that recognizes our language, and call it <code>CalcParser</code>.”</p>
+<p>pest does all the heavy lifting - tokenizing, tracking positions, handling whitespace. We just write the grammar and get a working parser.</p>
+<p>To use it:</p>
 <pre><code class="language-rust ignore">CalcParser::parse(Rule::Program, source)</code></pre>
+<p>This returns a tree of “pairs” - pest’s way of representing matched rules. In the <a href="./ast.html">next section</a>, we’ll convert these pairs into our own AST structure, which is easier to work with.</p>
+<h2 id="why-this-matters"><a class="header" href="#why-this-matters">Why This Matters</a></h2>
+<p>You might wonder: why not just use regular expressions? For a simple calculator, you probably could. But as languages get more complex (nested expressions, functions, classes), grammars scale and regexes don’t.</p>
+<p>The grammar is also your language’s specification. When someone asks “is <code>--1</code> valid?”, you look at the grammar. When you add a new feature, you extend the grammar. It’s the single source of truth for what your language accepts.</p>
 <p>Before doing that, we need to define our Abstract Syntax Tree (AST) in the <a href="./ast.html">next section</a>.</p>
 
                     </main>

@@ -179,12 +179,23 @@
                 <div id="content" class="content">
                     <main>
                         <h2 id="read-eval-print-loop-repl"><a class="header" href="#read-eval-print-loop-repl">Read-Eval-Print Loop (REPL)</a></h2>
-<p>REPL (as its name implies) loops through every line of the input and compiles it. We use <a href="https://github.com/kkawakam/rustyline">rustyline</a> crate to create our REPL. For each line of input, we can optionally choose to</p>
+<p>A REPL is an interactive programming environment. You type code, it immediately runs, you see the result. Then you type more code. This tight feedback loop makes REPLs perfect for learning, experimenting, and debugging.</p>
+<p>You’ve probably used REPLs before:</p>
 <ul>
-<li>directly interpret the AST</li>
-<li>JIT the AST</li>
-<li>compile to our bytecode VM and interpret it</li>
+<li>Python’s <code>&gt;&gt;&gt;</code> prompt</li>
+<li>Node.js’s interactive mode</li>
+<li>Browser developer console</li>
 </ul>
+<p>Now we’ll build one for our calculator! Even better, we’ll be able to switch between three execution backends - seeing how the same code runs through different compilation paths.</p>
+<h3 id="how-a-repl-works"><a class="header" href="#how-a-repl-works">How a REPL Works</a></h3>
+<p>The name tells you everything:</p>
+<ol>
+<li><strong>Read</strong> - Get a line of input from the user</li>
+<li><strong>Eval</strong> - Parse and execute it</li>
+<li><strong>Print</strong> - Show the result</li>
+<li><strong>Loop</strong> - Go back to step 1</li>
+</ol>
+<p>Here’s our implementation using <a href="https://github.com/kkawakam/rustyline">rustyline</a>, a library that provides readline-style line editing (arrow keys, history, etc.):</p>
 <pre><code class="language-rust no_run noplaypen">fn main() -&gt; Result&lt;()&gt; {
     let mut rl = DefaultEditor::new()?;
     println!("Calculator prompt. Expressions are line evaluated.");
@@ -228,24 +239,36 @@
     }
     Ok(())</code></pre>
 <p><a class="filename" href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/calculator/src/bin/repl.rs">calculator/src/bin/repl.rs</a></p>
-<p>Now, we can use run the REPL and choose different compilation path</p>
+<p>The REPL is simple:</p>
+<ol>
+<li>Create a rustyline editor (handles input, history, etc.)</li>
+<li>Loop forever, reading lines</li>
+<li>For each line, compile and execute using the chosen backend</li>
+<li>Print the result</li>
+<li>On Ctrl-C or Ctrl-D, exit</li>
+</ol>
+<h3 id="three-backends-one-interface"><a class="header" href="#three-backends-one-interface">Three Backends, One Interface</a></h3>
+<p>The magic is in the feature flags. The same REPL works with three different backends:</p>
 <pre><code class="language-bash"># Interpreter (stable Rust)
+# Walks the AST and computes directly
 cargo run --bin repl --features interpreter
 
 # Bytecode VM (stable Rust)
+# Compiles to bytecode, then interprets that
 cargo run --bin repl --features vm
 
 # JIT (requires nightly Rust + LLVM)
+# Compiles to native machine code
 rustup run nightly cargo run --bin repl --features jit
 </code></pre>
-<p>In any of them, you should see the prompt like</p>
-<pre><code class="language-text">Calculator prompt. Expressions are line evaluated.
-&gt;&gt;&gt;
-</code></pre>
-<p>waiting for your inputs. Here are some sample outputs of different compilation paths in debug mode.</p>
+<p>This is powerful for learning! You can compare how the same expression is handled:</p>
 <ul>
-<li>with <code>--features jit</code></li>
+<li>The interpreter shows the AST structure</li>
+<li>The VM shows the bytecode being generated</li>
+<li>The JIT shows the LLVM IR</li>
 </ul>
+<h3 id="jit-output-example"><a class="header" href="#jit-output-example">JIT Output Example</a></h3>
+<p>With <code>--features jit</code>, you see the generated LLVM IR:</p>
 <pre><code class="language-text">Calculator prompt. Expressions are line evaluated.
 &gt;&gt; 1 + 2
 Compiling the source: 1 + 2
@@ -256,7 +279,10 @@ entry:
 }
 
 3
-&gt;&gt; -2 + 5
+</code></pre>
+<p>Notice something interesting: the IR just says <code>ret i32 3</code>! LLVM computed <code>1 + 2 = 3</code> at compile time and baked the answer directly into the code. This is <strong>constant folding</strong>, one of LLVM’s many optimizations.</p>
+<p>Let’s try a more complex expression:</p>
+<pre><code class="language-text">&gt;&gt; -2 + 5
 Compiling the source: -2 + 5
 [BinaryExpr { op: Plus, lhs: UnaryExpr { op: Minus, child: Int(2) }, rhs: Int(5) }]
 Generated LLVM IR: define i32 @jit() {
@@ -265,21 +291,10 @@ entry:
 }
 
 3
-&gt;&gt; (1 + 2) - (8 - 10)
-Compiling the source: (1 + 2) - (8 - 10)
-[BinaryExpr { op: Minus, lhs: BinaryExpr { op: Plus, lhs: Int(1), rhs: Int(2) }, rhs: BinaryExpr { op: Minus, lhs: Int(8), rhs: Int(10) } }]
-Generated LLVM IR: define i32 @jit() {
-entry:
-  ret i32 5
-}
-
-5
-&gt;&gt;
-CTRL-C
 </code></pre>
-<ul>
-<li>with <code>--features vm</code></li>
-</ul>
+<p>Again, LLVM optimized <code>(-2) + 5</code> to just <code>3</code>. The AST shows the full structure, but the compiled code is minimal.</p>
+<h3 id="vm-output-example"><a class="header" href="#vm-output-example">VM Output Example</a></h3>
+<p>With <code>--features vm</code>, you see bytecode generation step by step:</p>
 <pre><code class="language-text">Calculator prompt. Expressions are line evaluated.
 &gt;&gt; 1 + 2
 Compiling the source: 1 + 2
@@ -291,28 +306,44 @@ added instructions [1, 0, 0, 1, 0, 1, 3] from opcode OpAdd
 added instructions [1, 0, 0, 1, 0, 1, 3, 2] from opcode OpPop
 byte code: Bytecode { instructions: [1, 0, 0, 1, 0, 1, 3, 2], constants: [Int(1), Int(2)] }
 3
-&gt;&gt; (1 + 2) - (8 - 10)
-Compiling the source: (1 + 2) - (8 - 10)
-[BinaryExpr { op: Minus, lhs: BinaryExpr { op: Plus, lhs: Int(1), rhs: Int(2) }, rhs: BinaryExpr { op: Minus, lhs: Int(8), rhs: Int(10) } }]
-compiling node BinaryExpr { op: Minus, lhs: BinaryExpr { op: Plus, lhs: Int(1), rhs: Int(2) }, rhs: BinaryExpr { op: Minus, lhs: Int(8), rhs: Int(10) } }
-added instructions [1, 0, 0] from opcode OpConstant(0)
-added instructions [1, 0, 0, 1, 0, 1] from opcode OpConstant(1)
-added instructions [1, 0, 0, 1, 0, 1, 3] from opcode OpAdd
-added instructions [1, 0, 0, 1, 0, 1, 3, 1, 0, 2] from opcode OpConstant(2)
-added instructions [1, 0, 0, 1, 0, 1, 3, 1, 0, 2, 1, 0, 3] from opcode OpConstant(3)
-added instructions [1, 0, 0, 1, 0, 1, 3, 1, 0, 2, 1, 0, 3, 4] from opcode OpSub
-added instructions [1, 0, 0, 1, 0, 1, 3, 1, 0, 2, 1, 0, 3, 4, 4] from opcode OpSub
-added instructions [1, 0, 0, 1, 0, 1, 3, 1, 0, 2, 1, 0, 3, 4, 4, 2] from opcode OpPop
-byte code: Bytecode { instructions: [1, 0, 0, 1, 0, 1, 3, 1, 0, 2, 1, 0, 3, 4, 4, 2], constants: [Int(1), Int(2), Int(8), Int(10)] }
-5
-&gt;&gt;&gt;
-CTRL-C
 </code></pre>
+<p>You can see each instruction being added:</p>
+<ol>
+<li><code>OpConstant(0)</code> - Push constant at index 0 (which is <code>1</code>)</li>
+<li><code>OpConstant(1)</code> - Push constant at index 1 (which is <code>2</code>)</li>
+<li><code>OpAdd</code> - Pop two values, push their sum</li>
+<li><code>OpPop</code> - Pop and return the result</li>
+</ol>
+<p>A more complex expression shows more bytecode:</p>
+<pre><code class="language-text">&gt;&gt; (1 + 2) - (8 - 10)
+byte code: Bytecode {
+  instructions: [1, 0, 0, 1, 0, 1, 3, 1, 0, 2, 1, 0, 3, 4, 4, 2],
+  constants: [Int(1), Int(2), Int(8), Int(10)]
+}
+5
+</code></pre>
+<p>Four constants, multiple operations, all encoded in a flat byte array.</p>
+<h3 id="why-build-a-repl"><a class="header" href="#why-build-a-repl">Why Build a REPL?</a></h3>
+<p>Building a REPL teaches you:</p>
+<ol>
+<li><strong>The edit-compile-run cycle</strong> - Even simpler than files</li>
+<li><strong>Error handling</strong> - What happens when input is invalid?</li>
+<li><strong>State management</strong> - In later chapters, we’ll maintain variables across lines</li>
+<li><strong>Debugging</strong> - Print AST, bytecode, or IR to see what’s happening</li>
+</ol>
+<p>Professional language implementations always include a REPL. It’s one of the most useful tools for both language developers and language users.</p>
 <h2 id="conclusion"><a class="header" href="#conclusion">Conclusion</a></h2>
-<p>This concludes our <a href="./calc_intro.html">Calculator</a> chapter. We took advantage of the simplicity of our <code>Calc</code> language to touch on a lot of topics.</p>
-<p>Note that our Calculator grammar is intentionally simple. It handles basic cases like negative first numbers (<code>-1 + 2</code>) and flexible whitespace, but it doesn’t have proper operator precedence. In the next chapter, we’ll see how <a href="../02_firstlang/intro.html">Firstlang</a> builds a more sophisticated grammar with proper operator precedence and multiple expression types.</p>
-<p>Thanks for following along and reading up this far!</p>
-<p>Stay tuned for the next chapter where we gradually work our way up to create a dynamically typed language named creatively as <strong>Firstlang</strong> :D</p>
+<p>This concludes our <a href="./calc_intro.html">Calculator</a> chapter. We took advantage of the simplicity of our <code>Calc</code> language to cover a lot of ground:</p>
+<ul>
+<li><strong>Grammar and parsing</strong> - Converting text to structured data</li>
+<li><strong>AST</strong> - Representing programs as trees</li>
+<li><strong>Interpretation</strong> - Walking the tree and computing</li>
+<li><strong>JIT compilation</strong> - Generating native code with LLVM</li>
+<li><strong>Bytecode VMs</strong> - An intermediate approach</li>
+<li><strong>REPL</strong> - Interactive programming</li>
+</ul>
+<p>Note that our Calculator grammar is intentionally simple. It handles basic cases like negative first numbers (<code>-1 + 2</code>) and flexible whitespace, but it doesn’t have proper operator precedence. The expression <code>1 + 2 * 3</code> might not evaluate as you’d expect! In the next chapter, we’ll see how <a href="../02_firstlang/intro.html">Firstlang</a> builds a more sophisticated grammar with proper operator precedence and multiple expression types.</p>
+<p>Thanks for following along! In the next chapter, we’ll build <strong>Firstlang</strong> - a dynamically typed language with variables, functions, control flow, and recursion.</p>
 
                     </main>
 

@@ -179,8 +179,17 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="from-calculator-to-real-language"><a class="header" href="#from-calculator-to-real-language">From Calculator to Real Language</a></h1>
-<p>You’ve built a working calculator. It parses expressions, constructs an AST, and evaluates (or compiles) the result. That’s a real achievement - you understand the core pipeline that every language uses.</p>
-<p>But it’s not a <em>programming language</em> yet.</p>
+<p>You’ve built a working calculator. It parses expressions like <code>(1 + 2) * 3</code>, constructs an AST, and evaluates (or compiles) the result through three different backends: an interpreter, a bytecode VM, and an LLVM JIT compiler. That’s a real achievement - you understand the core pipeline that every language uses.</p>
+<p>But something is missing. Try this thought experiment: Can you write a program that computes the first 10 Fibonacci numbers? Can you store intermediate results? Can you abstract repeated patterns into functions?</p>
+<p>No - because a calculator is not a <em>programming language</em> yet.</p>
+<h2 id="the-realization"><a class="header" href="#the-realization">The Realization</a></h2>
+<p>A calculator is like a sophisticated pocket calculator: it takes input, computes output, and forgets everything in between. There’s no <em>memory</em> of previous computations, no way to <em>name</em> values for reuse, and no way to <em>decide</em> which computation to perform based on conditions.</p>
+<p>Think about what you <em>can’t</em> do:</p>
+<pre><code>x = 10          # No variables!
+if (x &gt; 5) { }  # No conditionals!
+def add(a, b) { return a + b }  # No functions!
+</code></pre>
+<p>Each of these requires the language to maintain <em>state</em> - to remember things across multiple operations. That’s the fundamental shift we’re about to make.</p>
 <h2 id="whats-missing"><a class="header" href="#whats-missing">What’s Missing?</a></h2>
 <div class="table-wrapper"><table><thead><tr><th>Feature</th><th>Calculator</th><th>Real Language</th></tr></thead><tbody>
 <tr><td><strong>State</strong></td><td>None - each expression is independent</td><td>Variables persist across statements</td></tr>
@@ -202,14 +211,22 @@
 <li><strong>Evaluation</strong> - Same recursion, but now we track state</li>
 </ul>
 <h2 id="what-changes"><a class="header" href="#what-changes">What Changes</a></h2>
-<div class="table-wrapper"><table><thead><tr><th>Aspect</th><th>Calculator</th><th>Firstlang</th></tr></thead><tbody>
-<tr><td>Grammar</td><td>18 lines</td><td>70 lines</td></tr>
-<tr><td>AST nodes</td><td>2 types</td><td>8+ types</td></tr>
-<tr><td>Execution</td><td>Single eval</td><td>Statement sequence</td></tr>
-<tr><td>State</td><td>None</td><td>Variable environment</td></tr>
-<tr><td>Functions</td><td>None</td><td>Call stack</td></tr>
+<p>The transition from Calculator to Firstlang is not about rewriting everything - it’s about <em>adding layers</em>.</p>
+<div class="table-wrapper"><table><thead><tr><th>Aspect</th><th>Calculator</th><th>Firstlang</th><th>Growth</th></tr></thead><tbody>
+<tr><td>Grammar</td><td>18 lines</td><td>70 lines</td><td>~4x larger</td></tr>
+<tr><td>AST nodes</td><td>2 types</td><td>8+ types</td><td>~4x more cases</td></tr>
+<tr><td>Execution</td><td>Single eval</td><td>Statement sequence</td><td>Iterative instead of one-shot</td></tr>
+<tr><td>State</td><td>None</td><td>Variable environment</td><td>HashMap of name → value</td></tr>
+<tr><td>Functions</td><td>None</td><td>Call stack</td><td>Stack frames for recursion</td></tr>
+<tr><td>Keywords</td><td>None</td><td>5 keywords</td><td><code>def</code>, <code>if</code>, <code>else</code>, <code>while</code>, <code>return</code></td></tr>
 </tbody></table>
 </div>
+<p>Each of these changes builds on what you already know:</p>
+<p><strong>Grammar grows</strong> - But it’s still pest rules, just more of them.</p>
+<p><strong>AST nodes multiply</strong> - But they’re still Rust enums with the same recursive structure.</p>
+<p><strong>Execution becomes stateful</strong> - But it’s still recursive tree traversal, now with a HashMap.</p>
+<p><strong>Functions add call stacks</strong> - But each frame is just another HashMap, pushed and popped like any stack.</p>
+<p>The <em>concepts</em> are the same. The <em>scale</em> increases.</p>
 <h2 id="the-goal"><a class="header" href="#the-goal">The Goal</a></h2>
 <p>By the end of Part II, you’ll compute Fibonacci recursively:</p>
 <pre><code>def fib(n) {
@@ -222,7 +239,29 @@
 
 fib(10)  # → 55
 </code></pre>
-<p>This requires everything: variables, functions, conditionals, recursion.</p>
+<p>This 8-line program exercises <em>everything</em> a real language needs:</p>
+<ul>
+<li><strong>Variables</strong> (<code>n</code>) - Named storage</li>
+<li><strong>Functions</strong> (<code>fib</code>) - Abstraction and reuse</li>
+<li><strong>Parameters</strong> (passing <code>n</code>) - Data flow</li>
+<li><strong>Conditionals</strong> (<code>if</code>/<code>else</code>) - Decision making</li>
+<li><strong>Operators</strong> (<code>&lt;</code>, <code>-</code>) - Computation</li>
+<li><strong>Recursion</strong> (<code>fib</code> calls <code>fib</code>) - Self-reference</li>
+<li><strong>Call stack</strong> (tracks each frame) - Memory management</li>
+</ul>
+<p>If you can implement this, you have a real programming language.</p>
+<h2 id="the-journey-ahead"><a class="header" href="#the-journey-ahead">The Journey Ahead</a></h2>
+<p>Each chapter in Part II builds one piece:</p>
+<ol>
+<li><strong>Syntax</strong> - Define the Python-like grammar</li>
+<li><strong>Variables</strong> - Add state with a HashMap</li>
+<li><strong>Functions</strong> - Implement the call stack</li>
+<li><strong>Control Flow</strong> - Add <code>if</code> and <code>while</code></li>
+<li><strong>Recursion</strong> - Put it all together</li>
+<li><strong>REPL</strong> - Make it interactive</li>
+<li><strong>Fibonacci</strong> - The culmination</li>
+</ol>
+<p>By the end, you’ll have something you can actually <em>program</em> in. Not just evaluate expressions - write real algorithms.</p>
 <h2 id="ready"><a class="header" href="#ready">Ready?</a></h2>
 <p>Let’s build a real language.</p>
 

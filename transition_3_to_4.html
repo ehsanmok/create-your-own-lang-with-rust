@@ -179,19 +179,30 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="from-functions-to-objects"><a class="header" href="#from-functions-to-objects">From Functions to Objects</a></h1>
-<p>You’ve built Secondlang - a typed, compiled language that generates native code via LLVM. Fast Fibonacci!</p>
-<p>But something’s missing. Look at this code:</p>
-<pre><code># Two related values
+<p>You’ve built Secondlang - a typed, compiled language that generates native code via LLVM. It’s fast (computes <code>fib(35)</code> in milliseconds), type-safe (catches errors at compile time), and generates efficient machine code.</p>
+<p>But try modeling something from the real world - say, a 2D point on a screen, or a player in a game, or a bank account. You’ll quickly hit a wall.</p>
+<p>Look at this code for computing the distance between two points:</p>
+<pre><code># Point 1
 x1 = 10
 y1 = 20
 
+# Point 2
 x2 = 30
 y2 = 40
 
-# How do we know x1 goes with y1?
-# How do we pass "a point" to a function?
+# Distance computation
+dx = x2 - x1
+dy = y2 - y1
+distance_squared = dx*dx + dy*dy
 </code></pre>
-<p>We need a way to <strong>group related data together</strong>.</p>
+<p>This works, but there are problems:</p>
+<ol>
+<li><strong>No semantic grouping</strong> - Nothing says <code>x1</code> and <code>y1</code> belong together. They’re just two independent integers.</li>
+<li><strong>Easy to mix up</strong> - What if you accidentally use <code>x1</code> with <code>y2</code>? The compiler won’t catch it.</li>
+<li><strong>Can’t pass as a unit</strong> - You can’t write <code>def distance(p1, p2)</code>. You need <code>def distance(x1, y1, x2, y2)</code>.</li>
+<li><strong>No encapsulation</strong> - The distance formula is scattered across your code. If you want to change it, you need to find every place you computed it.</li>
+</ol>
+<p>We need a way to <strong>group related data</strong> and <strong>attach behavior to that data</strong>.</p>
 <h2 id="the-problem-with-primitives"><a class="header" href="#the-problem-with-primitives">The Problem with Primitives</a></h2>
 <blockquote>
 <p>Think of a filing cabinet. Secondlang gives you individual papers (integers, booleans). But you want <em>folders</em> that group related papers together. Classes are those folders.</p>
@@ -270,14 +281,21 @@ delete p                # Manual deallocation
 </tbody></table>
 </div>
 <h2 id="the-goal"><a class="header" href="#the-goal">The Goal</a></h2>
-<p>By the end of Part IV:</p>
+<p>By the end of Part IV, you’ll have a full object-oriented language:</p>
 <pre><code>class Counter {
     value: int
 
-    def __init__(self, start: int) { self.value = start }
+    def __init__(self, start: int) {
+        self.value = start
+    }
+
     def increment(self) -&gt; int {
         self.value = self.value + 1
         return self.value
+    }
+
+    def __del__(self) {
+        # Cleanup when deleted
     }
 }
 
@@ -286,7 +304,42 @@ c.increment()  # 1
 c.increment()  # 2
 delete c
 </code></pre>
-<p>Real OOP, compiled to native code.</p>
+<p>This small example demonstrates everything OOP adds:</p>
+<ul>
+<li><strong>Grouping</strong> - <code>value</code> lives inside <code>Counter</code>, not as a loose variable</li>
+<li><strong>Methods</strong> - <code>increment</code> operates on <code>self</code>, not global state</li>
+<li><strong>Encapsulation</strong> - Implementation details hidden inside the class</li>
+<li><strong>Lifecycle</strong> - <code>__init__</code> creates, <code>__del__</code> cleans up</li>
+<li><strong>Heap allocation</strong> - Objects live beyond function scope</li>
+<li><strong>Manual memory</strong> - You control when objects are freed</li>
+</ul>
+<h2 id="what-youll-learn"><a class="header" href="#what-youll-learn">What You’ll Learn</a></h2>
+<p>Thirdlang teaches you how OOP is implemented under the hood:</p>
+<ol>
+<li><strong>Class types</strong> - How classes become LLVM struct types</li>
+<li><strong>Heap allocation</strong> - Using <code>malloc</code> to create objects</li>
+<li><strong>Field access</strong> - LLVM’s <code>getelementptr</code> instruction</li>
+<li><strong>Method calls</strong> - Passing <code>self</code> as the first parameter</li>
+<li><strong>Constructors/Destructors</strong> - Initialization and cleanup</li>
+<li><strong>Memory management</strong> - Manual <code>new</code>/<code>delete</code> like C++</li>
+</ol>
+<p>After Thirdlang, you’ll understand how Python’s classes, JavaScript’s objects, and C++’s structs work at the machine level.</p>
+<h2 id="the-trade-offs"><a class="header" href="#the-trade-offs">The Trade-offs</a></h2>
+<p>Thirdlang’s memory model is deliberately simple - and dangerous:</p>
+<ul>
+<li><strong>No garbage collection</strong> - You must manually <code>delete</code> objects</li>
+<li><strong>Dangling pointers</strong> - Using an object after <code>delete</code> is undefined behavior</li>
+<li><strong>Memory leaks</strong> - Forgetting to <code>delete</code> leaks memory forever</li>
+<li><strong>Double free</strong> - Calling <code>delete</code> twice is undefined behavior</li>
+</ul>
+<p>Real languages solve this with:</p>
+<ul>
+<li><strong>Garbage collection</strong> (Python, Java, Go)</li>
+<li><strong>Reference counting</strong> (Swift, Python’s implementation)</li>
+<li><strong>Ownership</strong> (Rust)</li>
+<li><strong>Smart pointers</strong> (C++)</li>
+</ul>
+<p>We don’t implement these because they’re complex. But after Thirdlang, you’ll understand <em>why</em> they exist and <em>what problems</em> they solve.</p>
 <h2 id="ready"><a class="header" href="#ready">Ready?</a></h2>
 <p>Let’s add classes and objects.</p>
 

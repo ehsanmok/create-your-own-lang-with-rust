@@ -179,52 +179,108 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="variables-and-assignment"><a class="header" href="#variables-and-assignment">Variables and Assignment</a></h1>
-<p>Variables let us store values and refer to them by name. In Firstlang, assignment is simple:</p>
+<p>Variables let us store values and refer to them by name. Without variables, we could only work with literal values - every computation would need to repeat its inputs. Variables give us <em>memory</em>.</p>
 <pre><code>x = 42
 name = x + 8    # name = 50
 </code></pre>
+<p>That second line is the key: we’re using <code>x</code> by name instead of repeating <code>42</code>. If we later change <code>x</code>, code that uses <code>x</code> automatically uses the new value. Variables make code reusable and readable.</p>
 <h2 id="how-variables-work"><a class="header" href="#how-variables-work">How Variables Work</a></h2>
-<h3 id="the-ast"><a class="header" href="#the-ast">The AST</a></h3>
-<p>In our AST, assignment is represented as:</p>
+<p>Let’s trace through what happens when our interpreter runs <code>x = 42; y = x + 1</code>:</p>
+<h3 id="step-1-parse-to-ast"><a class="header" href="#step-1-parse-to-ast">Step 1: Parse to AST</a></h3>
+<p>The parser turns this into:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>enum Stmt {
-    Assignment { name: String, value: Expr },
-    // ...
-}
+</span>[
+    Stmt::Assignment { name: "x", value: Expr::Int(42) },
+    Stmt::Assignment { name: "y", value: Expr::Binary {
+        op: Add,
+        left: Expr::Var("x"),
+        right: Expr::Int(1)
+    }},
+]
 <span class="boring">}</span></code></pre></pre>
-<h3 id="storage-the-environment"><a class="header" href="#storage-the-environment">Storage: The Environment</a></h3>
-<p>Variables are stored in a <code>HashMap</code> inside our interpreter:</p>
+<p>Notice <code>Expr::Var("x")</code> - that’s a reference to a variable, not the variable itself. We’ll need to look it up later.</p>
+<h3 id="step-2-execute-first-assignment"><a class="header" href="#step-2-execute-first-assignment">Step 2: Execute First Assignment</a></h3>
+<p>For <code>x = 42</code>:</p>
+<ol>
+<li><strong>Evaluate the right side</strong> - <code>Expr::Int(42)</code> evaluates to <code>Value::Int(42)</code></li>
+<li><strong>Store in the environment</strong> - Put <code>"x" -&gt; 42</code> in our storage</li>
+</ol>
+<h3 id="step-3-execute-second-assignment"><a class="header" href="#step-3-execute-second-assignment">Step 3: Execute Second Assignment</a></h3>
+<p>For <code>y = x + 1</code>:</p>
+<ol>
+<li><strong>Evaluate the right side</strong> - This is a binary expression, so:
+<ul>
+<li>Evaluate left: <code>Expr::Var("x")</code> → look up “x” in storage → find <code>42</code></li>
+<li>Evaluate right: <code>Expr::Int(1)</code> → <code>1</code></li>
+<li>Apply operator: <code>42 + 1 = 43</code></li>
+</ul>
+</li>
+<li><strong>Store in the environment</strong> - Put <code>"y" -&gt; 43</code> in our storage</li>
+</ol>
+<h3 id="the-environment-storage"><a class="header" href="#the-environment-storage">The Environment (Storage)</a></h3>
+<p>Where do variables live? In a <code>HashMap</code> inside a “frame”:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>struct Frame {
     locals: HashMap&lt;String, Value&gt;,
 }
 <span class="boring">}</span></code></pre></pre>
-<p>When we encounter an assignment like <code>x = 42</code>:</p>
-<ol>
-<li>Evaluate the right-hand side expression</li>
-<li>Store the result in the current frame’s <code>locals</code></li>
-</ol>
-<h3 id="variable-lookup"><a class="header" href="#variable-lookup">Variable Lookup</a></h3>
-<p>When we encounter a variable reference like <code>x</code>:</p>
-<ol>
-<li>Look in the current frame’s locals</li>
-<li>If not found, look in globals (for functions)</li>
-<li>If still not found, error: “Undefined variable”</li>
-</ol>
-<h2 id="scoping"><a class="header" href="#scoping">Scoping</a></h2>
-<p>Firstlang uses simple scoping rules:</p>
-<pre><code>x = 10          # global scope
+<p>A <code>HashMap</code> is a dictionary: given a key (the variable name), it returns a value. When we assign <code>x = 42</code>, we insert <code>("x", 42)</code> into the map. When we look up <code>x</code>, we query the map with <code>"x"</code> and get <code>42</code> back.</p>
+<p>Why call it a “frame”? Because in the <a href="./functions.html">functions</a> chapter, we’ll have multiple frames - one for each function call. Each function gets its own private storage.</p>
+<h2 id="variable-lookup"><a class="header" href="#variable-lookup">Variable Lookup</a></h2>
+<p>When we encounter a variable like <code>x</code>, we need to find its value:</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>fn lookup_var(&amp;self, name: &amp;str) -&gt; Result&lt;Value, String&gt; {
+    // First, check the current frame
+    if let Some(value) = self.current_frame().locals.get(name) {
+        return Ok(value.clone());
+    }
+
+    // Then, check globals (for functions defined at top level)
+    if let Some(value) = self.globals.get(name) {
+        return Ok(value.clone());
+    }
+
+    // Not found anywhere - error!
+    Err(format!("Undefined variable: {}", name))
+}
+<span class="boring">}</span></code></pre></pre>
+<p>This is called <strong>scoping</strong>: we first look in the local scope (current function), then fall back to global scope. If the variable isn’t anywhere, that’s an error.</p>
+<h2 id="scoping-local-vs-global"><a class="header" href="#scoping-local-vs-global">Scoping: Local vs Global</a></h2>
+<p>Variables can be <em>local</em> (inside a function) or <em>global</em> (outside all functions):</p>
+<pre><code>x = 10          # global - accessible everywhere
 
 def foo() {
-    y = 20      # local to foo
-    return x + y
+    y = 20      # local to foo - only accessible inside foo
+    return x + y  # can access global x
 }
 
-foo()           # = 30 (can access global x)
+foo()           # = 30
+# y             # ERROR: y is not defined here
 </code></pre>
-<p>Variables inside functions are local to that function. Global variables (defined outside functions) are visible everywhere.</p>
+<p>When <code>foo</code> runs, it has access to:</p>
+<ul>
+<li>Its own locals (<code>y</code>)</li>
+<li>Global variables (<code>x</code>)</li>
+</ul>
+<p>But code outside <code>foo</code> cannot see <code>y</code> - it only existed during the function call.</p>
+<h2 id="reassignment"><a class="header" href="#reassignment">Reassignment</a></h2>
+<p>Variables can be reassigned:</p>
+<pre><code>x = 1
+x = x + 1   # x is now 2
+x = x * 2   # x is now 4
+</code></pre>
+<p>The right side is always evaluated <em>first</em>, using the current value of <code>x</code>. Then the result overwrites <code>x</code>. So <code>x = x + 1</code> means “take the current <code>x</code>, add 1, store it back in <code>x</code>.”</p>
+<h2 id="why-this-matters"><a class="header" href="#why-this-matters">Why This Matters</a></h2>
+<p>This simple mechanism - storing and looking up names - is the foundation of all programming:</p>
+<ul>
+<li><strong>Parameters</strong> are just variables that get their values from function calls</li>
+<li><strong>Loop counters</strong> are variables that change each iteration</li>
+<li><strong>Object fields</strong> (in Thirdlang) are variables attached to objects</li>
+</ul>
+<p>The environment is one of the most important data structures in any interpreter.</p>
 <h2 id="example"><a class="header" href="#example">Example</a></h2>
 <pre><code># Variables and arithmetic
 a = 5
@@ -239,8 +295,14 @@ x = x + 1
 x = x * 2
 x               # 4
 </code></pre>
+<p>Trace through this mentally:</p>
+<ul>
+<li>After line 1: <code>{a: 5}</code></li>
+<li>After line 2: <code>{a: 5, b: 3}</code></li>
+<li>After line 3: <code>{a: 5, b: 3, sum: 8}</code> (computed 5 + 3)</li>
+<li>And so on…</li>
+</ul>
 <div class="checkpoint">
-<strong>Checkpoint</strong>
 <p>At this point, you should be able to:</p>
 <ul>
 <li>Parse and evaluate <code>x = 42</code> and <code>y = x + 1</code></li>
@@ -248,7 +310,7 @@ x               # 4
 <li>Handle “undefined variable” errors gracefully</li>
 </ul>
 </div>
-<p>In the <a href="./functions.html">next section</a>, we’ll see how functions use these building blocks.</p>
+<p>In the <a href="./functions.html">next section</a>, we’ll see how functions use these building blocks - parameters are just local variables that get their values from call sites.</p>
 <div class="related-topics">
 <strong>Related Topics</strong>
 <ul>
