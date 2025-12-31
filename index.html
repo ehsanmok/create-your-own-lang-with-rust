@@ -181,50 +181,61 @@
                         <div class="license-notice">
 <p><em>Materials in this book are distributed under the terms of <a href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/LICENSE">Creative Commons BY-NC-SA 4.0</a></em></p>
 <img alt="license" src="./img/by-nc-sa.png">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./img/logo_dark_mode.png">
+  <source media="(prefers-color-scheme: light)" srcset="./img/logo_light_mode.png">
+  <img src="./img/logo_dark_mode.png" alt="CreateLang.rs Logo" class="logo-img" width="320">
+</picture>
 </div>
-<p>This book assumes some basic knowledge of the Rust language. Please take a look at the official <a href="https://doc.rust-lang.org/book/">Rust book</a>.</p>
-<p>The accompanying code and materials for this book are available on <a href="https://github.com/ehsanmok/create-your-own-lang-with-rust">GitHub</a>. To follow along, make sure you have</p>
-<ul>
-<li>
-<p><a href="https://www.rust-lang.org/tools/install">Rust toolchain installed</a> (stable 1.70+)</p>
-</li>
-<li>
-<p>Cloned the repository</p>
-<pre><code class="language-bash">git clone https://github.com/ehsanmok/create-your-own-lang-with-rust
+<hr />
+<h2 id="getting-started"><a class="header" href="#getting-started">Getting Started</a></h2>
+<p>This book assumes basic knowledge of Rust. If you’re new to Rust, start with the official <a href="https://doc.rust-lang.org/book/">Rust book</a>.</p>
+<p>The code and materials are available on <a href="https://github.com/ehsanmok/create-your-own-lang-with-rust">GitHub</a>. To follow along:</p>
+<pre><code class="language-bash"># Clone the repository
+git clone https://github.com/ehsanmok/create-your-own-lang-with-rust
+cd create-your-own-lang-with-rust
 </code></pre>
-<p>Then navigate to the project directory:</p>
-<pre><code class="language-bash">cd create-your-own-lang-with-rust
+<h3 id="what-works-with-stable-rust"><a class="header" href="#what-works-with-stable-rust">What Works with Stable Rust</a></h3>
+<div class="table-wrapper"><table><thead><tr><th>Project</th><th>Command</th></tr></thead><tbody>
+<tr><td>Calculator (interpreter/VM)</td><td><code>cargo run</code></td></tr>
+<tr><td>Firstlang (interpreter)</td><td><code>cargo run</code></td></tr>
+</tbody></table>
+</div>
+<h3 id="what-requires-nightly-rust--llvm"><a class="header" href="#what-requires-nightly-rust--llvm">What Requires Nightly Rust + LLVM</a></h3>
+<div class="table-wrapper"><table><thead><tr><th>Project</th><th>Command</th></tr></thead><tbody>
+<tr><td>Calculator JIT</td><td><code>rustup run nightly cargo run --features jit</code></td></tr>
+<tr><td>Secondlang</td><td><code>rustup run nightly cargo run</code></td></tr>
+<tr><td>Thirdlang</td><td><code>rustup run nightly cargo run</code></td></tr>
+</tbody></table>
+</div>
+<h3 id="llvm-setup"><a class="header" href="#llvm-setup">LLVM Setup</a></h3>
+<pre><code class="language-bash"># Install nightly Rust
+rustup toolchain install nightly
+
+# Install LLVM
+# macOS:
+brew install llvm
+
+# Debian/Ubuntu: see https://apt.llvm.org/
 </code></pre>
-</li>
-</ul>
-<p><strong>What works with stable Rust:</strong></p>
-<ul>
-<li><strong>Calculator</strong> (interpreter and VM modes) - <code>cargo run</code></li>
-<li><strong>Firstlang</strong> (interpreter) - <code>cargo run</code></li>
-</ul>
-<p><strong>What requires nightly Rust + LLVM:</strong></p>
-<ul>
-<li><strong>Calculator JIT</strong> - <code>rustup run nightly cargo run --features jit</code></li>
-<li><strong>Secondlang</strong> (compiled to native code) - <code>rustup run nightly cargo run</code></li>
-<li><strong>Thirdlang</strong> (classes and OOP) - <code>rustup run nightly cargo run</code></li>
-</ul>
-<p>To use LLVM features:</p>
-<ul>
-<li>Install nightly: <code>rustup toolchain install nightly</code></li>
-<li>Install LLVM: macOS (<code>brew install llvm</code>), Debian/Ubuntu (<a href="https://apt.llvm.org/">apt.llvm.org</a>)</li>
-<li>Check your version: <code>llvm-config --version</code></li>
-<li>Update <code>Cargo.toml</code> to match: LLVM 20.x uses <code>llvm20-1</code>, LLVM 19.x uses <code>llvm19-1</code>, LLVM 18.x uses <code>llvm18-1</code></li>
-</ul>
+<p>Check your LLVM version with <code>llvm-config --version</code> and update <code>Cargo.toml</code>:</p>
+<div class="table-wrapper"><table><thead><tr><th>LLVM</th><th>inkwell feature</th></tr></thead><tbody>
+<tr><td>20.x</td><td><code>llvm20-1</code></td></tr>
+<tr><td>19.x</td><td><code>llvm19-1</code></td></tr>
+<tr><td>18.x</td><td><code>llvm18-1</code></td></tr>
+</tbody></table>
+</div>
+<hr />
 <h2 id="motivations-and-goals"><a class="header" href="#motivations-and-goals">Motivations and Goals</a></h2>
 <p>This book arises from my frustration of not finding modern, clear, and concise teaching materials that are readily accessible to beginners like me who want to learn how to create their own programming language.</p>
-<p>The following are my guidelines:</p>
 <blockquote>
-<p>“If you don’t know how <em>compilers</em> work, then you don’t know how computers work” <sup><a href="http://steve-yegge.blogspot.com/2007/06/rich-programmer-food.html?">1</a></sup></p>
+<p><em>“If you don’t know how compilers work, then you don’t know how computers work”</em> <sup><a href="http://steve-yegge.blogspot.com/2007/06/rich-programmer-food.html">1</a></sup></p>
 </blockquote>
 <blockquote>
-<p>“If you can’t explain something in simple terms, you don’t understand it” <sup><a href="https://skeptics.stackexchange.com/questions/8742/did-einstein-say-if-you-cant-explain-it-simply-you-dont-understand-it-well-en">2</a></sup></p>
+<p><em>“If you can’t explain something in simple terms, you don’t understand it”</em> <sup><a href="https://skeptics.stackexchange.com/questions/8742/did-einstein-say-if-you-cant-explain-it-simply-you-dont-understand-it-well-en">2</a></sup></p>
 </blockquote>
-<p><span style="font-family:Trebuchet MS">Pedagogically, one of the most effective methods of teaching is co-creating interactively. Introducing the core aspects around the <em>simplest example</em> (here, our calculator language) helps a lot to build knowledge and confidence. For that, we will use mature technologies instead of spending tons of time partially reinventing the wheel and boring the reader.</span></p>
+<p><span style="font-family:Trebuchet MS">Pedagogically, one of the most effective methods of teaching is co-creating interactively. Introducing the core aspects around the <em>simplest example</em> (here, our calculator language) helps build knowledge and confidence. We use mature technologies instead of reinventing the wheel.</span></p>
+<hr />
 <h2 id="learning-progression"><a class="header" href="#learning-progression">Learning Progression</a></h2>
 <p>We build four languages, each building on concepts from the previous:</p>
 <div class="table-wrapper"><table><thead><tr><th>Language</th><th>Grammar</th><th>New Concepts</th><th>Execution</th></tr></thead><tbody>
@@ -241,58 +252,62 @@ Expr = { UnaryExpr | BinaryExpr | Term }
 Term = _{Int | "(" ~ Expr ~ ")" }
 ...
 </code></pre>
-<p>This minimal language lets us focus on the fundamentals without distraction: what is a grammar? How does pest generate a parser? What is an AST? We also explore <em>three different backends</em> (interpreter, bytecode VM, JIT) to show that the same AST can be executed in multiple ways.</p>
+<p>This minimal language lets us focus on the fundamentals: what is a grammar? How does pest generate a parser? What is an AST? We explore <em>three different backends</em> (interpreter, bytecode VM, JIT) to show that the same AST can be executed in multiple ways.</p>
 <h3 id="part-ii-firstlang"><a class="header" href="#part-ii-firstlang">Part II: Firstlang</a></h3>
-<p>With the basics understood, we add the features that make a <em>real</em> programming language. The grammar grows to 70 lines, adding:</p>
-<pre><code class="language-text">// New: Statements instead of just expressions
+<p>With the basics understood, we add features that make a <em>real</em> programming language. The grammar grows to 70 lines:</p>
+<pre><code class="language-text">// Statements instead of just expressions
 Stmt = { Function | Return | Assignment | Expr }
 
-// New: Functions with parameters
+// Functions with parameters
 Function = { "def" ~ Identifier ~ "(" ~ Params? ~ ")" ~ Block }
 
-// New: Control flow
+// Control flow
 Conditional = { "if" ~ "(" ~ Expr ~ ")" ~ Block ~ "else" ~ Block }
 WhileLoop = { "while" ~ "(" ~ Expr ~ ")" ~ Block }
 </code></pre>
 <p>We focus on a single backend (tree-walking interpreter) to deeply understand scoping, call stacks, and recursion. The culminating example is computing Fibonacci recursively.</p>
 <h3 id="part-iii-secondlang"><a class="header" href="#part-iii-secondlang">Part III: Secondlang</a></h3>
 <p>We add <em>static types</em> and compile to native code. The grammar changes are minimal (just 7 more lines), but the compiler grows significantly:</p>
-<pre><code class="language-text">// New: Type annotations
+<pre><code class="language-text">// Type annotations
 Type = { IntType | BoolType }
 TypedParam = { Identifier ~ ":" ~ Type }
 ReturnType = { "-&gt;" ~ Type }
 
-// Modified: Functions now have types
+// Functions now have types
 Function = { "def" ~ Identifier ~ "(" ~ TypedParams? ~ ")" ~ ReturnType? ~ Block }
 </code></pre>
-<p>This demonstrates a key insight: types are primarily a <em>semantic</em> addition, not a syntactic one. The grammar changes are small, but we need new compiler phases (type checking, type inference) and can now generate efficient native code via LLVM.</p>
+<p>Types are primarily a <em>semantic</em> addition, not a syntactic one. The grammar changes are small, but we need new compiler phases (type checking, type inference) and can now generate efficient native code via LLVM.</p>
 <h3 id="part-iv-thirdlang"><a class="header" href="#part-iv-thirdlang">Part IV: Thirdlang</a></h3>
 <p>Finally, we add <em>object-oriented programming</em> with classes, methods, and memory management. The grammar grows to 140 lines:</p>
-<pre><code class="language-text">// New: Class definitions
+<pre><code class="language-text">// Class definitions
 ClassDef = { "class" ~ Identifier ~ "{" ~ ClassBody ~ "}" }
 FieldDef = { Identifier ~ ":" ~ Type }
 MethodDef = { "def" ~ Identifier ~ "(" ~ SelfParam ~ ... ~ ")" ~ ... ~ Block }
 
-// New: Object operations
+// Object operations
 NewExpr = { "new" ~ Identifier ~ "(" ~ Args? ~ ")" }
 Delete = { "delete" ~ Expr }
 </code></pre>
 <p>This introduces heap allocation (<code>malloc</code>/<code>free</code>), struct types in LLVM, and the <code>self</code> parameter for methods. We see how OOP features map to lower-level constructs.</p>
+<hr />
 <h2 id="outline"><a class="header" href="#outline">Outline</a></h2>
 <ul>
-<li><a href="./crash_course.html">Crash Course on Computing</a> where we briefly set up definitions and foundations</li>
-<li><a href="./01_calculator/calc_intro.html"><strong>Calculator</strong></a>: Our first language supporting simple integer addition and subtraction. We use <a href="https://en.wikipedia.org/wiki/Parsing_expression_grammar">PEG</a> to define our grammar, <a href="https://pest.rs/">pest</a> to generate the parser, and explore AST interpretation, JIT compilation with <a href="https://github.com/TheDan64/inkwell">inkwell</a>, and a bytecode VM</li>
-<li><a href="./02_firstlang/intro.html"><strong>Firstlang</strong></a>: An interpreted language with variables, functions, control flow, and recursion. We implement <a href="./02_firstlang/fibonacci.html">Fibonacci</a> as the culminating example</li>
-<li><a href="./03_secondlang/intro.html"><strong>Secondlang</strong></a>: A statically typed language that compiles to native code via LLVM. We add <a href="./03_secondlang/annotations.html">type annotations</a>, <a href="./03_secondlang/inference.html">type inference</a>, AST <a href="./03_secondlang/optimizations.html">optimization passes</a> with the visitor pattern, and <a href="./03_secondlang/jit_fibonacci.html">JIT compilation</a></li>
-<li><a href="./04_thirdlang/intro.html"><strong>Thirdlang</strong></a>: An object-oriented language with <a href="./04_thirdlang/classes_syntax.html">classes</a>, <a href="./04_thirdlang/methods.html">methods</a>, <a href="./04_thirdlang/constructors.html">constructors/destructors</a>, and <a href="./04_thirdlang/memory.html">explicit memory management</a> via <code>new</code> and <code>delete</code></li>
+<li><a href="./crash_course.html">Crash Course on Computing</a> - definitions and foundations</li>
+<li><a href="./01_calculator/calc_intro.html"><strong>Calculator</strong></a> - integer arithmetic with PEG, pest, AST interpretation, JIT compilation, and bytecode VM</li>
+<li><a href="./02_firstlang/intro.html"><strong>Firstlang</strong></a> - variables, functions, control flow, recursion, culminating in <a href="./02_firstlang/fibonacci.html">Fibonacci</a></li>
+<li><a href="./03_secondlang/intro.html"><strong>Secondlang</strong></a> - <a href="./03_secondlang/annotations.html">type annotations</a>, <a href="./03_secondlang/inference.html">type inference</a>, <a href="./03_secondlang/optimizations.html">optimization passes</a>, and <a href="./03_secondlang/jit_fibonacci.html">JIT compilation</a></li>
+<li><a href="./04_thirdlang/intro.html"><strong>Thirdlang</strong></a> - <a href="./04_thirdlang/classes_syntax.html">classes</a>, <a href="./04_thirdlang/methods.html">methods</a>, <a href="./04_thirdlang/constructors.html">constructors/destructors</a>, and <a href="./04_thirdlang/memory.html">memory management</a></li>
 </ul>
-<h2 id="donation"><a class="header" href="#donation">Donation</a></h2>
-<p>If you have found this book useful, please consider donating to any of the organizations below</p>
-<ul>
-<li><a href="https://childfoundation.org/">Child Foundation</a></li>
-<li><a href="https://blacklivesmatter.com/">Black Lives Matter</a></li>
-<li><a href="https://www.foodbankscanada.ca/">Food Bank of Canada</a></li>
-</ul>
+<hr />
+<p align="center">
+  <strong>Support</strong><br>
+  If you found this book useful, please consider donating to:
+</p>
+<p align="center">
+  <a href="https://mycf.childfoundation.org/s/donate">Child Foundation</a> &bull;
+  <a href="https://blacklivesmatter.com/">Black Lives Matter</a> &bull;
+  <a href="https://www.foodbankscanada.ca/">Food Bank of Canada</a>
+</p>
 
                     </main>
 
