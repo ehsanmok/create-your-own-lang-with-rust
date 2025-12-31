@@ -251,19 +251,27 @@ entry:
 
 ## JIT Execution
 
+Now that we can generate IR for classes, let's actually run it. Here's how we take our Thirdlang program from source code to executed result:
+
 ```rust,ignore
 {{#include ../../../thirdlang/src/codegen.rs:jit_run}}
 ```
 
 <a class="filename" href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/thirdlang/src/codegen.rs">thirdlang/src/codegen.rs</a>
 
-Same pattern as Secondlang:
+This follows the same pattern as Secondlang, but now with class support. Let's walk through what happens:
 
-1. Create code generator
-2. Compile program
-3. Create JIT engine
-4. Get `__main` function
-5. Call and return result
+1. **Create the code generator** - This sets up our LLVM context, module, and builder. Think of it as preparing our workspace.
+
+2. **Compile the program** - We walk through the AST and emit LLVM IR for each class, method, and statement. When we encounter `new Counter()`, we emit malloc + constructor calls. When we see `c.increment()`, we emit a method call with `c` passed as `self`.
+
+3. **Create the JIT engine** - LLVM takes our IR and compiles it to native machine code for your CPU. This happens at runtime, hence "Just-In-Time".
+
+4. **Get the `__main` function** - Remember how we wrapped top-level code in a `__main` function? We look it up in the compiled code.
+
+5. **Call it and return** - We execute the native code. When it calls `malloc`, it's calling the real C malloc. When it calls our constructor, it's running the native x86/ARM code we generated. Fast!
+
+The magic is that the code we're running isn't being interpreted - it's real compiled code, just like if you wrote it in C or Rust. Objects really live on the heap. Methods really jump to function addresses. It's all native.
 
 ## Memory Layout Summary
 
@@ -309,7 +317,6 @@ Our simple approach is sufficient for learning the concepts.
 | delete | destructor call + free |
 
 <div class="checkpoint">
-<strong>Checkpoint</strong>
 
 At this point, you should be able to:
 

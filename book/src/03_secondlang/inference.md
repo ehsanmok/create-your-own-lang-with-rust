@@ -430,7 +430,6 @@ cargo test typeck
 ```
 
 <div class="checkpoint">
-<strong>Checkpoint</strong>
 
 At this point, you should be able to:
 

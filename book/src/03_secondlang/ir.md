@@ -304,7 +304,6 @@ LLVM IR key concepts:
 - **Platform-independent** - LLVM handles the CPU-specific details
 
 <div class="checkpoint">
-<strong>Checkpoint</strong>
 
 At this point, you should understand:
 

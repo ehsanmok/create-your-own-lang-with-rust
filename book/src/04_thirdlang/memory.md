@@ -334,7 +334,6 @@ delete p           # Caller deletes
 Memory management is one of the hardest parts of systems programming. Our simple model teaches the fundamentals without the full complexity of real-world solutions.
 
 <div class="checkpoint">
-<strong>Checkpoint</strong>
 
 At this point, you should understand:
 

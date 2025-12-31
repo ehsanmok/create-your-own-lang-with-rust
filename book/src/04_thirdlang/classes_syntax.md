@@ -300,7 +300,6 @@ The new `Class(String)` variant holds the class name. When we see `Point` as a t
 | Delete statement | No | `delete obj` |
 
 <div class="checkpoint">
-<strong>Checkpoint</strong>
 
 At this point, you should be able to:
 

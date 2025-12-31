@@ -1,22 +1,34 @@
 # From Functions to Objects
 
-You've built Secondlang - a typed, compiled language that generates native code via LLVM. Fast Fibonacci!
+You've built Secondlang - a typed, compiled language that generates native code via LLVM. It's fast (computes `fib(35)` in milliseconds), type-safe (catches errors at compile time), and generates efficient machine code.
 
-But something's missing. Look at this code:
+But try modeling something from the real world - say, a 2D point on a screen, or a player in a game, or a bank account. You'll quickly hit a wall.
+
+Look at this code for computing the distance between two points:
 
 ```
-# Two related values
+# Point 1
 x1 = 10
 y1 = 20
 
+# Point 2
 x2 = 30
 y2 = 40
 
-# How do we know x1 goes with y1?
-# How do we pass "a point" to a function?
+# Distance computation
+dx = x2 - x1
+dy = y2 - y1
+distance_squared = dx*dx + dy*dy
 ```
 
-We need a way to **group related data together**.
+This works, but there are problems:
+
+1. **No semantic grouping** - Nothing says `x1` and `y1` belong together. They're just two independent integers.
+2. **Easy to mix up** - What if you accidentally use `x1` with `y2`? The compiler won't catch it.
+3. **Can't pass as a unit** - You can't write `def distance(p1, p2)`. You need `def distance(x1, y1, x2, y2)`.
+4. **No encapsulation** - The distance formula is scattered across your code. If you want to change it, you need to find every place you computed it.
+
+We need a way to **group related data** and **attach behavior to that data**.
 
 ## The Problem with Primitives
 
@@ -114,16 +126,23 @@ Everything from Secondlang, plus:
 
 ## The Goal
 
-By the end of Part IV:
+By the end of Part IV, you'll have a full object-oriented language:
 
 ```
 class Counter {
     value: int
 
-    def __init__(self, start: int) { self.value = start }
+    def __init__(self, start: int) {
+        self.value = start
+    }
+
     def increment(self) -> int {
         self.value = self.value + 1
         return self.value
+    }
+
+    def __del__(self) {
+        # Cleanup when deleted
     }
 }
 
@@ -133,7 +152,45 @@ c.increment()  # 2
 delete c
 ```
 
-Real OOP, compiled to native code.
+This small example demonstrates everything OOP adds:
+
+- **Grouping** - `value` lives inside `Counter`, not as a loose variable
+- **Methods** - `increment` operates on `self`, not global state
+- **Encapsulation** - Implementation details hidden inside the class
+- **Lifecycle** - `__init__` creates, `__del__` cleans up
+- **Heap allocation** - Objects live beyond function scope
+- **Manual memory** - You control when objects are freed
+
+## What You'll Learn
+
+Thirdlang teaches you how OOP is implemented under the hood:
+
+1. **Class types** - How classes become LLVM struct types
+2. **Heap allocation** - Using `malloc` to create objects
+3. **Field access** - LLVM's `getelementptr` instruction
+4. **Method calls** - Passing `self` as the first parameter
+5. **Constructors/Destructors** - Initialization and cleanup
+6. **Memory management** - Manual `new`/`delete` like C++
+
+After Thirdlang, you'll understand how Python's classes, JavaScript's objects, and C++'s structs work at the machine level.
+
+## The Trade-offs
+
+Thirdlang's memory model is deliberately simple - and dangerous:
+
+- **No garbage collection** - You must manually `delete` objects
+- **Dangling pointers** - Using an object after `delete` is undefined behavior
+- **Memory leaks** - Forgetting to `delete` leaks memory forever
+- **Double free** - Calling `delete` twice is undefined behavior
+
+Real languages solve this with:
+
+- **Garbage collection** (Python, Java, Go)
+- **Reference counting** (Swift, Python's implementation)
+- **Ownership** (Rust)
+- **Smart pointers** (C++)
+
+We don't implement these because they're complex. But after Thirdlang, you'll understand *why* they exist and *what problems* they solve.
 
 ## Ready?
 
