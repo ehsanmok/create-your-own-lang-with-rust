@@ -1,9 +1,15 @@
 name: CI
 
 on:
-  pull_request:
   push:
+    branches:
+      -master
+    paths-ignore:
+      - "**/README.md"
+  pull_request:
     branches: [master]
+    paths-ignore:
+      - "**/README.md"
 
 env:
   CARGO_TERM_COLOR: always
@@ -48,11 +54,17 @@ jobs:
       - name: Clippy Secondlang (nightly)
         run: rustup run nightly cargo clippy -p secondlang -- -D warnings
 
+      - name: Clippy Thirdlang (nightly)
+        run: rustup run nightly cargo clippy -p thirdlang -- -D warnings
+
       - name: Build (stable)
         run: pixi run build
 
       - name: Build Secondlang (nightly)
         run: rustup run nightly cargo build -p secondlang
+
+      - name: Build Thirdlang (nightly)
+        run: rustup run nightly cargo build -p thirdlang
 
       - name: Test Calculator
         run: pixi run test-calculator
@@ -62,6 +74,9 @@ jobs:
 
       - name: Test Secondlang
         run: rustup run nightly cargo test -p secondlang
+
+      - name: Test Thirdlang
+        run: rustup run nightly cargo test -p thirdlang
 
       - name: Run Examples (stable only)
         run: |
@@ -76,6 +91,13 @@ jobs:
           rustup run nightly cargo run -p secondlang -- secondlang/examples/fibonacci.sl
           rustup run nightly cargo run -p secondlang -- secondlang/examples/factorial.sl
           rustup run nightly cargo run -p secondlang -- secondlang/examples/inference.sl
+
+      - name: Run Thirdlang Examples
+        run: |
+          rustup run nightly cargo run -p thirdlang --bin thirdlang -- thirdlang/examples/point.tl
+          rustup run nightly cargo run -p thirdlang --bin thirdlang -- thirdlang/examples/counter.tl
+          rustup run nightly cargo run -p thirdlang --bin thirdlang -- thirdlang/examples/destructor.tl
+          rustup run nightly cargo run -p thirdlang --bin thirdlang -- thirdlang/examples/linked_node.tl
 
       - name: Build Book
         run: pixi run book-build

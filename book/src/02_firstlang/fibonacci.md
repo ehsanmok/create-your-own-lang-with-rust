@@ -26,7 +26,7 @@ This sequence appears throughout nature - in flower petals, pine cones, and the 
 
 The mathematical definition translates directly to code:
 
-```python
+```
 def fib(n) {
     if (n < 2) {
         return n
@@ -40,21 +40,10 @@ fib(10)  # = 55
 
 This is beautiful in its simplicity, but let's trace through what happens when we call `fib(4)`:
 
-```
-fib(4)
-├── fib(3)
-│   ├── fib(2)
-│   │   ├── fib(1) → 1
-│   │   └── fib(0) → 0
-│   │   └── 1 + 0 = 1
-│   └── fib(1) → 1
-│   └── 1 + 1 = 2
-└── fib(2)
-    ├── fib(1) → 1
-    └── fib(0) → 0
-    └── 1 + 0 = 1
-└── 2 + 1 = 3
-```
+<p align="center">
+</br>
+    <a href><img alt="fib(4)" src="../img/fib4.svg"> </a>
+</p>
 
 Each call creates a new stack frame in our interpreter, and when the function returns, we pop the frame and continue with the result.
 
@@ -70,7 +59,7 @@ Our interpreter properly handles recursion because:
 
 For comparison, here's an iterative version (also works in Firstlang):
 
-```python
+```
 def fib_iter(n) {
     if (n < 2) {
         return n

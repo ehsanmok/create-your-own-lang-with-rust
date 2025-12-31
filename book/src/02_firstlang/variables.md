@@ -2,7 +2,7 @@
 
 Variables let us store values and refer to them by name. In Firstlang, assignment is simple:
 
-```python
+```
 x = 42
 name = x + 8    # name = 50
 ```
@@ -47,7 +47,7 @@ When we encounter a variable reference like `x`:
 
 Firstlang uses simple scoping rules:
 
-```python
+```
 x = 10          # global scope
 
 def foo() {
@@ -62,7 +62,7 @@ Variables inside functions are local to that function. Global variables (defined
 
 ## Example
 
-```python
+```
 # Variables and arithmetic
 a = 5
 b = 3
@@ -77,4 +77,24 @@ x = x * 2
 x               # 4
 ```
 
+<div class="checkpoint">
+<strong>Checkpoint</strong>
+
+At this point, you should be able to:
+
+- Parse and evaluate `x = 42` and `y = x + 1`
+- Look up variables and get their values
+- Handle "undefined variable" errors gracefully
+
+</div>
+
 In the [next section](./functions.md), we'll see how functions use these building blocks.
+
+<div class="related-topics">
+<strong>Related Topics</strong>
+
+- [Functions](./functions.md) - Parameters are just local variables
+- [Scoping](./recursion.md) - How each function call gets its own variables
+- [Secondlang Variables](../03_secondlang/annotations.md) - Adding types to variables
+
+</div>

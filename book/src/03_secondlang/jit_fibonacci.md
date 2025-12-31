@@ -6,31 +6,10 @@ We have built all the pieces. Now let us put them together and run some real pro
 
 Here is what happens when you run a Secondlang program:
 
-```
-Source Code: def fib(n: int) -> int { ... }; fib(10)
-                              |
-                          [Parser]
-                              |
-              Typed AST (types are Unknown)
-                              |
-                        [Type Checker]
-                              |
-              Typed AST (all types filled in)
-                              |
-                    [Optimizer (optional)]
-                              |
-                      [Code Generator]
-                              |
-                          LLVM IR
-                              |
-                        [JIT Engine]
-                              |
-                      Native Machine Code
-                              |
-                          [Execute]
-                              |
-                         Result: 55
-```
+<p align="center">
+</br>
+    <a href><img alt="JIT Fib pipeline" src="../img/jit-fib-pipeline.svg"> </a>
+</p>
 
 Each step transforms the program into a different representation, getting closer and closer to something the CPU can execute.
 
@@ -75,7 +54,7 @@ rustup run nightly cargo run -- --ir examples/fibonacci.sl
 
 You will see something like:
 
-```llvm
+```
 ; ModuleID = 'secondlang'
 source_filename = "secondlang"
 
@@ -154,7 +133,7 @@ Expected output: `3628800`
 
 The `inference.sl` example demonstrates the compiler inferring types automatically:
 
-```python
+```
 def complex_calc(x: int) -> int {
     a = x + 1           # int (inferred from x + literal)
     b = a * a           # int (inferred from int * int)
@@ -233,7 +212,7 @@ Let us step back and appreciate what we have accomplished. Starting from scratch
 
 All in about 1500 lines of Rust.
 
-## Comparing the Three Languages
+## Comparing the Languages
 
 See how we progressed through each language:
 
@@ -252,16 +231,15 @@ The progression is clear:
 2. **[Firstlang](../02_firstlang/intro.md)** - Add programming constructs, understand interpretation
 3. **Secondlang** - Add types, understand compilation
 
-## What Next?
+## What's Next: Thirdlang
 
-You now have the foundation to build real programming languages. Some ideas to explore:
+Ready for more? In **[Part IV: Thirdlang](../04_thirdlang/intro.md)**, we add **object-oriented programming**:
 
-- **Add more types**: strings, arrays, structs
-- **Add closures**: functions that capture variables
-- **Add garbage collection**: automatic memory management
-- **AOT compilation**: compile to executables instead of JIT
-- **Better error messages**: with source locations and suggestions
+- **Classes** - User-defined types with fields and methods
+- **Objects** - Heap-allocated instances
+- **Constructors/Destructors** - `__init__` and `__del__`
+- **Memory Management** - `new` and `delete`
 
-The concepts you learned here - grammars, parsing, ASTs, type checking, code generation - apply to any language you might want to build.
+Thirdlang builds directly on what you learned here. The type system extends to support class types, and the code generator adds LLVM struct types and malloc/free.
 
-Happy hacking.
+Continue to **[Thirdlang: Adding Classes and Objects](../04_thirdlang/intro.md)** →

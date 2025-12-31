@@ -211,4 +211,25 @@ All in a fraction of a second.
 cargo test codegen
 ```
 
+<div class="checkpoint">
+<strong>Checkpoint</strong>
+
+At this point, you should be able to:
+
+- Run `cargo run -- --ir examples/simple.sl` and see LLVM IR output
+- See functions like `@fib` in the IR
+- Verify the IR compiles without errors
+
+</div>
+
+<div class="related-topics">
+<strong>Related Topics</strong>
+
+- [From AST to IR](./ir.md) - Understanding LLVM IR syntax
+- [Type Inference](./inference.md) - How types flow into codegen
+- [JIT Compiling Fibonacci](./jit_fibonacci.md) - Running the compiled code
+- [Thirdlang Codegen](../04_thirdlang/codegen_classes.md) - Extending codegen for classes
+
+</div>
+
 In the next chapter, we put it all together and run Fibonacci.

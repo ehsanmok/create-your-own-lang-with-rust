@@ -6,7 +6,7 @@ Before we start adding types to our language, let us take a moment to understand
 
 In Firstlang, we can write code like this:
 
-```python
+```
 def add(a, b) {
     return a + b
 }
@@ -131,25 +131,10 @@ We write the types on function parameters and return values (the *boundaries*), 
 
 Here is the high-level flow:
 
-```
-Source Code: "def add(a: int, b: int) -> int { return a + b }"
-                              |
-                          [Parser]
-                              |
-                Typed AST (some types are Unknown)
-                              |
-                        [Type Checker]
-                              |
-                Typed AST (all types filled in)
-                              |
-                      [Code Generator]
-                              |
-                          LLVM IR
-                              |
-                           [LLVM]
-                              |
-                        Native Code
-```
+<p align="center">
+</br>
+    <a href><img alt="type checking pipeline" src="../img/type-checking-pipeline.svg"> </a>
+</p>
 
 The [parser](https://en.wikipedia.org/wiki/Parsing) creates an [AST](https://en.wikipedia.org/wiki/Abstract_syntax_tree) where some types are marked as `Unknown` (we do not know them yet). The type checker walks through the AST, figures out all the unknown types, and checks that everything is consistent. If something is wrong (like `1 + true`), it reports an error. If everything is okay, we have a fully-typed AST ready for code generation.
 

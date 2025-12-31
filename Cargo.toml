@@ -2,6 +2,7 @@
 members = [
     "firstlang",
     "secondlang",
+    "thirdlang",
     "calculator",
     "calculator/examples/llvm",
 ]

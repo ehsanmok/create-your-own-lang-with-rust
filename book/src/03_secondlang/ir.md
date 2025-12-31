@@ -6,19 +6,14 @@ Now we have a typed, [optimized](./optimizations.md) AST. The next step is to co
 
 [LLVM](https://llvm.org/) is a compiler infrastructure project that provides a set of reusable compiler and toolchain technologies. The key idea: you compile your language to LLVM IR, and LLVM handles everything else - optimization, code generation for different platforms, etc.
 
+> LLVM is like a universal translator for CPUs. You speak LLVM IR, and LLVM translates it to x86, ARM, WebAssembly - whatever you need. You write your compiler once; LLVM gives you every platform for free.
+
 As discussed in the [Crash Course](../crash_course.md#intermediate-representation-ir), an [IR](https://en.wikipedia.org/wiki/Intermediate_representation) is any representation between source and assembly:
 
-```
-Secondlang Source Code
-         |
-    [Your Compiler]
-         |
-      LLVM IR
-         |
-       [LLVM]
-         |
-   Machine Code (x86, ARM, etc.)
-```
+<p align="center">
+</br>
+    <a href><img alt="simple llvm flow" src="../img/simple-llvm-flow.svg"> </a>
+</p>
 
 Think of IR as a *universal assembly language*. It is low-level (close to the machine) but not tied to any specific CPU. LLVM takes IR and produces optimized machine code for whatever platform you are on.
 
@@ -36,7 +31,7 @@ def answer() -> int {
 
 And here is the LLVM IR it compiles to:
 
-```llvm
+```
 define i64 @answer() {
 entry:
   ret i64 42
@@ -63,7 +58,7 @@ def add(a: int, b: int) -> int {
 
 LLVM IR:
 
-```llvm
+```
 define i64 @add(i64 %a, i64 %b) {
 entry:
   %a.addr = alloca i64           ; allocate stack space for a
@@ -99,7 +94,7 @@ x = x + 1    // x is now 6
 
 By storing variables in stack slots (`alloca`), we can modify them:
 
-```llvm
+```
 %x.addr = alloca i64
 store i64 5, ptr %x.addr           ; x = 5
 %tmp = load i64, ptr %x.addr       ; load x
@@ -125,7 +120,7 @@ def max(a: int, b: int) -> int {
 
 LLVM IR:
 
-```llvm
+```
 define i64 @max(i64 %a, i64 %b) {
 entry:
   %cmp = icmp sgt i64 %a, %b     ; compare: is a > b? (signed greater than)
@@ -160,7 +155,7 @@ x = 3
 
 In SSA form, we cannot reuse `x`. Instead, we create new names:
 
-```llvm
+```
 %x.1 = ...   ; first assignment
 %x.2 = ...   ; second assignment
 %x.3 = ...   ; third assignment
@@ -187,7 +182,7 @@ def pick(cond: bool, a: int, b: int) -> int {
 
 After the if/else, what is `x`? It depends on which branch we took. In SSA, we need different names:
 
-```llvm
+```
 then:
   %x.then = ...
   br label %merge
@@ -202,7 +197,7 @@ merge:
 
 The answer is a **[phi node](https://en.wikipedia.org/wiki/Static_single-assignment_form#Converting_to_SSA)** (φ). A phi node selects a value based on which block we came from:
 
-```llvm
+```
 merge:
   %x = phi i64 [ %x.then, %then ], [ %x.else, %else ]
   ret i64 %x
@@ -228,7 +223,7 @@ def fib(n: int) -> int {
 
 LLVM IR (simplified):
 
-```llvm
+```
 define i64 @fib(i64 %n) {
 entry:
   %cmp = icmp slt i64 %n, 2      ; is n < 2?
@@ -272,7 +267,7 @@ rustup run nightly cargo run -- --ir examples/fibonacci.sl
 
 Output:
 
-```llvm
+```
 ; ModuleID = 'secondlang'
 source_filename = "secondlang"
 
@@ -307,5 +302,26 @@ LLVM IR key concepts:
 - **Basic blocks** - sequences of instructions ending with a terminator (`ret`, `br`)
 - **Phi nodes** - merge values from different control flow paths
 - **Platform-independent** - LLVM handles the CPU-specific details
+
+<div class="checkpoint">
+<strong>Checkpoint</strong>
+
+At this point, you should understand:
+
+- Why LLVM IR exists (portable, optimizable)
+- The alloca/load/store pattern for variables
+- How conditionals use basic blocks and phi nodes
+- What SSA form means
+
+</div>
+
+<div class="related-topics">
+<strong>Related Topics</strong>
+
+- [LLVM Code Generation](./codegen.md) - Generating IR from AST
+- [Basic LLVM Example](../01_calculator/basic_llvm.md) - Simple JIT introduction
+- [Thirdlang IR](../04_thirdlang/optimization.md) - Optimizing IR
+
+</div>
 
 In the next chapter, we write the [code generator](./codegen.md) that produces this IR from our typed AST.

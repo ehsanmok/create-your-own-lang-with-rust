@@ -66,7 +66,7 @@ Calculator evaluated a single expression and returned a value. Firstlang execute
 
 Our ultimate goal is to compute the Fibonacci sequence recursively:
 
-```python
+```
 def fib(n) {
     if (n < 2) {
         return n

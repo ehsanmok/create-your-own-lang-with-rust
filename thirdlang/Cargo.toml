@@ -1,0 +1,22 @@
+[package]
+name = "thirdlang"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.70"
+description = "An object-oriented programming language with classes, methods, and explicit memory management"
+authors = ["Ehsan M. Kermani <ehsanmok@users.noreply.github.com>"]
+
+[dependencies]
+pest = "2.7"
+pest_derive = "2.7"
+# LLVM bindings - requires nightly Rust
+# Update feature to match your llvm-config --version
+inkwell = { version = "0.7.1", features = ["llvm20-1"] }
+
+[lib]
+path = "src/lib.rs"
+
+[[bin]]
+name = "thirdlang"
+path = "src/main.rs"
+

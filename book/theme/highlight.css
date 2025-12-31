@@ -1,6 +1,9 @@
 /*
  * Syntax Highlighting - "Compiler Craft" Theme
  *
+ * NOTE: This book uses ONLY the Rust theme. All highlighting is optimized for
+ * the warm cream background of the Rust theme.
+ *
  * Color Palette Philosophy:
  * - Built on warm/cool contrast for visual interest and readability
  * - Warm tones (oranges, golds): literals, numbers, strings
@@ -11,7 +14,6 @@
  */
 
 /* Base code block styling - Rust theme (warm cream) */
-/* Only apply block display to code inside pre elements */
 pre code.hljs,
 pre>code {
     display: block;
@@ -23,7 +25,8 @@ pre>code {
     line-height: 1.65;
 }
 
-pre .hljs {
+pre .hljs,
+.hljs {
     background: #faf8f5;
     color: #3c3836;
     font-size: 0.95rem;
@@ -38,14 +41,14 @@ pre .hljs {
     overflow-x: visible;
 }
 
-/* Comments - warm gray (for light/Rust theme) */
+/* Comments - warm gray */
 .hljs-comment,
 .hljs-quote {
     color: #928374;
     font-style: italic;
 }
 
-/* Keywords - deep purple (maintains contrast on light bg) */
+/* Keywords - deep purple (maintains contrast on cream bg) */
 .hljs-keyword,
 .hljs-selector-tag {
     color: #8839ef;
@@ -150,7 +153,6 @@ pre .hljs {
 
 /* ========================================
    LANGUAGE-SPECIFIC OVERRIDES
-   Maintain consistency while allowing subtle language-specific tweaks
    ======================================== */
 
 /* Rust-specific styling */
@@ -172,47 +174,6 @@ pre .hljs {
     color: #c45b29;
 }
 
-/* Python-specific styling */
-.language-python .hljs-keyword {
-    color: #c084fc;
-}
-
-.language-python .hljs-built_in {
-    color: #fbbf24;
-}
-
-.language-python .hljs-title.function_ {
-    color: #60a5fa;
-}
-
-/* LLVM IR styling */
-.language-llvm .hljs-keyword {
-    color: #c084fc;
-}
-
-.language-llvm .hljs-type {
-    color: #fbbf24;
-}
-
-.language-llvm .hljs-symbol {
-    color: #22d3d1;
-}
-
-.language-llvm .hljs-number {
-    color: #fb923c;
-}
-
-/* Assembly styling */
-.language-asm .hljs-keyword,
-.language-x86asm .hljs-keyword {
-    color: #c084fc;
-}
-
-.language-asm .hljs-built_in,
-.language-x86asm .hljs-built_in {
-    color: #60a5fa;
-}
-
 /* Bash/Shell styling */
 .language-bash .hljs-keyword,
 .language-shell .hljs-keyword {
@@ -226,7 +187,7 @@ pre .hljs {
 
 .language-bash .hljs-variable,
 .language-shell .hljs-variable {
-    color: #67e8f9;
+    color: #0e7490;
 }
 
 /* TOML styling */
@@ -243,93 +204,15 @@ pre .hljs {
     color: #c084fc;
 }
 
-/* ========================================
-   LIGHT THEME (Rust theme)
-
-   Palette: Warm cream background with rich, saturated syntax colors
-   Maintains readability while feeling connected to the dark theme
-   ======================================== */
-
-.rust pre code.hljs,
-.light pre code.hljs {
-    background: #faf8f5;
-    color: #3c3836;
+/* Assembly styling */
+.language-asm .hljs-keyword,
+.language-x86asm .hljs-keyword {
+    color: #c084fc;
 }
 
-.rust .hljs,
-.light .hljs {
-    background: #faf8f5;
-    color: #3c3836;
-}
-
-/* Comments - warm gray */
-.rust .hljs-comment,
-.rust .hljs-quote,
-.light .hljs-comment,
-.light .hljs-quote {
-    color: #928374;
-    font-style: italic;
-}
-
-/* Keywords - deep purple (maintains contrast) */
-.rust .hljs-keyword,
-.light .hljs-keyword {
-    color: #8839ef;
-    font-weight: 500;
-}
-
-/* Types - rich amber (warm, readable on cream) */
-.rust .hljs-type,
-.rust .hljs-built_in,
-.light .hljs-type,
-.light .hljs-built_in {
-    color: #b45309;
-}
-
-/* Functions - deep blue (cool contrast) */
-.rust .hljs-title.function_,
-.rust .hljs-attr,
-.light .hljs-title.function_,
-.light .hljs-attr {
-    color: #2563eb;
-}
-
-/* Strings - forest green (natural, readable) */
-.rust .hljs-string,
-.light .hljs-string {
-    color: #166534;
-}
-
-/* Numbers - rust orange (brand consistency) */
-.rust .hljs-number,
-.light .hljs-number {
-    color: #c45b29;
-}
-
-/* Symbols - teal */
-.rust .hljs-symbol,
-.light .hljs-symbol {
-    color: #0891b2;
-}
-
-/* Variables - darker cyan for light bg */
-.rust .hljs-variable,
-.light .hljs-variable {
-    color: #0e7490;
-}
-
-/* Meta/macros - rust brand */
-.rust .hljs-meta,
-.light .hljs-meta {
-    color: #c45b29;
-}
-
-/* Tags and sections - coral red */
-.rust .hljs-section,
-.rust .hljs-name,
-.light .hljs-section,
-.light .hljs-name {
-    color: #dc2626;
+.language-asm .hljs-built_in,
+.language-x86asm .hljs-built_in {
+    color: #60a5fa;
 }
 
 /* ========================================
@@ -345,8 +228,8 @@ pre .hljs {
     -ms-user-select: none;
     user-select: none;
     text-align: center;
-    color: #5c6370;
-    border-right: 1px solid #3e4451;
+    color: #928374;
+    border-right: 1px solid #e5ddd2;
     vertical-align: top;
     padding-right: 10px !important;
 }

@@ -26,7 +26,7 @@ n \times (n-1)! & \text{otherwise}
 \end{cases}
 $$
 
-```python
+```
 def factorial(n) {
     if (n <= 1) {
         return 1        # Base case
@@ -78,7 +78,7 @@ Our interpreter properly handles recursion because:
 
 ### Sum of Numbers
 
-```python
+```
 def sum_to(n) {
     if (n <= 0) {
         return 0
@@ -92,7 +92,7 @@ sum_to(5)  # 5 + 4 + 3 + 2 + 1 + 0 = 15
 
 ### Power Function
 
-```python
+```
 def power(base, exp) {
     if (exp == 0) {
         return 1
@@ -108,7 +108,7 @@ power(2, 10)  # 1024
 
 Functions can call each other recursively. This is called [mutual recursion](https://en.wikipedia.org/wiki/Mutual_recursion):
 
-```python
+```
 def is_even(n) {
     if (n == 0) {
         return true
@@ -133,7 +133,7 @@ is_odd(7)   # true
 
 Recursion uses memory for each call. Very deep recursion can cause a [stack overflow](https://en.wikipedia.org/wiki/Stack_overflow):
 
-```python
+```
 factorial(100000)  # Too deep! Runs out of stack space.
 ```
 

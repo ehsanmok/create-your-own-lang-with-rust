@@ -39,12 +39,6 @@
 - **Linear Scan Register Allocation** - Poletto, Sarkar
 - **Simple and Efficient Construction of SSA Form** - Braun et al.
 
-## Community
-
-- **r/ProgrammingLanguages** on Reddit
-- **Programming Languages** Discord servers
-- **Rust Users Forum** - [users.rust-lang.org](https://users.rust-lang.org)
-
 ## Source Code
 
 All code for this book:

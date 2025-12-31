@@ -56,7 +56,7 @@ Block = { "{" ~ Stmt* ~ "}" }
 
 ### Simple Arithmetic
 
-```python
+```
 1 + 2 * 3       # = 7 (multiplication first)
 (1 + 2) * 3     # = 9 (parentheses override)
 -5 + 3          # = -2 (unary minus)
@@ -64,14 +64,14 @@ Block = { "{" ~ Stmt* ~ "}" }
 
 ### Variables
 
-```python
+```
 x = 10
 y = x + 5       # = 15
 ```
 
 ### Functions
 
-```python
+```
 def greet() {
     return 42
 }
@@ -85,7 +85,7 @@ add(3, 4)       # = 7
 
 ### Conditionals
 
-```python
+```
 def max(a, b) {
     if (a > b) {
         return a
@@ -99,7 +99,7 @@ max(10, 20)     # = 20
 
 ### Loops
 
-```python
+```
 x = 0
 while (x < 5) {
     x = x + 1
@@ -109,7 +109,7 @@ x               # = 5
 
 ### Recursion
 
-```python
+```
 def factorial(n) {
     if (n <= 1) {
         return 1

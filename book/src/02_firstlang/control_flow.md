@@ -6,7 +6,7 @@ Control flow lets our programs make decisions and repeat operations.
 
 The `if` expression evaluates a condition and executes one of two branches:
 
-```python
+```
 if (x > 0) {
     return 1
 } else {
@@ -33,7 +33,7 @@ Expr::If { cond, then_branch, else_branch } => {
 
 ### Examples
 
-```python
+```
 def abs(x) {
     if (x < 0) {
         return x * -1
@@ -46,7 +46,7 @@ abs(-5)     # 5
 abs(3)      # 3
 ```
 
-```python
+```
 def max(a, b) {
     if (a > b) {
         return a
@@ -62,7 +62,7 @@ max(10, 20)  # 20
 
 The `while` loop repeats while a condition is true:
 
-```python
+```
 x = 0
 while (x < 5) {
     x = x + 1
@@ -90,7 +90,7 @@ Expr::While { cond, body } => {
 
 ### Examples
 
-```python
+```
 # Sum 1 to 10
 sum = 0
 i = 1
@@ -101,7 +101,7 @@ while (i <= 10) {
 sum         # 55
 ```
 
-```python
+```
 # Iterative factorial
 def factorial(n) {
     result = 1
@@ -119,7 +119,7 @@ factorial(5)  # 120
 
 Control flow becomes powerful when combined with functions:
 
-```python
+```
 def countdown(n) {
     while (n > 0) {
         n = n - 1
@@ -144,7 +144,7 @@ def fizzbuzz_check(n) {
 
 `return` exits the function immediately, even from inside a loop:
 
-```python
+```
 def find_first_even(n) {
     i = 1
     while (i <= n) {
@@ -158,5 +158,25 @@ def find_first_even(n) {
 
 find_first_even(5)  # 2
 ```
+
+<div class="checkpoint">
+<strong>Checkpoint</strong>
+
+At this point, you should be able to:
+
+- Run `if (true) { 1 } else { 2 }` and get `1`
+- Run a `while` loop that counts to 10
+- Combine if/else with functions
+
+</div>
+
+<div class="related-topics">
+<strong>Related Topics</strong>
+
+- [Recursion](./recursion.md) - Functions calling themselves
+- [Fibonacci](./fibonacci.md) - Using all constructs together
+- [Secondlang Control Flow](../03_secondlang/codegen.md) - Compiling conditionals to IR
+
+</div>
 
 With control flow in place, we're ready for the ultimate test: [recursion](./recursion.md)!

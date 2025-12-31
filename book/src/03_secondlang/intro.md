@@ -43,7 +43,7 @@ The type checker is the major new component. It walks the AST, infers types for 
 
 Without types, the interpreter must check types at runtime for every operation:
 
-```python
+```
 # Firstlang interpreter
 def eval_binary(left, right, op):
     if type(left) != type(right):
@@ -55,7 +55,7 @@ def eval_binary(left, right, op):
 
 With static types, we know at compile time that `a` is an `int` and `b` is an `int`, so `a + b` is a single CPU instruction:
 
-```llvm
+```
 %add = add i64 %a, %b
 ```
 
@@ -75,7 +75,7 @@ No runtime checks, no type dispatch, just a direct machine instruction.
 
 Firstlang (untyped):
 
-```python
+```
 def fib(n) {
     if (n < 2) {
         return n

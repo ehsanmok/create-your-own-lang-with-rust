@@ -10,7 +10,7 @@ Functions are the heart of any programming language. They let us:
 
 In Firstlang, we define functions with `def`:
 
-```python
+```
 def add(a, b) {
     return a + b
 }
@@ -75,12 +75,14 @@ Expr::Call { name, args } => {
 
 ## The Call Stack
 
+> The call stack is like a stack of sticky notes. Each function call writes its variables on a new note and puts it on top. When the function returns, you tear off the top note and throw it away. The note underneath becomes current again. This is why `inner()`'s `x` doesn't overwrite `outer()`'s `x` - they're on different notes.
+
 Each function call creates a new "frame" on the call stack. This is crucial for:
 
 - **Local variables** - Each call has its own `a` and `b`
 - **Recursion** - Multiple calls can be "in flight" simultaneously
 
-```python
+```
 def outer() {
     x = 1
     return inner()
@@ -96,24 +98,16 @@ outer()
 
 During execution:
 
-```
-Call Stack:
-┌─────────────┐
-│ inner       │  ← current frame (y = 2)
-│ x = 1, y = ?│
-├─────────────┤
-│ outer       │  ← previous frame (x = 1)
-│ x = 1       │
-├─────────────┤
-│ global      │
-└─────────────┘
-```
+<p align="center">
+</br>
+    <a href><img alt="call stack" src="../img/call-stack.svg"> </a>
+</p>
 
 ## Examples
 
 ### Simple Function
 
-```python
+```
 def square(x) {
     return x * x
 }
@@ -123,7 +117,7 @@ square(5)       # 25
 
 ### Multiple Parameters
 
-```python
+```
 def area(width, height) {
     return width * height
 }
@@ -133,7 +127,7 @@ area(4, 5)      # 20
 
 ### Function Composition
 
-```python
+```
 def double(x) {
     return x * 2
 }

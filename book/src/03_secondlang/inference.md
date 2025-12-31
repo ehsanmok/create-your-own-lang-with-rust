@@ -1,5 +1,7 @@
 # Type Inference
 
+> Type inference is like filling in a crossword puzzle. Some squares have letters (explicit annotations), others are blank (Unknown). You use the constraints - "this must be 5 letters", "it crosses with CAT" - to fill in the blanks. Type inference uses constraints like "this is added to an int, so it must be int" to fill in Unknown types.
+
 In the [previous chapter](./annotations.md), we saw that the parser creates an AST with many `Type::Unknown` values. The type checker's job is to figure out what those unknown types should be. This process is called **[type inference](https://en.wikipedia.org/wiki/Type_inference)**.
 
 ## What Kind of Type Inference?
@@ -288,7 +290,7 @@ The type checker:
 4. **Checks `return doubled + 1`**:
    - `doubled` is `Int`, `1` is `Int`
    - `doubled + 1` is `Int`
-   - Declared return type is `Int` ✓ matches
+   - Declared return type is `Int` - matches
 
 All types are inferred from the parameter types flowing through the expressions.
 
@@ -387,10 +389,10 @@ For a simple language like Secondlang, this is fine. The annotation burden is lo
 
 | Feature | Secondlang | TypeScript | Haskell |
 |---------|------------|------------|---------|
-| Variable inference | ✓ | ✓ | ✓ |
-| Function param inference | ✗ | Partial | ✓ |
-| Polymorphism | ✗ | ✓ (generics) | ✓ (parametric) |
-| Bidirectional | ✗ | ✓ | Partial |
+| Variable inference | Yes | Yes | Yes |
+| Function param inference | No | Partial | Yes |
+| Polymorphism | No | Yes (generics) | Yes (parametric) |
+| Bidirectional | No | Yes | Partial |
 
 ## Summary
 
@@ -426,5 +428,26 @@ This demonstrates all the inference concepts in action.
 ```bash
 cargo test typeck
 ```
+
+<div class="checkpoint">
+<strong>Checkpoint</strong>
+
+At this point, you should be able to:
+
+- Compile `x = 5` and have `x` inferred as `int`
+- Get an error for `x = 5 + true` (type mismatch)
+- Compile functions without annotating local variable types
+
+</div>
+
+<div class="related-topics">
+<strong>Related Topics</strong>
+
+- [Type Annotations](./annotations.md) - Where types come from
+- [Why Types Matter](./why_types.md) - Motivation for static types
+- [Code Generation](./codegen.md) - How types inform IR generation
+- [Thirdlang Types](../04_thirdlang/classes_syntax.md) - Extending types for classes
+
+</div>
 
 In the next chapter, we look at [optimizations](./optimizations.md) we can do on the typed AST before generating code.

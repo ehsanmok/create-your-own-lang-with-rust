@@ -1,5 +1,7 @@
 ## Abstract Syntax Tree (AST)
 
+> Think of source code as a *sentence* and the AST as its *diagram*. Just like "The cat sat on the mat" can be diagrammed into subject/verb/object, `1 + 2` can be diagrammed into left/operator/right. The AST is that diagram - it captures *structure*, not just text.
+
 AST comes into the picture when we want to go from the string representation of our program like `"-1"` or `"1 + 2"` to something more manageable and easier to work with. Since our program is not a random string (that's what the grammar ensures), we can use the structure within the expressions `"-1"` and `"1 + 2"` to our advantage and come up with a *new representation* like a [tree](https://en.wikipedia.org/wiki/Tree_structure):
 
 <p align="center">
@@ -104,3 +106,24 @@ Run such tests locally with
 ```bash
 cargo test interpreter --tests
 ```
+
+<div class="checkpoint">
+<strong>Checkpoint</strong>
+
+At this point, you should be able to:
+
+* Parse `1 + 2` and build an AST with a `Binary` node
+* Evaluate `1 + 2 - 3` and get `0`
+* Handle nested expressions like `-1 + (2 + 3)`
+
+</div>
+
+<div class="related-topics">
+<strong>Related Topics</strong>
+
+* [Grammar and Parser](./grammar_lexer_parser.md) - How input becomes tokens
+* [JIT Compilation](./jit_intro.md) - Compile AST to machine code
+* [Virtual Machine](./vm.md) - Compile AST to bytecode
+* [Firstlang AST](../02_firstlang/functions.md) - AST for a full language
+
+</div>

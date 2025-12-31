@@ -5,21 +5,31 @@
 
 This repository contains the codes and the contents for [createlang.rs](https://createlang.rs)
 
+## Why did I write this book?
+
+The book arose from my frustration of not finding modern, clear and concise teaching materials that are readily accessible to beginners like me who wants to learn a bit on how to create their own programming language.
+
+> "If you don't know how *compilers* work, then you don't know how computers work" <sup>[1](http://steve-yegge.blogspot.com/2007/06/rich-programmer-food.html?)</sup>
+
+> "If you can't explain something in simple terms, you don't understand it" <sup>[2](https://skeptics.stackexchange.com/questions/8742/did-einstein-say-if-you-cant-explain-it-simply-you-dont-understand-it-well-en)</sup>
+
 ## Project Structure
 
-The book teaches programming language implementation through three progressively complex languages:
+The book teaches programming language implementation through four progressively complex languages:
 
-| Language | Type System | Execution | Rust Version |
-|----------|-------------|-----------|--------------|
-| **Calculator** | None | Interpreter/VM | stable 1.70+ |
-| **Calculator** | None | JIT | nightly (LLVM) |
-| **Firstlang** | Dynamic | Interpreter | stable 1.70+ |
-| **Secondlang** | Static | LLVM JIT | nightly (LLVM) |
+| Language | Type System | Execution | Features | Rust Version |
+|----------|-------------|-----------|----------|--------------|
+| **Calculator** | None | Interpreter/VM | Arithmetic | stable 1.70+ |
+| **Calculator** | None | JIT | Arithmetic | nightly (LLVM) |
+| **Firstlang** | Dynamic | Interpreter | Functions, recursion | stable 1.70+ |
+| **Secondlang** | Static | LLVM JIT | Type inference | nightly (LLVM) |
+| **Thirdlang** | Static | LLVM JIT | Classes, OOP | nightly (LLVM) |
 
 ```
 ├── calculator/     # Simple arithmetic language (see calculator/README.md)
 ├── firstlang/      # Interpreted language with recursion (see firstlang/README.md)
 ├── secondlang/     # Typed language with LLVM backend (see secondlang/README.md)
+├── thirdlang/      # OOP language with classes (see thirdlang/README.md)
 └── book/           # mdbook source
 ```
 
@@ -41,6 +51,14 @@ cargo run  # REPL
 cd secondlang
 rustup run nightly cargo run -- examples/fibonacci.sl
 rustup run nightly cargo run -- --ir examples/fibonacci.sl
+```
+
+### Thirdlang (nightly Rust + LLVM)
+
+```bash
+cd thirdlang
+rustup run nightly cargo run --bin thirdlang -- examples/point.tl
+rustup run nightly cargo run --bin thirdlang -- examples/counter.tl
 ```
 
 ### Calculator (stable Rust, or nightly for JIT)
@@ -105,15 +123,10 @@ cd firstlang && cargo test
 
 # Secondlang (nightly Rust)
 cd secondlang && rustup run nightly cargo test
+
+# Thirdlang (nightly Rust)
+cd thirdlang && rustup run nightly cargo test
 ```
-
-## Why am I writing this book?
-
-The book arises from my frustration of not finding modern, clear and concise teaching materials that are readily accessible to beginners like me who wants to learn a bit on how to create their own programming language.
-
-> "If you don't know how *compilers* work, then you don't know how computers work" <sup>[1](http://steve-yegge.blogspot.com/2007/06/rich-programmer-food.html?)</sup>
-
-> "If you can't explain something in simple terms, you don't understand it" <sup>[2](https://skeptics.stackexchange.com/questions/8742/did-einstein-say-if-you-cant-explain-it-simply-you-dont-understand-it-well-en)</sup>
 
 ## Building the Book
 

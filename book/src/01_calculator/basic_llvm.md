@@ -52,3 +52,23 @@ Here is how to *stitch* our add function in LLVM
 ```
 
 Yes! all of this just to add two integers.
+
+<div class="checkpoint">
+<strong>Checkpoint</strong>
+
+At this point, you should be able to:
+
+- Run the LLVM example with `rustup run nightly cargo run`
+- See the JIT execute and return `3` (for `1 + 2`)
+- Understand the context → module → function → basic block hierarchy
+
+</div>
+
+<div class="related-topics">
+<strong>Related Topics</strong>
+
+- [AST Traversal Patterns](./ast_traversal.md) - Compile full AST to LLVM
+- [LLVM IR Basics](../03_secondlang/ir.md) - Understanding LLVM IR syntax
+- [Secondlang Codegen](../03_secondlang/codegen.md) - Full compiler to LLVM
+
+</div>

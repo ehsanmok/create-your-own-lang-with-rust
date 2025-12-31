@@ -1,0 +1,148 @@
+// Thirdlang Grammar - Object-oriented language with classes
+// Extends Secondlang with classes, methods, constructors, destructors,
+// and explicit memory management (new/delete)
+
+WHITESPACE = _{ " " | "\t" | NEWLINE }
+COMMENT = _{ "#" ~ (!NEWLINE ~ ANY)* }
+
+// Keywords
+KEYWORD = @{
+    "def" | "if" | "else" | "while" | "true" | "false" | "return" |
+    "int" | "bool" | "class" | "self" | "new" | "delete"
+}
+
+// Identifiers (variable/function/class names)
+Identifier = @{ !KEYWORD ~ (ASCII_ALPHA | "_") ~ (ASCII_ALPHANUMERIC | "_")* }
+
+// ANCHOR: types
+// Types - now includes class types
+Type = { IntType | BoolType | ClassType }
+IntType = { "int" }
+BoolType = { "bool" }
+ClassType = { Identifier }  // Class name as type
+// ANCHOR_END: types
+
+// Program is a sequence of top-level items
+Program = _{ SOI ~ TopLevel* ~ EOI }
+
+// Top-level items: classes or statements
+TopLevel = { ClassDef | Stmt }
+
+// ANCHOR: class_def
+// =============================================================================
+// Class Definition
+// =============================================================================
+// class Point {
+//     x: int
+//     y: int
+//
+//     def __init__(self, x: int, y: int) {
+//         self.x = x
+//         self.y = y
+//     }
+//
+//     def distance(self, other: Point) -> int {
+//         dx = self.x - other.x
+//         return dx * dx
+//     }
+//
+//     def __del__(self) { }
+// }
+
+ClassDef = { "class" ~ Identifier ~ "{" ~ ClassBody ~ "}" }
+ClassBody = { (FieldDef | MethodDef)* }
+
+// Field definition: x: int
+FieldDef = { Identifier ~ ":" ~ Type }
+
+// Method definition: def name(self, params) -> type { body }
+// First parameter must be 'self'
+MethodDef = { "def" ~ Identifier ~ "(" ~ SelfParam ~ MethodParams? ~ ")" ~ ReturnType? ~ Block }
+SelfParam = { "self" }
+MethodParams = _{ "," ~ TypedParam ~ ("," ~ TypedParam)* }
+// ANCHOR_END: class_def
+
+// =============================================================================
+// Statements (same as Secondlang + delete)
+// =============================================================================
+Stmt = { Function | SimpleStmt }
+SimpleStmt = _{ Delete | Return | Assignment | Expr }
+
+// Function definition with types: def name(x: int, y: int) -> int { body }
+Function = { "def" ~ Identifier ~ "(" ~ TypedParams? ~ ")" ~ ReturnType? ~ Block }
+TypedParams = _{ TypedParam ~ ("," ~ TypedParam)* }
+TypedParam = { Identifier ~ ":" ~ Type }
+ReturnType = { "->" ~ Type }
+
+// Block: { statements }
+Block = { "{" ~ Stmt* ~ "}" }
+
+// Return statement
+Return = { "return" ~ Expr }
+
+// ANCHOR: delete
+// Delete statement: delete obj
+Delete = { "delete" ~ Expr }
+// ANCHOR_END: delete
+
+// Assignment with optional type: x: int = 10  or  x = 10  or  self.x = 10
+Assignment = { AssignTarget ~ (":" ~ Type)? ~ "=" ~ Expr }
+AssignTarget = { FieldAccess | Identifier }
+
+// =============================================================================
+// Expressions (ordered by precedence - lowest to highest)
+// =============================================================================
+Expr = { Conditional | WhileLoop | Comparison }
+
+// if (cond) { ... } else { ... }
+Conditional = { "if" ~ "(" ~ Expr ~ ")" ~ Block ~ "else" ~ Block }
+
+// while (cond) { ... }
+WhileLoop = { "while" ~ "(" ~ Expr ~ ")" ~ Block }
+
+// Comparison operators
+Comparison = { Additive ~ (CompOp ~ Additive)* }
+CompOp = { "<=" | ">=" | "<" | ">" | "==" | "!=" }
+
+// Addition/Subtraction
+Additive = { Multiplicative ~ (AddOp ~ Multiplicative)* }
+AddOp = { "+" | "-" }
+
+// Multiplication/Division
+Multiplicative = { Unary ~ (MulOp ~ Unary)* }
+MulOp = { "*" | "/" | "%" }
+
+// Unary operators
+Unary = { UnaryOp ~ Unary | Postfix }
+UnaryOp = { "-" | "!" }
+
+// ANCHOR: postfix
+// Postfix: field access and method calls
+Postfix = { Primary ~ PostfixOp* }
+PostfixOp = { MethodCall | FieldAccessOp }
+MethodCall = { "." ~ Identifier ~ "(" ~ Args? ~ ")" }
+FieldAccessOp = { "." ~ Identifier }
+
+// For assignment target parsing
+FieldAccess = { (SelfKeyword | Identifier) ~ ("." ~ Identifier)+ }
+SelfKeyword = { "self" }
+// ANCHOR_END: postfix
+
+// Primary expressions
+// FunctionCall must come before Identifier to properly parse calls like square(5)
+Primary = _{ NewExpr | FunctionCall | Literal | SelfKeyword | Identifier | "(" ~ Expr ~ ")" }
+
+// ANCHOR: new_expr
+// new Point(1, 2)
+NewExpr = { "new" ~ Identifier ~ "(" ~ Args? ~ ")" }
+// ANCHOR_END: new_expr
+
+// Function call (standalone, not method): name(args)
+FunctionCall = { Identifier ~ "(" ~ Args? ~ ")" }
+Args = _{ Expr ~ ("," ~ Expr)* }
+
+// Literals
+Literal = { Bool | Int }
+Int = @{ ASCII_DIGIT+ }
+Bool = @{ "true" | "false" }
+

@@ -34,13 +34,14 @@ book = { cmd = "mdbook serve --open", cwd = "book" }
 # Test tasks
 # -----------------------------------------------------------------------------
 
-# Run all tests (stable Rust for calculator/firstlang, nightly for secondlang)
+# Run all tests (stable Rust for calculator/firstlang, nightly for secondlang/thirdlang)
 test-calculator = "cargo test -p calculator"
 test-firstlang = "cargo test -p firstlang"
 test-secondlang = "rustup run nightly cargo test -p secondlang"
+test-thirdlang = "rustup run nightly cargo test -p thirdlang"
 
 # Run all tests
-tests = { cmd = "cargo test -p calculator -p firstlang && rustup run nightly cargo test -p secondlang" }
+tests = { cmd = "cargo test -p calculator -p firstlang && rustup run nightly cargo test -p secondlang -p thirdlang" }
 
 # -----------------------------------------------------------------------------
 # Example tasks
@@ -58,13 +59,20 @@ example-secondlang-fib = "rustup run nightly cargo run -p secondlang -- secondla
 example-secondlang-factorial = "rustup run nightly cargo run -p secondlang -- secondlang/examples/factorial.sl"
 example-secondlang-inference = "rustup run nightly cargo run -p secondlang -- secondlang/examples/inference.sl"
 
+# Run thirdlang examples (requires nightly)
+example-thirdlang-point = "rustup run nightly cargo run -p thirdlang --bin thirdlang -- thirdlang/examples/point.tl"
+example-thirdlang-counter = "rustup run nightly cargo run -p thirdlang --bin thirdlang -- thirdlang/examples/counter.tl"
+example-thirdlang-destructor = "rustup run nightly cargo run -p thirdlang --bin thirdlang -- thirdlang/examples/destructor.tl"
+
 # Run all examples
 examples = """
 cargo run -p calculator --bin main calculator/examples/simple.calc && \
 cargo run -p firstlang -- firstlang/examples/fibonacci.fl && \
 cargo run -p firstlang -- firstlang/examples/factorial.fl && \
 rustup run nightly cargo run -p secondlang -- secondlang/examples/fibonacci.sl && \
-rustup run nightly cargo run -p secondlang -- secondlang/examples/factorial.sl
+rustup run nightly cargo run -p secondlang -- secondlang/examples/factorial.sl && \
+rustup run nightly cargo run -p thirdlang --bin thirdlang -- thirdlang/examples/point.tl && \
+rustup run nightly cargo run -p thirdlang --bin thirdlang -- thirdlang/examples/counter.tl
 """
 
 # -----------------------------------------------------------------------------
@@ -83,11 +91,14 @@ clippy = "cargo clippy -p calculator -p firstlang -- -D warnings"
 # Run clippy for secondlang (requires nightly)
 clippy-secondlang = "rustup run nightly cargo clippy -p secondlang -- -D warnings"
 
+# Run clippy for thirdlang (requires nightly)
+clippy-thirdlang = "rustup run nightly cargo clippy -p thirdlang -- -D warnings"
+
 # Run all clippy lints
-clippy-all = { cmd = "cargo clippy -p calculator -p firstlang -- -D warnings && rustup run nightly cargo clippy -p secondlang -- -D warnings" }
+clippy-all = { cmd = "cargo clippy -p calculator -p firstlang -- -D warnings && rustup run nightly cargo clippy -p secondlang -p thirdlang -- -D warnings" }
 
 # Lint: format check + clippy (all projects)
-lint = { cmd = "cargo fmt --all -- --check && cargo clippy -p calculator -p firstlang -- -D warnings && rustup run nightly cargo clippy -p secondlang -- -D warnings" }
+lint = { cmd = "cargo fmt --all -- --check && cargo clippy -p calculator -p firstlang -- -D warnings && rustup run nightly cargo clippy -p secondlang -p thirdlang -- -D warnings" }
 
 # -----------------------------------------------------------------------------
 # Build tasks
@@ -99,8 +110,11 @@ build = "cargo build -p calculator -p firstlang"
 # Build secondlang (requires nightly)
 build-secondlang = "rustup run nightly cargo build -p secondlang"
 
+# Build thirdlang (requires nightly)
+build-thirdlang = "rustup run nightly cargo build -p thirdlang"
+
 # Build everything
-build-all = { cmd = "cargo build -p calculator -p firstlang && rustup run nightly cargo build -p secondlang" }
+build-all = { cmd = "cargo build -p calculator -p firstlang && rustup run nightly cargo build -p secondlang -p thirdlang" }
 
 # -----------------------------------------------------------------------------
 # CI task (runs everything)
@@ -111,8 +125,8 @@ cargo fmt --all -- --check && \
 cargo clippy -p calculator -p firstlang -- -D warnings && \
 cargo build -p calculator -p firstlang && \
 cargo test -p calculator -p firstlang && \
-rustup run nightly cargo clippy -p secondlang -- -D warnings && \
-rustup run nightly cargo build -p secondlang && \
-rustup run nightly cargo test -p secondlang && \
+rustup run nightly cargo clippy -p secondlang -p thirdlang -- -D warnings && \
+rustup run nightly cargo build -p secondlang -p thirdlang && \
+rustup run nightly cargo test -p secondlang -p thirdlang && \
 cd book && mdbook build
 """ }
