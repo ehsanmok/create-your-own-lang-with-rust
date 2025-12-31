@@ -4,7 +4,7 @@ language = "en"
 multilingual = false
 src = "src"
 title = "Create Your Own Programming Language with Rust"
-version = "0.1"
+version = "1.0"
 
 [output.html]
 additional-css = ["theme/custom.css", "theme/highlight.css"]
