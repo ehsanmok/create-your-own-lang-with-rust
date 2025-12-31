@@ -188,44 +188,6 @@
 </picture>
 </div>
 <hr />
-<h2 id="getting-started"><a class="header" href="#getting-started">Getting Started</a></h2>
-<p>This book assumes basic knowledge of Rust. If you’re new to Rust, start with the official <a href="https://doc.rust-lang.org/book/">Rust book</a>.</p>
-<p>The code and materials are available on <a href="https://github.com/ehsanmok/create-your-own-lang-with-rust">GitHub</a>. To follow along:</p>
-<pre><code class="language-bash"># Clone the repository
-git clone https://github.com/ehsanmok/create-your-own-lang-with-rust
-cd create-your-own-lang-with-rust
-</code></pre>
-<h3 id="what-works-with-stable-rust"><a class="header" href="#what-works-with-stable-rust">What Works with Stable Rust</a></h3>
-<div class="table-wrapper"><table><thead><tr><th>Project</th><th>Command</th></tr></thead><tbody>
-<tr><td>Calculator (interpreter/VM)</td><td><code>cargo run</code></td></tr>
-<tr><td>Firstlang (interpreter)</td><td><code>cargo run</code></td></tr>
-</tbody></table>
-</div>
-<h3 id="what-requires-nightly-rust--llvm"><a class="header" href="#what-requires-nightly-rust--llvm">What Requires Nightly Rust + LLVM</a></h3>
-<div class="table-wrapper"><table><thead><tr><th>Project</th><th>Command</th></tr></thead><tbody>
-<tr><td>Calculator JIT</td><td><code>rustup run nightly cargo run --features jit</code></td></tr>
-<tr><td>Secondlang</td><td><code>rustup run nightly cargo run</code></td></tr>
-<tr><td>Thirdlang</td><td><code>rustup run nightly cargo run</code></td></tr>
-</tbody></table>
-</div>
-<h3 id="llvm-setup"><a class="header" href="#llvm-setup">LLVM Setup</a></h3>
-<pre><code class="language-bash"># Install nightly Rust
-rustup toolchain install nightly
-
-# Install LLVM
-# macOS:
-brew install llvm
-
-# Debian/Ubuntu: see https://apt.llvm.org/
-</code></pre>
-<p>Check your LLVM version with <code>llvm-config --version</code> and update <code>Cargo.toml</code>:</p>
-<div class="table-wrapper"><table><thead><tr><th>LLVM</th><th>inkwell feature</th></tr></thead><tbody>
-<tr><td>20.x</td><td><code>llvm20-1</code></td></tr>
-<tr><td>19.x</td><td><code>llvm19-1</code></td></tr>
-<tr><td>18.x</td><td><code>llvm18-1</code></td></tr>
-</tbody></table>
-</div>
-<hr />
 <h2 id="motivations-and-goals"><a class="header" href="#motivations-and-goals">Motivations and Goals</a></h2>
 <p>This book arises from my frustration of not finding modern, clear, and concise teaching materials that are readily accessible to beginners like me who want to learn how to create their own programming language.</p>
 <blockquote>
@@ -235,6 +197,57 @@ brew install llvm
 <p><em>“If you can’t explain something in simple terms, you don’t understand it”</em> <sup><a href="https://skeptics.stackexchange.com/questions/8742/did-einstein-say-if-you-cant-explain-it-simply-you-dont-understand-it-well-en">2</a></sup></p>
 </blockquote>
 <p><span style="font-family:Trebuchet MS">Pedagogically, one of the most effective methods of teaching is co-creating interactively. Introducing the core aspects around the <em>simplest example</em> (here, our calculator language) helps build knowledge and confidence. We use mature technologies instead of reinventing the wheel.</span></p>
+<hr />
+<h2 id="getting-started"><a class="header" href="#getting-started">Getting Started</a></h2>
+<p>This book assumes basic knowledge of Rust. If you’re new to Rust, start with the official <a href="https://doc.rust-lang.org/book/">Rust book</a>.</p>
+<p>The code and materials are available on <a href="https://github.com/ehsanmok/create-your-own-lang-with-rust">GitHub</a>. To follow along:</p>
+<pre><code class="language-bash">git clone https://github.com/ehsanmok/create-your-own-lang-with-rust
+cd create-your-own-lang-with-rust
+</code></pre>
+<h3 id="calculator-and-firstlang-stable-rust"><a class="header" href="#calculator-and-firstlang-stable-rust">Calculator and Firstlang (stable Rust)</a></h3>
+<p>These projects work with stable Rust 1.70+ and require no external dependencies:</p>
+<pre><code class="language-bash"># Calculator - interpreter mode
+cd calculator
+cargo run --bin main examples/simple.calc
+
+# Calculator - VM mode
+cargo run --bin main --features vm examples/simple.calc
+
+# Firstlang - interpreter
+cd firstlang
+cargo run -- examples/fibonacci.fl
+cargo run  # REPL
+</code></pre>
+<h3 id="secondlang-and-thirdlang-nightly-rust--llvm"><a class="header" href="#secondlang-and-thirdlang-nightly-rust--llvm">Secondlang and Thirdlang (nightly Rust + LLVM)</a></h3>
+<p>These projects require nightly Rust and LLVM for JIT compilation:</p>
+<pre><code class="language-bash"># Install nightly Rust
+rustup toolchain install nightly
+
+# Install LLVM (macOS)
+brew install llvm
+
+# Install LLVM (Debian/Ubuntu) - see https://apt.llvm.org/
+</code></pre>
+<p>Check your LLVM version with <code>llvm-config --version</code> and update the <code>inkwell</code> dependency in <code>Cargo.toml</code> to match:</p>
+<div class="table-wrapper"><table><thead><tr><th>LLVM Version</th><th>inkwell feature</th></tr></thead><tbody>
+<tr><td>20.x</td><td><code>llvm20-1</code></td></tr>
+<tr><td>19.x</td><td><code>llvm19-1</code></td></tr>
+<tr><td>18.x</td><td><code>llvm18-1</code></td></tr>
+</tbody></table>
+</div>
+<p>For example, with LLVM 20:</p>
+<pre><code class="language-toml">inkwell = { version = "0.7", features = ["llvm20-1"] }
+</code></pre>
+<pre><code class="language-bash"># Secondlang
+cd secondlang
+rustup run nightly cargo run -- examples/fibonacci.sl
+rustup run nightly cargo run -- --ir examples/fibonacci.sl  # view LLVM IR
+
+# Thirdlang
+cd thirdlang
+rustup run nightly cargo run --bin thirdlang -- examples/point.tl
+rustup run nightly cargo run --bin thirdlang -- examples/counter.tl
+</code></pre>
 <hr />
 <h2 id="learning-progression"><a class="header" href="#learning-progression">Learning Progression</a></h2>
 <p>We build four languages, each building on concepts from the previous:</p>
