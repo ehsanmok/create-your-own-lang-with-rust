@@ -155,7 +155,7 @@ println!("{}", vm.pop_last());
 Run tests locally:
 
 ```bash
-cargo test vm --tests
+cargo test vm --tests --features vm
 ```
 
 ## Trade-offs: VM vs JIT vs Interpreter
