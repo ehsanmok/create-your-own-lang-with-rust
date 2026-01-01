@@ -63,7 +63,7 @@ Let us walk through the important cases:
 
 ### Integers and Booleans
 
-```rust
+```rust,ignore
 Expr::Int(n) => Ok(self.context.i64_type().const_int(*n as u64, false)),
 Expr::Bool(b) => Ok(self.context.bool_type().const_int(*b as u64, false)),
 ```
@@ -72,7 +72,7 @@ Constants are simple. We create a constant integer value of the right type. The 
 
 ### Variables: The Alloca/Load Pattern
 
-```rust
+```rust,ignore
 Expr::Var(name) => {
     let ptr = self.variables.get(name)
         .ok_or_else(|| format!("Undefined variable: {}", name))?;
@@ -91,7 +91,7 @@ This pattern handles mutable variables naturally and LLVM optimizes it away when
 
 ### Binary Operations
 
-```rust
+```rust,ignore
 Expr::Binary { op, left, right } => {
     let l = self.compile_expr(left)?;  // compile left operand
     let r = self.compile_expr(right)?; // compile right operand
@@ -108,7 +108,7 @@ We recursively compile left and right operands, then emit the appropriate instru
 
 ### Function Calls
 
-```rust
+```rust,ignore
 Expr::Call { name, args } => {
     let function = self.functions.get(name)
         .ok_or_else(|| format!("Undefined function: {}", name))?;
@@ -135,7 +135,7 @@ The `try_as_basic_value().unwrap_basic()` deserves explanation. In LLVM, functio
 
 Conditionals need multiple basic blocks:
 
-```rust
+```rust,ignore
 Expr::If { cond, then_branch, else_branch } => {
     // Compile condition and convert to i1 for branching
     let cond_val = self.compile_expr(cond)?;

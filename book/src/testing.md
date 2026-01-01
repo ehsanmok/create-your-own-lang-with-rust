@@ -14,7 +14,7 @@ Test at multiple levels:
 
 Test that source code produces the expected AST:
 
-```rust
+```rust,ignore
 #[test]
 fn test_parse_addition() {
     let ast = parse("1 + 2").unwrap();
@@ -42,7 +42,7 @@ fn test_parse_error() {
 
 Test type inference and error detection:
 
-```rust
+```rust,ignore
 #[test]
 fn test_type_inference() {
     let mut program = parse("x = 5").unwrap();
@@ -69,7 +69,7 @@ fn test_type_error() {
 
 Test the full pipeline from source to result:
 
-```rust
+```rust,ignore
 #[test]
 fn test_fibonacci() {
     let source = r#"
@@ -93,7 +93,7 @@ fn test_fibonacci() {
 
 Compare output against saved "golden" files:
 
-```rust
+```rust,ignore
 #[test]
 fn test_ir_output() {
     let ir = compile_to_ir("def answer() -> int { return 42 }").unwrap();
@@ -113,7 +113,7 @@ Use [insta](https://insta.rs/) for snapshot testing in Rust. When output changes
 
 Generate random inputs and check properties:
 
-```rust
+```rust,ignore
 use quickcheck::quickcheck;
 
 quickcheck! {
@@ -143,7 +143,7 @@ cargo fuzz run parse_fuzz
 
 Create a fuzz target:
 
-```rust
+```rust,ignore
 // fuzz/fuzz_targets/parse_fuzz.rs
 #![no_main]
 use libfuzzer_sys::fuzz_target;
@@ -168,7 +168,7 @@ Run fuzzing for hours/days on CI. Even 10 minutes often finds bugs.
 
 Errors should be helpful. Test them:
 
-```rust
+```rust,ignore
 #[test]
 fn test_undefined_variable_error() {
     let result = run("x + 1");
@@ -182,7 +182,7 @@ fn test_undefined_variable_error() {
 
 When you fix a bug, add a test:
 
-```rust
+```rust,ignore
 #[test]
 fn test_issue_42_nested_if() {
     // This used to crash due to incorrect phi node generation

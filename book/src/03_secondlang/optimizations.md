@@ -8,7 +8,7 @@ In this chapter, we introduce the **[visitor pattern](https://en.wikipedia.org/w
 
 Imagine we want to add a new operation on our AST, like "pretty print" or "count variables" or "simplify expressions". Without a good design, we would need to modify every AST node type:
 
-```rust
+```rust,ignore
 // Bad: scattered across many files
 impl Expr {
     fn pretty_print(&self) { ... }
@@ -21,7 +21,7 @@ Every time we add a new operation, we touch every node. That gets messy.
 
 The visitor pattern flips this around. Instead of adding methods to nodes, we create separate *visitor* objects:
 
-```rust
+```rust,ignore
 struct PrettyPrinter;
 impl ExprVisitor for PrettyPrinter { ... }
 
@@ -155,7 +155,7 @@ Implementation:
 
 Multiple optimization passes can be chained. This is called a **[pass pipeline](https://en.wikipedia.org/wiki/Multi-pass_compiler)**:
 
-```rust
+```rust,ignore
 pub fn optimize_program(program: &Program) -> Program {
     // First: fold constants
     let program = ConstantFolder::fold_program(&program);

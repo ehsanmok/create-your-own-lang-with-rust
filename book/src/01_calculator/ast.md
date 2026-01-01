@@ -26,7 +26,7 @@ Notice something important: the nodes in our tree are *different kinds* of thing
 
 In Rust, we represent "different kinds of things" with enums. Let's start simple:
 
-```rust
+```rust,ignore
 pub enum Operator {
     Plus,
     Minus,
@@ -74,7 +74,7 @@ See how it's nested? The outer `+` has children, and one child is itself a `+` e
 
 Now we can define our full AST:
 
-```rust
+```rust,ignore
 {{#include ../../../calculator/src/ast.rs:operator}}
 
 {{#include ../../../calculator/src/ast.rs:node}}

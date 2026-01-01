@@ -30,7 +30,7 @@ The interpreter needs to:
 
 Here's the implementation:
 
-```rust
+```rust,ignore
 Expr::If { cond, then_branch, else_branch } => {
     // Step 1: Evaluate the condition
     let cond_val = self.eval_expr(cond)?;
@@ -105,7 +105,7 @@ This reads as: "while x is less than 5, increment x." The loop runs 5 times: whe
 
 The interpreter uses an actual loop - Rust's `loop` construct - and checks the condition at the start of each iteration:
 
-```rust
+```rust,ignore
 Expr::While { cond, body } => {
     loop {
         // Step 1: Evaluate the condition

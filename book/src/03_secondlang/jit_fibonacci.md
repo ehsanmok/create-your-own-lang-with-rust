@@ -17,7 +17,7 @@ Each step transforms the program into a different representation, getting closer
 
 Create a file `examples/fibonacci.sl`:
 
-```rust
+```rust,ignore
 def fib(n: int) -> int {
     if (n < 2) {
         return n
@@ -111,7 +111,7 @@ Shows typed variables, functions, and control flow.
 
 ### Factorial
 
-```rust
+```rust,ignore
 def factorial(n: int) -> int {
     if (n <= 1) {
         return 1

@@ -24,7 +24,7 @@ In a small program, this might be okay. But imagine a large program with thousan
 
 With types, we tell the compiler *what kind of values* each variable can hold:
 
-```rust
+```rust,ignore
 def add(a: int, b: int) -> int {
     return a + b
 }
@@ -58,7 +58,7 @@ There is another benefit to types: **performance**.
 
 Consider this function:
 
-```rust
+```rust,ignore
 def square(x: int) -> int {
     return x * x
 }
@@ -95,7 +95,7 @@ These are sometimes called [primitive types](https://en.wikipedia.org/wiki/Primi
 
 Functions also have types. A function's type describes what it takes in and what it produces:
 
-```rust
+```rust,ignore
 def add(a: int, b: int) -> int { ... }
 # Type: (int, int) -> int
 # "Takes two ints, returns an int"
@@ -113,7 +113,7 @@ You might worry that adding types means writing `int` everywhere, making code ve
 
 *[Type inference](https://en.wikipedia.org/wiki/Type_inference)* means the compiler figures out types when it can:
 
-```rust
+```rust,ignore
 def factorial(n: int) -> int {
     result = 1        # compiler infers: result is int
     i = 1             # compiler infers: i is int

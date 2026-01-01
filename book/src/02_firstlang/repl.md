@@ -4,7 +4,7 @@ A REPL (Read-Eval-Print Loop) is an interactive environment for your language. I
 
 ## The Basic Loop
 
-```rust
+```rust,ignore
 fn repl() {
     let mut interpreter = Interpreter::new();
 
@@ -79,7 +79,7 @@ The REPL supports multi-line input by detecting unclosed brackets. When you have
 
 This is implemented by counting bracket depth:
 
-```rust
+```rust,ignore
 /// Count unmatched opening brackets in a string
 fn bracket_depth(s: &str) -> i32 {
     let mut depth = 0;

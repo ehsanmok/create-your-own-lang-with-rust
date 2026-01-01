@@ -224,7 +224,7 @@ Inside `{ self.x = x; self.y = y }`:
 
 ### Final AST
 
-```rust
+```rust,ignore
 TopLevel::Class(ClassDef {
     name: "Point".to_string(),
     fields: vec![

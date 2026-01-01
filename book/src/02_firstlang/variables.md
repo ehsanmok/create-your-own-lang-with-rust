@@ -17,7 +17,7 @@ Let's trace through what happens when our interpreter runs `x = 42; y = x + 1`:
 
 The parser turns this into:
 
-```rust
+```rust,ignore
 [
     Stmt::Assignment { name: "x", value: Expr::Int(42) },
     Stmt::Assignment { name: "y", value: Expr::Binary {
@@ -51,7 +51,7 @@ For `y = x + 1`:
 
 Where do variables live? In a `HashMap` inside a "frame":
 
-```rust
+```rust,ignore
 struct Frame {
     locals: HashMap<String, Value>,
 }
@@ -65,7 +65,7 @@ Why call it a "frame"? Because in the [functions](./functions.md) chapter, we'll
 
 When we encounter a variable like `x`, we need to find its value:
 
-```rust
+```rust,ignore
 fn lookup_var(&self, name: &str) -> Result<Value, String> {
     // First, check the current frame
     if let Some(value) = self.current_frame().locals.get(name) {

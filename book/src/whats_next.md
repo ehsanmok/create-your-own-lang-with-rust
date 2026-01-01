@@ -42,7 +42,7 @@ Read about [virtual method tables](https://en.wikipedia.org/wiki/Virtual_method_
 
 Add `impl Trait for Type`:
 
-```rust
+```rust,ignore
 trait Printable {
     def print(self) -> int
 }
@@ -58,7 +58,7 @@ This enables polymorphism without inheritance. See how [Rust traits](https://doc
 
 Add type parameters:
 
-```rust
+```rust,ignore
 class Box<T> {
     value: T
     def get(self) -> T { return self.value }
@@ -101,7 +101,7 @@ Requires:
 
 ### Structs (without methods)
 
-```rust
+```rust,ignore
 struct Point { x: int, y: int }
 p = Point { x: 10, y: 20 }
 ```
@@ -131,7 +131,7 @@ Requires:
 
 ### Pattern Matching
 
-```rust
+```rust,ignore
 match value {
     0 => "zero",
     1 => "one",
@@ -141,7 +141,7 @@ match value {
 
 Or with destructuring:
 
-```rust
+```rust,ignore
 match point {
     Point { x: 0, y } => "on y-axis",
     Point { x, y: 0 } => "on x-axis",
@@ -151,7 +151,7 @@ match point {
 
 ### Algebraic Data Types (ADTs)
 
-```rust
+```rust,ignore
 enum Option<T> {
     Some(T),
     None
@@ -264,7 +264,7 @@ Read [The Garbage Collection Handbook](https://gchandbook.org/) for deep coverag
 
 Compiler enforces memory safety without runtime cost:
 
-```rust
+```rust,ignore
 p = new Point(1, 2)
 q = p      # p is moved, can't use p anymore
 delete q   # Only q can free

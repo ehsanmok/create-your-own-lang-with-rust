@@ -23,7 +23,7 @@ Many languages use LLVM: Rust, Swift, Julia, Kotlin/Native, and more. By using L
 
 Let us see what LLVM IR looks like. Here is a Secondlang function:
 
-```rust
+```rust,ignore
 def answer() -> int {
     return 42
 }
@@ -50,7 +50,7 @@ That is it. Our function just returns 42.
 
 Here is a function that adds two numbers:
 
-```rust
+```rust,ignore
 def add(a: int, b: int) -> int {
     return a + b
 }
@@ -87,7 +87,7 @@ This pattern looks wasteful. Why not just use `%a` and `%b` directly?
 
 The answer is **mutability**. In LLVM IR, values like `%a` are immutable - you cannot change them. But in most languages, variables *can* change:
 
-```rust
+```rust,ignore
 x = 5
 x = x + 1    // x is now 6
 ```
@@ -108,7 +108,7 @@ This is called the **alloca/load/store pattern**. It is simple to generate and L
 
 Conditionals require **branching** - jumping to different code based on a condition:
 
-```rust
+```rust,ignore
 def max(a: int, b: int) -> int {
     if (a > b) {
         return a
@@ -147,7 +147,7 @@ LLVM IR uses **[Static Single Assignment (SSA)](https://en.wikipedia.org/wiki/St
 
 Consider this code:
 
-```rust
+```rust,ignore
 x = 1
 x = 2
 x = 3
@@ -169,7 +169,7 @@ Why SSA? It makes optimization easier. The compiler always knows exactly where e
 
 SSA creates a problem with conditionals. Consider:
 
-```rust
+```rust,ignore
 def pick(cond: bool, a: int, b: int) -> int {
     if (cond) {
         x = a
@@ -211,7 +211,7 @@ Phi nodes are the only way to merge values from different [control flow](https:/
 
 [Recursive](https://en.wikipedia.org/wiki/Recursion_(computer_science)) functions use the `call` instruction:
 
-```rust
+```rust,ignore
 def fib(n: int) -> int {
     if (n < 2) {
         return n

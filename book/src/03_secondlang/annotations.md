@@ -55,7 +55,7 @@ Take a moment to compare this with [Firstlang's grammar](../02_firstlang/syntax.
 
 In Firstlang, expressions were simple:
 
-```rust
+```rust,ignore
 enum Expr {
     Int(i64),
     Bool(bool),
@@ -80,7 +80,7 @@ The `TypedExpr` struct wraps an expression with its type. Let us understand the 
 
 When we parse `1 + 2`, we do not yet know the type of the result. So we create:
 
-```rust
+```rust,ignore
 TypedExpr::unknown(Expr::Binary {
     op: BinaryOp::Add,
     left: Box::new(TypedExpr::unknown(Expr::Int(1))),
@@ -136,7 +136,7 @@ Let us trace through parsing `def add(a: int, b: int) -> int { return a + b }`:
 
 The final AST looks like:
 
-```rust
+```rust,ignore
 Stmt::Function {
     name: "add".to_string(),
     params: vec![

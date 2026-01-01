@@ -88,7 +88,7 @@ fib(10)
 
 Secondlang (typed):
 
-```rust
+```rust,ignore
 def fib(n: int) -> int {
     if (n < 2) {
         return n

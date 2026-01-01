@@ -98,7 +98,7 @@ The type "flows" from the literals, through the operator, into the variable. No 
 
 Let us trace through this code in detail:
 
-```rust
+```rust,ignore
 x = 42
 y = x * 2 + 10
 is_big = y > 50
@@ -241,7 +241,7 @@ The `Unknown` case is the heart of type inference. When we unify `Unknown` with 
 
 The **type environment** (also called symbol table or context) maps names to types:
 
-```rust
+```rust,ignore
 type TypeEnv = HashMap<String, Type>;
 ```
 
@@ -263,7 +263,7 @@ Functions are trickier because we need to handle:
 
 Consider:
 
-```rust
+```rust,ignore
 def compute(a: int, b: int) -> int {
     temp = a + b        # What type is temp?
     doubled = temp * 2  # What type is doubled?
@@ -308,7 +308,7 @@ The type checker uses two passes:
 
 We scan all function definitions and record their types *before* checking any bodies. Why? Because functions can call each other (mutual recursion):
 
-```rust
+```rust,ignore
 def isEven(n: int) -> bool {
     if (n == 0) { return true }
     else { return isOdd(n - 1) }
@@ -345,21 +345,21 @@ The pattern is always the same:
 
 Type inference is not magic. It fails when there is not enough information:
 
-```rust
+```rust,ignore
 # This would fail - what type is x?
 x = some_function_that_could_return_anything()
 ```
 
 Or when types conflict:
 
-```rust
+```rust,ignore
 x = 42
 x = true  # Error: x is Int, cannot assign Bool
 ```
 
 We report errors with helpful messages:
 
-```rust
+```rust,ignore
 let result = typecheck("1 + true");
 // Error: "Arithmetic operation requires int operands, got int and bool"
 
@@ -371,7 +371,7 @@ let result = typecheck("add(1, true)");
 
 Our inference cannot handle some things that Hindley-Milner can:
 
-```rust
+```rust,ignore
 # Hindley-Milner could infer: identity : forall a. a -> a
 def identity(x) {
     return x

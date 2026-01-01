@@ -32,7 +32,7 @@ When we call `add(3, 4)`, the parameters `a` and `b` get bound to the values `3`
 
 In our AST, functions are statements (they're declarations, not expressions):
 
-```rust
+```rust,ignore
 enum Stmt {
     Function {
         name: String,
@@ -51,7 +51,7 @@ Let's understand each field:
 
 When we parse `def add(a, b) { return a + b }`, we create:
 
-```rust
+```rust,ignore
 Stmt::Function {
     name: "add".to_string(),
     params: vec!["a".to_string(), "b".to_string()],
@@ -80,7 +80,7 @@ Here's the process:
 
 Here's how this looks in code:
 
-```rust
+```rust,ignore
 Expr::Call { name, args } => {
     // Step 1: Look up the function by name
     let func = self.lookup_var(name)?;

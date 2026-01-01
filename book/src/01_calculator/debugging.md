@@ -18,7 +18,7 @@ Debug by checking each arrow: Is the input to this stage correct? Is the output?
 
 The AST is your program's structure. When behavior is wrong, print it:
 
-```rust
+```rust,ignore
 // In your code
 let ast = parse(source)?;
 println!("{:#?}", ast);  // Pretty-print with {:#?}
@@ -40,7 +40,7 @@ If this looks wrong, your parser has a bug. If it looks right, the bug is in exe
 
 A common parsing bug: `1 + 2 * 3` parses as `(1 + 2) * 3` instead of `1 + (2 * 3)`.
 
-```rust
+```rust,ignore
 let ast = parse("1 + 2 * 3")?;
 println!("{:#?}", ast);
 
@@ -54,7 +54,7 @@ Fix: Check your grammar's precedence rules. In PEG, earlier alternatives have hi
 
 Don't write 100 lines then debug. Test each feature in isolation:
 
-```rust
+```rust,ignore
 #[test]
 fn test_addition() {
     assert_eq!(eval("1 + 2"), 3);
@@ -94,7 +94,7 @@ When we add LLVM compilation, two more techniques become essential:
 
 ### Print the IR
 
-```rust
+```rust,ignore
 // After code generation
 codegen.module.print_to_stderr();
 ```
@@ -113,7 +113,7 @@ If this looks wrong, your codegen has a bug.
 
 ### Use LLVM's Verifier
 
-```rust
+```rust,ignore
 codegen.module.verify().map_err(|e| {
     eprintln!("LLVM verification failed: {}", e);
     e.to_string()
