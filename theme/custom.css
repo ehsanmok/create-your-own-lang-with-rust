@@ -384,6 +384,38 @@ blockquote p {
 }
 
 /* =============================================================================
+   LOGO THEME SWITCHING
+   Show correct logo based on mdbook theme, not OS prefers-color-scheme
+   ============================================================================= */
+
+.license-notice .logo-img {
+  max-width: 320px;
+  height: auto;
+}
+
+/* Default: show light mode logo (for Rust theme - light background) */
+.license-notice .logo-light {
+  display: block;
+}
+
+.license-notice .logo-dark {
+  display: none;
+}
+
+/* Dark themes: show dark mode logo (light text for dark backgrounds) */
+.coal .license-notice .logo-light,
+.navy .license-notice .logo-light,
+.ayu .license-notice .logo-light {
+  display: none;
+}
+
+.coal .license-notice .logo-dark,
+.navy .license-notice .logo-dark,
+.ayu .license-notice .logo-dark {
+  display: block;
+}
+
+/* =============================================================================
    LINKS
    ============================================================================= */
 
