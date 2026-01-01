@@ -609,13 +609,13 @@ impl ExprVisitor for AlgebraicSimplifier {
 <h2 id="using-the-optimizations"><a class="header" href="#using-the-optimizations">Using the Optimizations</a></h2>
 <p>Enable optimizations with the <code>-O</code> flag:</p>
 <pre><code class="language-bash"># Without optimization
-secondlang --ir examples/fibonacci.sl
+rustup run nightly cargo run -- --ir examples/fibonacci.sl
 
 # With optimization
-secondlang --ir -O examples/fibonacci.sl
+rustup run nightly cargo run -- --ir -O examples/fibonacci.sl
 </code></pre>
 <h2 id="testing"><a class="header" href="#testing">Testing</a></h2>
-<pre><code class="language-bash">cargo test visitor
+<pre><code class="language-bash">rustup run nightly cargo test
 </code></pre>
 <p>In the next chapter, we look at what <a href="./ir.html">LLVM IR</a> looks like before we start generating it.</p>
 

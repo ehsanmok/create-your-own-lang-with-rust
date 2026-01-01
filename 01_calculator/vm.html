@@ -382,7 +382,7 @@ let mut vm = VM::new(byte_code);
 vm.run();
 println!("{}", vm.pop_last());</code></pre>
 <p>Run tests locally:</p>
-<pre><code class="language-bash">cargo test vm --tests
+<pre><code class="language-bash">cargo test vm --tests --features vm
 </code></pre>
 <h2 id="trade-offs-vm-vs-jit-vs-interpreter"><a class="header" href="#trade-offs-vm-vs-jit-vs-interpreter">Trade-offs: VM vs JIT vs Interpreter</a></h2>
 <div class="table-wrapper"><table><thead><tr><th>Approach</th><th>Startup</th><th>Execution</th><th>Complexity</th><th>Portability</th></tr></thead><tbody>

@@ -641,12 +641,12 @@ pub fn jit_run(program: &amp;Program) -&gt; Result&lt;i64, String&gt; {
 </ol>
 <p>All in a fraction of a second.</p>
 <h2 id="testing"><a class="header" href="#testing">Testing</a></h2>
-<pre><code class="language-bash">cargo test codegen
+<pre><code class="language-bash">rustup run nightly cargo test compile
 </code></pre>
 <div class="checkpoint">
 <p>At this point, you should be able to:</p>
 <ul>
-<li>Run <code>cargo run -- --ir examples/simple.sl</code> and see LLVM IR output</li>
+<li>Run <code>rustup run nightly cargo run -- --ir examples/fibonacci.sl</code> and see LLVM IR output</li>
 <li>See functions like <code>@fib</code> in the IR</li>
 <li>Verify the IR compiles without errors</li>
 </ul>
