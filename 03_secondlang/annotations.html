@@ -288,16 +288,13 @@ Bool = @{ "true" | "false" }
 <p>Take a moment to compare this with <a href="../02_firstlang/syntax.html">Firstlang’s grammar</a>. The expression rules (<code>Expr</code>, <code>Comparison</code>, <code>Additive</code>, etc.) are exactly the same. The only differences are in <code>Function</code>, <code>TypedParam</code>, <code>ReturnType</code>, <code>Type</code>, and <code>Assignment</code> (which now optionally accepts a type annotation). If the pest syntax looks unfamiliar, review the <a href="../crash_course.html#peg-and-pest-syntax">PEG and pest Syntax</a> section.</p>
 <h2 id="the-typed-ast"><a class="header" href="#the-typed-ast">The Typed AST</a></h2>
 <p>In Firstlang, expressions were simple:</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>enum Expr {
+<pre><code class="language-rust ignore">enum Expr {
     Int(i64),
     Bool(bool),
     Var(String),
     Binary { op: BinaryOp, left: Box&lt;Expr&gt;, right: Box&lt;Expr&gt; },
     // ...
-}
-<span class="boring">}</span></code></pre></pre>
+}</code></pre>
 <p>In Secondlang, every expression carries its type. This is sometimes called a <strong>decorated AST</strong> or <strong><a href="https://en.wikipedia.org/wiki/Abstract_syntax_tree">annotated AST</a></strong>:</p>
 <pre><code class="language-rust ignore">/// A typed expression: expression + its inferred type
 #[derive(Debug, Clone, PartialEq)]
@@ -325,14 +322,11 @@ impl TypedExpr {
 <li><code>TypedExpr::unknown(expr)</code> - creates an expression with <code>Type::Unknown</code></li>
 </ul>
 <p>When we parse <code>1 + 2</code>, we do not yet know the type of the result. So we create:</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>TypedExpr::unknown(Expr::Binary {
+<pre><code class="language-rust ignore">TypedExpr::unknown(Expr::Binary {
     op: BinaryOp::Add,
     left: Box::new(TypedExpr::unknown(Expr::Int(1))),
     right: Box::new(TypedExpr::unknown(Expr::Int(2))),
-})
-<span class="boring">}</span></code></pre></pre>
+})</code></pre>
 <p>All the types are <code>Unknown</code>. The type checker (next chapter) will fill them in.</p>
 <h2 id="statements-with-types"><a class="header" href="#statements-with-types">Statements with Types</a></h2>
 <p>Statements also include type information:</p>
@@ -428,9 +422,7 @@ pub enum Expr {
 </li>
 </ol>
 <p>The final AST looks like:</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>Stmt::Function {
+<pre><code class="language-rust ignore">Stmt::Function {
     name: "add".to_string(),
     params: vec![
         ("a".to_string(), Type::Int),
@@ -447,8 +439,7 @@ pub enum Expr {
             ty: Type::Unknown,  // &lt;-- filled in by type checker
         })
     ],
-}
-<span class="boring">}</span></code></pre></pre>
+}</code></pre>
 <p>Notice that all expression types are <code>Unknown</code>. The type checker will walk through this AST and fill in <code>Type::Int</code> everywhere.</p>
 <p>In the next chapter, we will implement the <a href="./inference.html">type checker</a>.</p>
 

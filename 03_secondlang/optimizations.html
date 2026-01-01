@@ -183,25 +183,19 @@
 <p>In this chapter, we introduce the <strong><a href="https://en.wikipedia.org/wiki/Visitor_pattern">visitor pattern</a></strong>, a classic technique for walking through and transforming ASTs.</p>
 <h2 id="the-visitor-pattern"><a class="header" href="#the-visitor-pattern">The Visitor Pattern</a></h2>
 <p>Imagine we want to add a new operation on our AST, like “pretty print” or “count variables” or “simplify expressions”. Without a good design, we would need to modify every AST node type:</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>// Bad: scattered across many files
+<pre><code class="language-rust ignore">// Bad: scattered across many files
 impl Expr {
     fn pretty_print(&amp;self) { ... }
     fn count_variables(&amp;self) { ... }
     fn simplify(&amp;self) { ... }
-}
-<span class="boring">}</span></code></pre></pre>
+}</code></pre>
 <p>Every time we add a new operation, we touch every node. That gets messy.</p>
 <p>The visitor pattern flips this around. Instead of adding methods to nodes, we create separate <em>visitor</em> objects:</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>struct PrettyPrinter;
+<pre><code class="language-rust ignore">struct PrettyPrinter;
 impl ExprVisitor for PrettyPrinter { ... }
 
 struct ConstantFolder;
-impl ExprVisitor for ConstantFolder { ... }
-<span class="boring">}</span></code></pre></pre>
+impl ExprVisitor for ConstantFolder { ... }</code></pre>
 <p>Each visitor is self-contained. Adding a new operation means adding a new visitor, not modifying existing code. This follows the <a href="https://en.wikipedia.org/wiki/Open%E2%80%93closed_principle">open/closed principle</a>: open for extension, closed for modification.</p>
 <h2 id="the-exprvisitor-trait"><a class="header" href="#the-exprvisitor-trait">The ExprVisitor Trait</a></h2>
 <p>Our visitor trait provides a hook for each expression type:</p>
@@ -560,15 +554,12 @@ impl ExprVisitor for AlgebraicSimplifier {
 <p><a class="filename" href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/secondlang/src/visitor.rs">secondlang/src/visitor.rs</a></p>
 <h2 id="chaining-optimizations"><a class="header" href="#chaining-optimizations">Chaining Optimizations</a></h2>
 <p>Multiple optimization passes can be chained. This is called a <strong><a href="https://en.wikipedia.org/wiki/Multi-pass_compiler">pass pipeline</a></strong>:</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>pub fn optimize_program(program: &amp;Program) -&gt; Program {
+<pre><code class="language-rust ignore">pub fn optimize_program(program: &amp;Program) -&gt; Program {
     // First: fold constants
     let program = ConstantFolder::fold_program(&amp;program);
     // Then: simplify algebra
     AlgebraicSimplifier::simplify_program(&amp;program)
-}
-<span class="boring">}</span></code></pre></pre>
+}</code></pre>
 <p>Consider <code>x * (1 + 0)</code>:</p>
 <ol>
 <li>After constant folding: <code>x * 1</code> (because <code>1 + 0 = 1</code>)</li>

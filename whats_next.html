@@ -210,28 +210,22 @@ class Dog extends Animal {
 <p>Read about <a href="https://en.wikipedia.org/wiki/Virtual_method_table">virtual method tables</a> to understand the implementation.</p>
 <h3 id="interfaces--traits"><a class="header" href="#interfaces--traits">Interfaces / Traits</a></h3>
 <p>Add <code>impl Trait for Type</code>:</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>trait Printable {
+<pre><code class="language-rust ignore">trait Printable {
     def print(self) -&gt; int
 }
 
 impl Printable for Point {
     def print(self) -&gt; int { return self.x }
-}
-<span class="boring">}</span></code></pre></pre>
+}</code></pre>
 <p>This enables polymorphism without inheritance. See how <a href="https://doc.rust-lang.org/book/ch10-02-traits.html">Rust traits</a> work.</p>
 <h3 id="generics"><a class="header" href="#generics">Generics</a></h3>
 <p>Add type parameters:</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>class Box&lt;T&gt; {
+<pre><code class="language-rust ignore">class Box&lt;T&gt; {
     value: T
     def get(self) -&gt; T { return self.value }
 }
 
-b = new Box&lt;int&gt;(42)
-<span class="boring">}</span></code></pre></pre>
+b = new Box&lt;int&gt;(42)</code></pre>
 <p>This requires <strong>monomorphization</strong> (generating specialized code for each type) or <strong>type erasure</strong> (using runtime type info).</p>
 <h2 id="path-2-add-new-types"><a class="header" href="#path-2-add-new-types">Path 2: Add New Types</a></h2>
 <h3 id="strings"><a class="header" href="#strings">Strings</a></h3>
@@ -257,11 +251,8 @@ arr[0] = 10
 <li>Dynamic resizing (for lists)</li>
 </ul>
 <h3 id="structs-without-methods"><a class="header" href="#structs-without-methods">Structs (without methods)</a></h3>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>struct Point { x: int, y: int }
-p = Point { x: 10, y: 20 }
-<span class="boring">}</span></code></pre></pre>
+<pre><code class="language-rust ignore">struct Point { x: int, y: int }
+p = Point { x: 10, y: 20 }</code></pre>
 <p>Simpler than classes - no methods, no heap allocation, just grouped data.</p>
 <h2 id="path-3-advanced-features"><a class="header" href="#path-3-advanced-features">Path 3: Advanced Features</a></h2>
 <h3 id="closures"><a class="header" href="#closures">Closures</a></h3>
@@ -280,27 +271,19 @@ add5(10)  # returns 15
 <li>Closure representation (function pointer + environment)</li>
 </ul>
 <h3 id="pattern-matching"><a class="header" href="#pattern-matching">Pattern Matching</a></h3>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>match value {
+<pre><code class="language-rust ignore">match value {
     0 =&gt; "zero",
     1 =&gt; "one",
     n =&gt; "other"
-}
-<span class="boring">}</span></code></pre></pre>
+}</code></pre>
 <p>Or with destructuring:</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>match point {
+<pre><code class="language-rust ignore">match point {
     Point { x: 0, y } =&gt; "on y-axis",
     Point { x, y: 0 } =&gt; "on x-axis",
     _ =&gt; "elsewhere"
-}
-<span class="boring">}</span></code></pre></pre>
+}</code></pre>
 <h3 id="algebraic-data-types-adts"><a class="header" href="#algebraic-data-types-adts">Algebraic Data Types (ADTs)</a></h3>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>enum Option&lt;T&gt; {
+<pre><code class="language-rust ignore">enum Option&lt;T&gt; {
     Some(T),
     None
 }
@@ -308,8 +291,7 @@ add5(10)  # returns 15
 enum Result&lt;T, E&gt; {
     Ok(T),
     Err(E)
-}
-<span class="boring">}</span></code></pre></pre>
+}</code></pre>
 <p>Combined with pattern matching, this is incredibly powerful.</p>
 <h2 id="path-4-better-error-handling"><a class="header" href="#path-4-better-error-handling">Path 4: Better Error Handling</a></h2>
 <h3 id="source-locations"><a class="header" href="#source-locations">Source Locations</a></h3>
@@ -374,12 +356,9 @@ delete q              # refcount = 1
 <p>Read <a href="https://gchandbook.org/">The Garbage Collection Handbook</a> for deep coverage.</p>
 <h3 id="ownership-rust-style"><a class="header" href="#ownership-rust-style">Ownership (Rust-style)</a></h3>
 <p>Compiler enforces memory safety without runtime cost:</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>p = new Point(1, 2)
+<pre><code class="language-rust ignore">p = new Point(1, 2)
 q = p      # p is moved, can't use p anymore
-delete q   # Only q can free
-<span class="boring">}</span></code></pre></pre>
+delete q   # Only q can free</code></pre>
 <p>This is complex but eliminates memory bugs at compile time.</p>
 <h2 id="path-7-optimizations"><a class="header" href="#path-7-optimizations">Path 7: Optimizations</a></h2>
 <h3 id="constant-folding"><a class="header" href="#constant-folding">Constant Folding</a></h3>

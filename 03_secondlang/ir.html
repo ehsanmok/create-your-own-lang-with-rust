@@ -194,12 +194,9 @@
 <p>Many languages use LLVM: Rust, Swift, Julia, Kotlin/Native, and more. By using LLVM, we get world-class optimizations for free.</p>
 <h2 id="a-simple-example"><a class="header" href="#a-simple-example">A Simple Example</a></h2>
 <p>Let us see what LLVM IR looks like. Here is a Secondlang function:</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>def answer() -&gt; int {
+<pre><code class="language-rust ignore">def answer() -&gt; int {
     return 42
-}
-<span class="boring">}</span></code></pre></pre>
+}</code></pre>
 <p>And here is the LLVM IR it compiles to:</p>
 <pre><code>define i64 @answer() {
 entry:
@@ -215,12 +212,9 @@ entry:
 <p>That is it. Our function just returns 42.</p>
 <h2 id="ir-for-arithmetic"><a class="header" href="#ir-for-arithmetic">IR for Arithmetic</a></h2>
 <p>Here is a function that adds two numbers:</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>def add(a: int, b: int) -&gt; int {
+<pre><code class="language-rust ignore">def add(a: int, b: int) -&gt; int {
     return a + b
-}
-<span class="boring">}</span></code></pre></pre>
+}</code></pre>
 <p>LLVM IR:</p>
 <pre><code>define i64 @add(i64 %a, i64 %b) {
 entry:
@@ -246,11 +240,8 @@ entry:
 <h3 id="why-all-the-loading-and-storing"><a class="header" href="#why-all-the-loading-and-storing">Why All the Loading and Storing?</a></h3>
 <p>This pattern looks wasteful. Why not just use <code>%a</code> and <code>%b</code> directly?</p>
 <p>The answer is <strong>mutability</strong>. In LLVM IR, values like <code>%a</code> are immutable - you cannot change them. But in most languages, variables <em>can</em> change:</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>x = 5
-x = x + 1    // x is now 6
-<span class="boring">}</span></code></pre></pre>
+<pre><code class="language-rust ignore">x = 5
+x = x + 1    // x is now 6</code></pre>
 <p>By storing variables in stack slots (<code>alloca</code>), we can modify them:</p>
 <pre><code>%x.addr = alloca i64
 store i64 5, ptr %x.addr           ; x = 5
@@ -261,16 +252,13 @@ store i64 %tmp2, ptr %x.addr       ; x = x + 1
 <p>This is called the <strong>alloca/load/store pattern</strong>. It is simple to generate and LLVM optimizes it away (the <a href="https://llvm.org/docs/Passes.html#mem2reg-promote-memory-to-register">mem2reg pass</a> promotes stack slots to registers) when possible.</p>
 <h2 id="ir-for-conditionals"><a class="header" href="#ir-for-conditionals">IR for Conditionals</a></h2>
 <p>Conditionals require <strong>branching</strong> - jumping to different code based on a condition:</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>def max(a: int, b: int) -&gt; int {
+<pre><code class="language-rust ignore">def max(a: int, b: int) -&gt; int {
     if (a &gt; b) {
         return a
     } else {
         return b
     }
-}
-<span class="boring">}</span></code></pre></pre>
+}</code></pre>
 <p>LLVM IR:</p>
 <pre><code>define i64 @max(i64 %a, i64 %b) {
 entry:
@@ -293,12 +281,9 @@ else:
 <h2 id="ssa-form"><a class="header" href="#ssa-form">SSA Form</a></h2>
 <p>LLVM IR uses <strong><a href="https://en.wikipedia.org/wiki/Static_single-assignment_form">Static Single Assignment (SSA)</a></strong> form. This means every variable is assigned exactly once.</p>
 <p>Consider this code:</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>x = 1
+<pre><code class="language-rust ignore">x = 1
 x = 2
-x = 3
-<span class="boring">}</span></code></pre></pre>
+x = 3</code></pre>
 <p>In SSA form, we cannot reuse <code>x</code>. Instead, we create new names:</p>
 <pre><code>%x.1 = ...   ; first assignment
 %x.2 = ...   ; second assignment
@@ -308,17 +293,14 @@ x = 3
 <p>Why SSA? It makes optimization easier. The compiler always knows exactly where each value was defined. This enables powerful optimizations like <a href="https://en.wikipedia.org/wiki/Dead_code_elimination">dead code elimination</a>, <a href="https://en.wikipedia.org/wiki/Constant_folding#Constant_propagation">constant propagation</a>, and <a href="https://en.wikipedia.org/wiki/Common_subexpression_elimination">common subexpression elimination</a>.</p>
 <h2 id="phi-nodes-merging-values-from-different-paths"><a class="header" href="#phi-nodes-merging-values-from-different-paths">Phi Nodes: Merging Values from Different Paths</a></h2>
 <p>SSA creates a problem with conditionals. Consider:</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>def pick(cond: bool, a: int, b: int) -&gt; int {
+<pre><code class="language-rust ignore">def pick(cond: bool, a: int, b: int) -&gt; int {
     if (cond) {
         x = a
     } else {
         x = b
     }
     return x
-}
-<span class="boring">}</span></code></pre></pre>
+}</code></pre>
 <p>After the if/else, what is <code>x</code>? It depends on which branch we took. In SSA, we need different names:</p>
 <pre><code>then:
   %x.then = ...
@@ -340,16 +322,13 @@ merge:
 <p>Phi nodes are the only way to merge values from different <a href="https://en.wikipedia.org/wiki/Control_flow">control flow</a> paths in SSA.</p>
 <h2 id="ir-for-recursion"><a class="header" href="#ir-for-recursion">IR for Recursion</a></h2>
 <p><a href="https://en.wikipedia.org/wiki/Recursion_(computer_science)">Recursive</a> functions use the <code>call</code> instruction:</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>def fib(n: int) -&gt; int {
+<pre><code class="language-rust ignore">def fib(n: int) -&gt; int {
     if (n &lt; 2) {
         return n
     } else {
         return fib(n - 1) + fib(n - 2)
     }
-}
-<span class="boring">}</span></code></pre></pre>
+}</code></pre>
 <p>LLVM IR (simplified):</p>
 <pre><code>define i64 @fib(i64 %n) {
 entry:

@@ -188,17 +188,14 @@ name = x + 8    # name = 50
 <p>Let’s trace through what happens when our interpreter runs <code>x = 42; y = x + 1</code>:</p>
 <h3 id="step-1-parse-to-ast"><a class="header" href="#step-1-parse-to-ast">Step 1: Parse to AST</a></h3>
 <p>The parser turns this into:</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>[
+<pre><code class="language-rust ignore">[
     Stmt::Assignment { name: "x", value: Expr::Int(42) },
     Stmt::Assignment { name: "y", value: Expr::Binary {
         op: Add,
         left: Expr::Var("x"),
         right: Expr::Int(1)
     }},
-]
-<span class="boring">}</span></code></pre></pre>
+]</code></pre>
 <p>Notice <code>Expr::Var("x")</code> - that’s a reference to a variable, not the variable itself. We’ll need to look it up later.</p>
 <h3 id="step-2-execute-first-assignment"><a class="header" href="#step-2-execute-first-assignment">Step 2: Execute First Assignment</a></h3>
 <p>For <code>x = 42</code>:</p>
@@ -220,19 +217,14 @@ name = x + 8    # name = 50
 </ol>
 <h3 id="the-environment-storage"><a class="header" href="#the-environment-storage">The Environment (Storage)</a></h3>
 <p>Where do variables live? In a <code>HashMap</code> inside a “frame”:</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>struct Frame {
+<pre><code class="language-rust ignore">struct Frame {
     locals: HashMap&lt;String, Value&gt;,
-}
-<span class="boring">}</span></code></pre></pre>
+}</code></pre>
 <p>A <code>HashMap</code> is a dictionary: given a key (the variable name), it returns a value. When we assign <code>x = 42</code>, we insert <code>("x", 42)</code> into the map. When we look up <code>x</code>, we query the map with <code>"x"</code> and get <code>42</code> back.</p>
 <p>Why call it a “frame”? Because in the <a href="./functions.html">functions</a> chapter, we’ll have multiple frames - one for each function call. Each function gets its own private storage.</p>
 <h2 id="variable-lookup"><a class="header" href="#variable-lookup">Variable Lookup</a></h2>
 <p>When we encounter a variable like <code>x</code>, we need to find its value:</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>fn lookup_var(&amp;self, name: &amp;str) -&gt; Result&lt;Value, String&gt; {
+<pre><code class="language-rust ignore">fn lookup_var(&amp;self, name: &amp;str) -&gt; Result&lt;Value, String&gt; {
     // First, check the current frame
     if let Some(value) = self.current_frame().locals.get(name) {
         return Ok(value.clone());
@@ -245,8 +237,7 @@ name = x + 8    # name = 50
 
     // Not found anywhere - error!
     Err(format!("Undefined variable: {}", name))
-}
-<span class="boring">}</span></code></pre></pre>
+}</code></pre>
 <p>This is called <strong>scoping</strong>: we first look in the local scope (current function), then fall back to global scope. If the variable isn’t anywhere, that’s an error.</p>
 <h2 id="scoping-local-vs-global"><a class="header" href="#scoping-local-vs-global">Scoping: Local vs Global</a></h2>
 <p>Variables can be <em>local</em> (inside a function) or <em>global</em> (outside all functions):</p>

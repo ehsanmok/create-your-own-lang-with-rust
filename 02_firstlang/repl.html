@@ -181,9 +181,7 @@
                         <h1 id="building-the-repl"><a class="header" href="#building-the-repl">Building the REPL</a></h1>
 <p>A REPL (Read-Eval-Print Loop) is an interactive environment for your language. It lets users type expressions and see results immediately.</p>
 <h2 id="the-basic-loop"><a class="header" href="#the-basic-loop">The Basic Loop</a></h2>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>fn repl() {
+<pre><code class="language-rust ignore">fn repl() {
     let mut interpreter = Interpreter::new();
 
     loop {
@@ -200,8 +198,7 @@
 
         // Loop (back to Read)
     }
-}
-<span class="boring">}</span></code></pre></pre>
+}</code></pre>
 <h2 id="persistent-state"><a class="header" href="#persistent-state">Persistent State</a></h2>
 <p>The key insight is that we use <strong>one interpreter</strong> across all inputs. This means:</p>
 <ul>
@@ -243,9 +240,7 @@ Goodbye!
 120
 </code></pre>
 <p>This is implemented by counting bracket depth:</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>/// Count unmatched opening brackets in a string
+<pre><code class="language-rust ignore">/// Count unmatched opening brackets in a string
 fn bracket_depth(s: &amp;str) -&gt; i32 {
     let mut depth = 0;
     let mut in_string = false;
@@ -261,8 +256,7 @@ fn bracket_depth(s: &amp;str) -&gt; i32 {
         }
     }
     depth
-}
-<span class="boring">}</span></code></pre></pre>
+}</code></pre>
 <p>When <code>bracket_depth</code> is positive, we keep reading lines until all brackets are closed.</p>
 <h2 id="error-handling"><a class="header" href="#error-handling">Error Handling</a></h2>
 <p>The REPL catches errors and keeps running:</p>

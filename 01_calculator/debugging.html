@@ -191,12 +191,9 @@
 <p>Debug by checking each arrow: Is the input to this stage correct? Is the output?</p>
 <h2 id="print-the-ast"><a class="header" href="#print-the-ast">Print the AST</a></h2>
 <p>The AST is your program’s structure. When behavior is wrong, print it:</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>// In your code
+<pre><code class="language-rust ignore">// In your code
 let ast = parse(source)?;
-println!("{:#?}", ast);  // Pretty-print with {:#?}
-<span class="boring">}</span></code></pre></pre>
+println!("{:#?}", ast);  // Pretty-print with {:#?}</code></pre>
 <p>Output:</p>
 <pre><code>Binary {
     op: Add,
@@ -207,20 +204,15 @@ println!("{:#?}", ast);  // Pretty-print with {:#?}
 <p>If this looks wrong, your parser has a bug. If it looks right, the bug is in execution.</p>
 <h2 id="check-operator-precedence"><a class="header" href="#check-operator-precedence">Check Operator Precedence</a></h2>
 <p>A common parsing bug: <code>1 + 2 * 3</code> parses as <code>(1 + 2) * 3</code> instead of <code>1 + (2 * 3)</code>.</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>let ast = parse("1 + 2 * 3")?;
+<pre><code class="language-rust ignore">let ast = parse("1 + 2 * 3")?;
 println!("{:#?}", ast);
 
 // Should be: Add(1, Mul(2, 3))
-// Bug if:    Mul(Add(1, 2), 3)
-<span class="boring">}</span></code></pre></pre>
+// Bug if:    Mul(Add(1, 2), 3)</code></pre>
 <p>Fix: Check your grammar’s precedence rules. In PEG, earlier alternatives have higher precedence.</p>
 <h2 id="test-small-test-often"><a class="header" href="#test-small-test-often">Test Small, Test Often</a></h2>
 <p>Don’t write 100 lines then debug. Test each feature in isolation:</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>#[test]
+<pre><code class="language-rust ignore">#[test]
 fn test_addition() {
     assert_eq!(eval("1 + 2"), 3);
 }
@@ -233,8 +225,7 @@ fn test_subtraction() {
 #[test]
 fn test_combined() {
     assert_eq!(eval("1 + 2 - 3"), 0);
-}
-<span class="boring">}</span></code></pre></pre>
+}</code></pre>
 <p>When a test fails, you know exactly what’s broken.</p>
 <h2 id="use-the-repl"><a class="header" href="#use-the-repl">Use the REPL</a></h2>
 <p>The REPL is your best friend for quick experiments:</p>
@@ -249,11 +240,8 @@ fn test_combined() {
 <h2 id="when-using-llvm-later"><a class="header" href="#when-using-llvm-later">When Using LLVM (Later)</a></h2>
 <p>When we add LLVM compilation, two more techniques become essential:</p>
 <h3 id="print-the-ir"><a class="header" href="#print-the-ir">Print the IR</a></h3>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>// After code generation
-codegen.module.print_to_stderr();
-<span class="boring">}</span></code></pre></pre>
+<pre><code class="language-rust ignore">// After code generation
+codegen.module.print_to_stderr();</code></pre>
 <p>You’ll see LLVM IR:</p>
 <pre><code class="language-llvm">define i64 @add(i64 %a, i64 %b) {
 entry:
@@ -263,13 +251,10 @@ entry:
 </code></pre>
 <p>If this looks wrong, your codegen has a bug.</p>
 <h3 id="use-llvms-verifier"><a class="header" href="#use-llvms-verifier">Use LLVM’s Verifier</a></h3>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>codegen.module.verify().map_err(|e| {
+<pre><code class="language-rust ignore">codegen.module.verify().map_err(|e| {
     eprintln!("LLVM verification failed: {}", e);
     e.to_string()
-})?;
-<span class="boring">}</span></code></pre></pre>
+})?;</code></pre>
 <p>The verifier catches:</p>
 <ul>
 <li>Missing terminators (every basic block needs <code>ret</code> or <code>br</code>)</li>

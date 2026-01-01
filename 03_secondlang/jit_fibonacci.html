@@ -189,9 +189,7 @@
 <p>Each step transforms the program into a different representation, getting closer and closer to something the CPU can execute.</p>
 <h2 id="running-fibonacci"><a class="header" href="#running-fibonacci">Running Fibonacci</a></h2>
 <p>Create a file <code>examples/fibonacci.sl</code>:</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>def fib(n: int) -&gt; int {
+<pre><code class="language-rust ignore">def fib(n: int) -&gt; int {
     if (n &lt; 2) {
         return n
     } else {
@@ -199,8 +197,7 @@
     }
 }
 
-fib(10)
-<span class="boring">}</span></code></pre></pre>
+fib(10)</code></pre>
 <p>Run it:</p>
 <pre><code class="language-bash">cd secondlang
 rustup run nightly cargo run -- examples/fibonacci.sl
@@ -262,9 +259,7 @@ entry:
 </code></pre>
 <p>Shows typed variables, functions, and control flow.</p>
 <h3 id="factorial"><a class="header" href="#factorial">Factorial</a></h3>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>def factorial(n: int) -&gt; int {
+<pre><code class="language-rust ignore">def factorial(n: int) -&gt; int {
     if (n &lt;= 1) {
         return 1
     } else {
@@ -272,8 +267,7 @@ entry:
     }
 }
 
-factorial(10)
-<span class="boring">}</span></code></pre></pre>
+factorial(10)</code></pre>
 <pre><code class="language-bash">rustup run nightly cargo run -- examples/factorial.sl
 </code></pre>
 <p>Expected output: <code>3628800</code></p>

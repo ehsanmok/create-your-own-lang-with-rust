@@ -574,9 +574,7 @@ fn parse_method_def(pair: Pair&lt;Rule&gt;) -&gt; Result&lt;MethodDef, String&gt
 </li>
 </ol>
 <h3 id="final-ast"><a class="header" href="#final-ast">Final AST</a></h3>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>TopLevel::Class(ClassDef {
+<pre><code class="language-rust ignore">TopLevel::Class(ClassDef {
     name: "Point".to_string(),
     fields: vec![
         FieldDef { name: "x".to_string(), ty: Type::Int },
@@ -601,8 +599,7 @@ fn parse_method_def(pair: Pair&lt;Rule&gt;) -&gt; Result&lt;MethodDef, String&gt
             body: vec![/* return self.x */],
         },
     ],
-})
-<span class="boring">}</span></code></pre></pre>
+})</code></pre>
 <p>Note: The <code>self</code> parameter is implicit in methods - it is not stored in the <code>params</code> list. The type checker knows every method receives <code>self</code> of the class type.</p>
 <h2 id="type-information-for-classes"><a class="header" href="#type-information-for-classes">Type Information for Classes</a></h2>
 <p>Classes need metadata for type checking. We store this in <code>ClassInfo</code>:</p>

@@ -197,17 +197,14 @@
 </p>
 <h2 id="defining-the-ast-in-rust"><a class="header" href="#defining-the-ast-in-rust">Defining the AST in Rust</a></h2>
 <p>In Rust, we represent “different kinds of things” with enums. Let’s start simple:</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>pub enum Operator {
+<pre><code class="language-rust ignore">pub enum Operator {
     Plus,
     Minus,
 }
 
 pub enum Node {
     Int(i32),
-}
-<span class="boring">}</span></code></pre></pre>
+}</code></pre>
 <p>This says: an <code>Operator</code> is either <code>Plus</code> or <code>Minus</code>. A <code>Node</code> is an integer that holds an <code>i32</code> value.</p>
 <p>But wait - this only handles numbers! What about expressions like <code>1 + 2</code>? We need nodes that can contain other nodes.</p>
 <h2 id="recursive-expressions"><a class="header" href="#recursive-expressions">Recursive Expressions</a></h2>
@@ -228,9 +225,7 @@ pub enum Node {
 <p>See how it’s nested? The outer <code>+</code> has children, and one child is itself a <code>+</code> expression. Trees let us represent this nesting naturally.</p>
 <h2 id="the-complete-ast"><a class="header" href="#the-complete-ast">The Complete AST</a></h2>
 <p>Now we can define our full AST:</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>pub enum Operator {
+<pre><code class="language-rust ignore">pub enum Operator {
     Plus,
     Minus,
 }
@@ -246,8 +241,7 @@ pub enum Node {
         lhs: Box&lt;Node&gt;,
         rhs: Box&lt;Node&gt;,
     },
-}
-<span class="boring">}</span></code></pre></pre>
+}</code></pre>
 <p><a class="filename" href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/calculator/src/ast.rs">calculator/src/ast.rs</a></p>
 <p>Let’s understand each variant:</p>
 <ul>

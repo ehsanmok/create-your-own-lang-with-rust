@@ -203,17 +203,14 @@
 <p>When we call <code>add(3, 4)</code>, the parameters <code>a</code> and <code>b</code> get bound to the values <code>3</code> and <code>4</code>, the body executes, and the result <code>7</code> is returned.</p>
 <h2 id="the-ast"><a class="header" href="#the-ast">The AST</a></h2>
 <p>In our AST, functions are statements (they’re declarations, not expressions):</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>enum Stmt {
+<pre><code class="language-rust ignore">enum Stmt {
     Function {
         name: String,
         params: Vec&lt;String&gt;,
         body: Vec&lt;Stmt&gt;,
     },
     // ...
-}
-<span class="boring">}</span></code></pre></pre>
+}</code></pre>
 <p>Let’s understand each field:</p>
 <ul>
 <li><strong><code>name: String</code></strong> - The function’s name, like <code>"add"</code> or <code>"fibonacci"</code></li>
@@ -221,9 +218,7 @@
 <li><strong><code>body: Vec&lt;Stmt&gt;</code></strong> - The statements inside the function body</li>
 </ul>
 <p>When we parse <code>def add(a, b) { return a + b }</code>, we create:</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>Stmt::Function {
+<pre><code class="language-rust ignore">Stmt::Function {
     name: "add".to_string(),
     params: vec!["a".to_string(), "b".to_string()],
     body: vec![
@@ -233,8 +228,7 @@
             rhs: Box::new(Expr::Var("b".to_string())),
         })
     ],
-}
-<span class="boring">}</span></code></pre></pre>
+}</code></pre>
 <h2 id="how-function-calls-work"><a class="header" href="#how-function-calls-work">How Function Calls Work</a></h2>
 <p>When we evaluate a function call like <code>add(3, 4)</code>, several things happen in sequence. Understanding this sequence is crucial for understanding how programming languages work.</p>
 <p>Here’s the process:</p>
@@ -247,9 +241,7 @@
 <li><strong>Return</strong> the result - Pop the frame and give the result back to the caller</li>
 </ol>
 <p>Here’s how this looks in code:</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>Expr::Call { name, args } =&gt; {
+<pre><code class="language-rust ignore">Expr::Call { name, args } =&gt; {
     // Step 1: Look up the function by name
     let func = self.lookup_var(name)?;
 
@@ -277,8 +269,7 @@
     } else {
         Err(format!("{} is not a function", name))
     }
-}
-<span class="boring">}</span></code></pre></pre>
+}</code></pre>
 <p>The key insight here is that each function call gets its <em>own</em> environment. When we call <code>add(3, 4)</code>, we create <code>a = 3, b = 4</code> in a fresh frame. This frame is destroyed when the function returns. That’s why local variables are local - they only exist in their frame.</p>
 <h2 id="the-call-stack"><a class="header" href="#the-call-stack">The Call Stack</a></h2>
 <blockquote>

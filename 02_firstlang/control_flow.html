@@ -199,9 +199,7 @@
 <li><strong>Return the result</strong> - Whatever the chosen branch produces</li>
 </ol>
 <p>Here’s the implementation:</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>Expr::If { cond, then_branch, else_branch } =&gt; {
+<pre><code class="language-rust ignore">Expr::If { cond, then_branch, else_branch } =&gt; {
     // Step 1: Evaluate the condition
     let cond_val = self.eval_expr(cond)?;
 
@@ -215,8 +213,7 @@
     } else {
         return Err("Condition must be a boolean".to_string());
     }
-}
-<span class="boring">}</span></code></pre></pre>
+}</code></pre>
 <p>Notice we require the condition to be a boolean. In some languages, <code>if (0)</code> is valid (0 is “falsy”). In Firstlang, we’re explicit: <code>if (x == 0)</code> is the way to check for zero.</p>
 <h3 id="examples"><a class="header" href="#examples">Examples</a></h3>
 <p><strong>Absolute value</strong> - Returns the non-negative version of a number:</p>
@@ -257,9 +254,7 @@ x           # 5
 <p>This reads as: “while x is less than 5, increment x.” The loop runs 5 times: when x is 0, 1, 2, 3, and 4. When x becomes 5, the condition <code>x &lt; 5</code> is false, and the loop stops.</p>
 <h3 id="how-it-works-1"><a class="header" href="#how-it-works-1">How It Works</a></h3>
 <p>The interpreter uses an actual loop - Rust’s <code>loop</code> construct - and checks the condition at the start of each iteration:</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>Expr::While { cond, body } =&gt; {
+<pre><code class="language-rust ignore">Expr::While { cond, body } =&gt; {
     loop {
         // Step 1: Evaluate the condition
         let cond_val = self.eval_expr(cond)?;
@@ -280,8 +275,7 @@ x           # 5
 
     // Loops don't return a meaningful value
     Ok(Value::Unit)
-}
-<span class="boring">}</span></code></pre></pre>
+}</code></pre>
 <p>The key insight: after executing the body, we go back to the top and check the condition again. This creates the repetition.</p>
 <h3 id="examples-1"><a class="header" href="#examples-1">Examples</a></h3>
 <p><strong>Sum of 1 to 10</strong> - Classic loop example:</p>

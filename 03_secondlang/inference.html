@@ -264,12 +264,9 @@ FUNCTION typecheck_expr(expr, env) -&gt; Type:
 <p>The type “flows” from the literals, through the operator, into the variable. No explicit annotation needed.</p>
 <h2 id="step-by-step-example"><a class="header" href="#step-by-step-example">Step-by-Step Example</a></h2>
 <p>Let us trace through this code in detail:</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>x = 42
+<pre><code class="language-rust ignore">x = 42
 y = x * 2 + 10
-is_big = y &gt; 50
-<span class="boring">}</span></code></pre></pre>
+is_big = y &gt; 50</code></pre>
 <h3 id="step-1-parse-types-are-unknown"><a class="header" href="#step-1-parse-types-are-unknown">Step 1: Parse (types are Unknown)</a></h3>
 <p>After parsing, the AST looks like this (simplified):</p>
 <pre><code>Assignment { name: "x", value: Int(42), ty: Unknown }
@@ -439,10 +436,7 @@ Assignment { name: "is_big", value: Binary(...), ty: Bool }
 <p>The <code>Unknown</code> case is the heart of type inference. When we unify <code>Unknown</code> with a concrete type, we <em>learn</em> what the unknown type should be.</p>
 <h2 id="the-type-environment"><a class="header" href="#the-type-environment">The Type Environment</a></h2>
 <p>The <strong>type environment</strong> (also called symbol table or context) maps names to types:</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>type TypeEnv = HashMap&lt;String, Type&gt;;
-<span class="boring">}</span></code></pre></pre>
+<pre><code class="language-rust ignore">type TypeEnv = HashMap&lt;String, Type&gt;;</code></pre>
 <p>The environment is:</p>
 <ul>
 <li><strong>Extended</strong> when we declare a variable or enter a function (adding new bindings)</li>
@@ -458,14 +452,11 @@ Assignment { name: "is_big", value: Binary(...), ty: Bool }
 <li>Return value (must match declared return type)</li>
 </ol>
 <p>Consider:</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>def compute(a: int, b: int) -&gt; int {
+<pre><code class="language-rust ignore">def compute(a: int, b: int) -&gt; int {
     temp = a + b        # What type is temp?
     doubled = temp * 2  # What type is doubled?
     return doubled + 1
-}
-<span class="boring">}</span></code></pre></pre>
+}</code></pre>
 <p>The type checker:</p>
 <ol>
 <li>
@@ -533,17 +524,14 @@ pub fn typecheck(program: &amp;mut Program) -&gt; Result&lt;(), String&gt; {
 <p><a class="filename" href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/secondlang/src/typeck.rs">secondlang/src/typeck.rs</a></p>
 <p><strong>Pass 1: Collect function signatures</strong></p>
 <p>We scan all function definitions and record their types <em>before</em> checking any bodies. Why? Because functions can call each other (mutual recursion):</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>def isEven(n: int) -&gt; bool {
+<pre><code class="language-rust ignore">def isEven(n: int) -&gt; bool {
     if (n == 0) { return true }
     else { return isOdd(n - 1) }
 }
 def isOdd(n: int) -&gt; bool {
     if (n == 0) { return false }
     else { return isEven(n - 1) }
-}
-<span class="boring">}</span></code></pre></pre>
+}</code></pre>
 <p>When checking <code>isEven</code>, we need to know the type of <code>isOdd</code>. By collecting all signatures first, <a href="https://en.wikipedia.org/wiki/Mutual_recursion">mutual recursion</a> works.</p>
 <p><strong>Pass 2: Check each statement</strong></p>
 <p>Now we go through each statement, inferring types as we go.</p>
@@ -707,31 +695,20 @@ def isOdd(n: int) -&gt; bool {
 </ol>
 <h2 id="when-inference-fails"><a class="header" href="#when-inference-fails">When Inference Fails</a></h2>
 <p>Type inference is not magic. It fails when there is not enough information:</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span><span class="boring">This would fail - what type is x?
-</span>x = some_function_that_could_return_anything()
-<span class="boring">}</span></code></pre></pre>
+<pre><code class="language-rust ignore"><span class="boring">This would fail - what type is x?
+</span>x = some_function_that_could_return_anything()</code></pre>
 <p>Or when types conflict:</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>x = 42
-x = true  # Error: x is Int, cannot assign Bool
-<span class="boring">}</span></code></pre></pre>
+<pre><code class="language-rust ignore">x = 42
+x = true  # Error: x is Int, cannot assign Bool</code></pre>
 <p>We report errors with helpful messages:</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>let result = typecheck("1 + true");
+<pre><code class="language-rust ignore">let result = typecheck("1 + true");
 // Error: "Arithmetic operation requires int operands, got int and bool"
 
 let result = typecheck("add(1, true)");
-// Error: "Type mismatch: expected int, got bool"
-<span class="boring">}</span></code></pre></pre>
+// Error: "Type mismatch: expected int, got bool"</code></pre>
 <h2 id="limitations-of-local-inference"><a class="header" href="#limitations-of-local-inference">Limitations of Local Inference</a></h2>
 <p>Our inference cannot handle some things that Hindley-Milner can:</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span><span class="boring">Hindley-Milner could infer: identity : forall a. a -&gt; a
+<pre><code class="language-rust ignore"><span class="boring">Hindley-Milner could infer: identity : forall a. a -&gt; a
 </span>def identity(x) {
     return x
 }
@@ -739,8 +716,7 @@ let result = typecheck("add(1, true)");
 <span class="boring">We require annotations:
 </span>def identity(x: int) -&gt; int {
     return x
-}
-<span class="boring">}</span></code></pre></pre>
+}</code></pre>
 <p>For a simple language like Secondlang, this is fine. The annotation burden is low (just function boundaries), and the implementation is much simpler.</p>
 <h2 id="comparison-with-other-systems"><a class="header" href="#comparison-with-other-systems">Comparison with Other Systems</a></h2>
 <div class="table-wrapper"><table><thead><tr><th>Feature</th><th>Secondlang</th><th>TypeScript</th><th>Haskell</th></tr></thead><tbody>

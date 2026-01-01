@@ -194,14 +194,11 @@ add(1, true)   # crashes at runtime!
 <p>In a small program, this might be okay. But imagine a large program with thousands of lines. The buggy code might be in a rarely-used feature. You deploy your program, and months later, a user triggers that code path and the program crashes. Not good.</p>
 <h2 id="the-solution-catch-errors-early"><a class="header" href="#the-solution-catch-errors-early">The Solution: Catch Errors Early</a></h2>
 <p>With types, we tell the compiler <em>what kind of values</em> each variable can hold:</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>def add(a: int, b: int) -&gt; int {
+<pre><code class="language-rust ignore">def add(a: int, b: int) -&gt; int {
     return a + b
 }
 
-add(1, true)  # Error at COMPILE time: expected int, got bool
-<span class="boring">}</span></code></pre></pre>
+add(1, true)  # Error at COMPILE time: expected int, got bool</code></pre>
 <p>Now the compiler catches the bug <em>before</em> the program even runs. We know about the problem immediately, not months later in production.</p>
 <p>Think of types as a <em>contract</em>. When we write <code>a: int</code>, we are promising that <code>a</code> will always be an integer. The compiler checks that we keep our promises.</p>
 <h2 id="static-vs-dynamic-typing"><a class="header" href="#static-vs-dynamic-typing">Static vs Dynamic Typing</a></h2>
@@ -220,12 +217,9 @@ add(1, true)  # Error at COMPILE time: expected int, got bool
 <h2 id="types-enable-fast-code"><a class="header" href="#types-enable-fast-code">Types Enable Fast Code</a></h2>
 <p>There is another benefit to types: <strong>performance</strong>.</p>
 <p>Consider this function:</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>def square(x: int) -&gt; int {
+<pre><code class="language-rust ignore">def square(x: int) -&gt; int {
     return x * x
-}
-<span class="boring">}</span></code></pre></pre>
+}</code></pre>
 <p>The compiler knows that <code>x</code> is always a 64-bit integer. It knows the result is always a 64-bit integer. So it can generate a <em>single CPU instruction</em> for the multiplication:</p>
 <pre><code class="language-asm">imul rax, rax   ; multiply rax by itself
 </code></pre>
@@ -248,23 +242,18 @@ add(1, true)  # Error at COMPILE time: expected int, got bool
 </div>
 <p>These are sometimes called <a href="https://en.wikipedia.org/wiki/Primitive_data_type">primitive types</a>.</p>
 <p>Functions also have types. A function’s type describes what it takes in and what it produces:</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>def add(a: int, b: int) -&gt; int { ... }
+<pre><code class="language-rust ignore">def add(a: int, b: int) -&gt; int { ... }
 <span class="boring">Type: (int, int) -&gt; int
 </span><span class="boring">"Takes two ints, returns an int"
 </span>
 def isPositive(n: int) -&gt; bool { ... }
 <span class="boring">Type: (int) -&gt; bool
-</span><span class="boring">"Takes an int, returns a bool"
-</span><span class="boring">}</span></code></pre></pre>
+</span><span class="boring">"Takes an int, returns a bool"</span></code></pre>
 <p>This notation <code>(int, int) -&gt; int</code> is called a <a href="https://en.wikipedia.org/wiki/Function_type">function type</a>.</p>
 <h2 id="type-inference-the-best-of-both-worlds"><a class="header" href="#type-inference-the-best-of-both-worlds">Type Inference: The Best of Both Worlds</a></h2>
 <p>You might worry that adding types means writing <code>int</code> everywhere, making code verbose. But we can be smarter.</p>
 <p><em><a href="https://en.wikipedia.org/wiki/Type_inference">Type inference</a></em> means the compiler figures out types when it can:</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>def factorial(n: int) -&gt; int {
+<pre><code class="language-rust ignore">def factorial(n: int) -&gt; int {
     result = 1        # compiler infers: result is int
     i = 1             # compiler infers: i is int
     while (i &lt;= n) {
@@ -272,8 +261,7 @@ def isPositive(n: int) -&gt; bool { ... }
         i = i + 1
     }
     return result
-}
-<span class="boring">}</span></code></pre></pre>
+}</code></pre>
 <p>We write the types on function parameters and return values (the <em>boundaries</em>), and the compiler infers the rest. This gives us the safety of types without excessive verbosity. We cover this in detail in the <a href="./inference.html">Type Inference</a> chapter.</p>
 <h2 id="how-type-checking-works"><a class="header" href="#how-type-checking-works">How Type Checking Works</a></h2>
 <p>Here is the high-level flow:</p>

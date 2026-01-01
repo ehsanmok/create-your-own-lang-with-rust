@@ -501,22 +501,16 @@ pub struct CodeGen&lt;'ctx&gt; {
 <p><a class="filename" href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/secondlang/src/codegen.rs">secondlang/src/codegen.rs</a></p>
 <p>Let us walk through the important cases:</p>
 <h3 id="integers-and-booleans"><a class="header" href="#integers-and-booleans">Integers and Booleans</a></h3>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>Expr::Int(n) =&gt; Ok(self.context.i64_type().const_int(*n as u64, false)),
-Expr::Bool(b) =&gt; Ok(self.context.bool_type().const_int(*b as u64, false)),
-<span class="boring">}</span></code></pre></pre>
+<pre><code class="language-rust ignore">Expr::Int(n) =&gt; Ok(self.context.i64_type().const_int(*n as u64, false)),
+Expr::Bool(b) =&gt; Ok(self.context.bool_type().const_int(*b as u64, false)),</code></pre>
 <p>Constants are simple. We create a constant integer value of the right type. The <code>false</code> argument means the value is unsigned (we use signed arithmetic in operations).</p>
 <h3 id="variables-the-allocaload-pattern"><a class="header" href="#variables-the-allocaload-pattern">Variables: The Alloca/Load Pattern</a></h3>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>Expr::Var(name) =&gt; {
+<pre><code class="language-rust ignore">Expr::Var(name) =&gt; {
     let ptr = self.variables.get(name)
         .ok_or_else(|| format!("Undefined variable: {}", name))?;
     let val = self.builder.build_load(self.context.i64_type(), *ptr, name)?;
     Ok(val.into_int_value())
-}
-<span class="boring">}</span></code></pre></pre>
+}</code></pre>
 <p>Variables are stored on the stack using the <strong>alloca/load/store pattern</strong> we discussed in the <a href="./ir.html#why-all-the-loading-and-storing">IR chapter</a>:</p>
 <ol>
 <li>When we declare a variable, we use <code>alloca</code> to reserve stack space and store the pointer</li>
@@ -525,9 +519,7 @@ Expr::Bool(b) =&gt; Ok(self.context.bool_type().const_int(*b as u64, false)),
 </ol>
 <p>This pattern handles mutable variables naturally and LLVM optimizes it away when possible (promoting stack slots to registers).</p>
 <h3 id="binary-operations"><a class="header" href="#binary-operations">Binary Operations</a></h3>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>Expr::Binary { op, left, right } =&gt; {
+<pre><code class="language-rust ignore">Expr::Binary { op, left, right } =&gt; {
     let l = self.compile_expr(left)?;  // compile left operand
     let r = self.compile_expr(right)?; // compile right operand
 
@@ -536,13 +528,10 @@ Expr::Bool(b) =&gt; Ok(self.context.bool_type().const_int(*b as u64, false)),
         BinaryOp::Sub =&gt; Ok(self.builder.build_int_sub(l, r, "sub")?),
         // ... etc
     }
-}
-<span class="boring">}</span></code></pre></pre>
+}</code></pre>
 <p>We recursively compile left and right operands, then emit the appropriate instruction. The <code>"add"</code> string is a name for the result (helps when reading the IR).</p>
 <h3 id="function-calls"><a class="header" href="#function-calls">Function Calls</a></h3>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>Expr::Call { name, args } =&gt; {
+<pre><code class="language-rust ignore">Expr::Call { name, args } =&gt; {
     let function = self.functions.get(name)
         .ok_or_else(|| format!("Undefined function: {}", name))?;
 
@@ -552,8 +541,7 @@ Expr::Bool(b) =&gt; Ok(self.context.bool_type().const_int(*b as u64, false)),
 
     let call = self.builder.build_call(*function, &amp;arg_values, "call")?;
     Ok(call.try_as_basic_value().unwrap_basic().into_int_value())
-}
-<span class="boring">}</span></code></pre></pre>
+}</code></pre>
 <p>We look up the function, compile each argument, then emit a <code>call</code> instruction.</p>
 <p>The <code>try_as_basic_value().unwrap_basic()</code> deserves explanation. In LLVM, function calls can return either:</p>
 <ul>
@@ -563,9 +551,7 @@ Expr::Bool(b) =&gt; Ok(self.context.bool_type().const_int(*b as u64, false)),
 <p><code>try_as_basic_value()</code> returns an enum with both possibilities. Since our functions always return <code>int</code>, we know we have a basic value and can safely unwrap it. The <code>into_int_value()</code> converts it to the specific integer type we need.</p>
 <h3 id="conditionals"><a class="header" href="#conditionals">Conditionals</a></h3>
 <p>Conditionals need multiple basic blocks:</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>Expr::If { cond, then_branch, else_branch } =&gt; {
+<pre><code class="language-rust ignore">Expr::If { cond, then_branch, else_branch } =&gt; {
     // Compile condition and convert to i1 for branching
     let cond_val = self.compile_expr(cond)?;
     let cond_bool = self.builder.build_int_truncate(cond_val, self.context.bool_type(), "cond")?;
@@ -592,8 +578,7 @@ Expr::Bool(b) =&gt; Ok(self.context.bool_type().const_int(*b as u64, false)),
     // Continue at merge point
     self.builder.position_at_end(merge_bb);
     // ... use phi node to select result ...
-}
-<span class="boring">}</span></code></pre></pre>
+}</code></pre>
 <p>The key insight: we create separate basic blocks, compile each branch by positioning the builder at the right block, then use a <strong>phi node</strong> to merge the results.</p>
 <p>Remember from the <a href="./ir.html#phi-nodes-merging-values-from-different-paths">IR chapter</a>: a phi node selects a value based on which block we came from. If the condition was true and we came from <code>then_bb</code>, use the then-result. Otherwise use the else-result.</p>
 <h2 id="jit-execution"><a class="header" href="#jit-execution">JIT Execution</a></h2>

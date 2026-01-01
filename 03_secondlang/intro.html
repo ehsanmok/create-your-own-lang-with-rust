@@ -240,17 +240,14 @@ def eval_binary(left, right, op):
 fib(10)
 </code></pre>
 <p>Secondlang (typed):</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>def fib(n: int) -&gt; int {
+<pre><code class="language-rust ignore">def fib(n: int) -&gt; int {
     if (n &lt; 2) {
         return n
     } else {
         return fib(n - 1) + fib(n - 2)
     }
 }
-fib(10)
-<span class="boring">}</span></code></pre></pre>
+fib(10)</code></pre>
 <p>The programs are nearly identical. Type annotations are the only difference, but they unlock compile-time safety and native code generation.</p>
 <h2 id="project-structure"><a class="header" href="#project-structure">Project Structure</a></h2>
 <pre><code>secondlang/

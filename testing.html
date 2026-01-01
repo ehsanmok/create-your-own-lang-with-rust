@@ -189,9 +189,7 @@
 </ul>
 <h2 id="unit-testing-the-parser"><a class="header" href="#unit-testing-the-parser">Unit Testing the Parser</a></h2>
 <p>Test that source code produces the expected AST:</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>#[test]
+<pre><code class="language-rust ignore">#[test]
 fn test_parse_addition() {
     let ast = parse("1 + 2").unwrap();
     assert!(matches!(
@@ -204,8 +202,7 @@ fn test_parse_addition() {
 fn test_parse_error() {
     let result = parse("1 +");
     assert!(result.is_err());
-}
-<span class="boring">}</span></code></pre></pre>
+}</code></pre>
 <p><strong>What to test:</strong></p>
 <ul>
 <li>Valid syntax parses correctly</li>
@@ -215,9 +212,7 @@ fn test_parse_error() {
 </ul>
 <h2 id="unit-testing-the-type-checker"><a class="header" href="#unit-testing-the-type-checker">Unit Testing the Type Checker</a></h2>
 <p>Test type inference and error detection:</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>#[test]
+<pre><code class="language-rust ignore">#[test]
 fn test_type_inference() {
     let mut program = parse("x = 5").unwrap();
     typecheck(&amp;mut program).unwrap();
@@ -229,8 +224,7 @@ fn test_type_error() {
     let mut program = parse("x = 5 + true").unwrap();
     let result = typecheck(&amp;mut program);
     assert!(result.is_err());
-}
-<span class="boring">}</span></code></pre></pre>
+}</code></pre>
 <p><strong>What to test:</strong></p>
 <ul>
 <li>Correct types are inferred</li>
@@ -240,9 +234,7 @@ fn test_type_error() {
 </ul>
 <h2 id="integration-testing"><a class="header" href="#integration-testing">Integration Testing</a></h2>
 <p>Test the full pipeline from source to result:</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>#[test]
+<pre><code class="language-rust ignore">#[test]
 fn test_fibonacci() {
     let source = r#"
         def fib(n: int) -&gt; int {
@@ -252,8 +244,7 @@ fn test_fibonacci() {
         fib(10)
     "#;
     assert_eq!(run(source).unwrap(), 55);
-}
-<span class="boring">}</span></code></pre></pre>
+}</code></pre>
 <p><strong>What to test:</strong></p>
 <ul>
 <li>Complete programs produce correct output</li>
@@ -262,14 +253,11 @@ fn test_fibonacci() {
 </ul>
 <h2 id="snapshot-testing"><a class="header" href="#snapshot-testing">Snapshot Testing</a></h2>
 <p>Compare output against saved “golden” files:</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>#[test]
+<pre><code class="language-rust ignore">#[test]
 fn test_ir_output() {
     let ir = compile_to_ir("def answer() -&gt; int { return 42 }").unwrap();
     insta::assert_snapshot!(ir);
-}
-<span class="boring">}</span></code></pre></pre>
+}</code></pre>
 <p>Use <a href="https://insta.rs/">insta</a> for snapshot testing in Rust. When output changes, review and accept or reject.</p>
 <p><strong>Good for:</strong></p>
 <ul>
@@ -279,9 +267,7 @@ fn test_ir_output() {
 </ul>
 <h2 id="property-based-testing"><a class="header" href="#property-based-testing">Property-Based Testing</a></h2>
 <p>Generate random inputs and check properties:</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>use quickcheck::quickcheck;
+<pre><code class="language-rust ignore">use quickcheck::quickcheck;
 
 quickcheck! {
     fn parse_roundtrip(expr: ArbitraryExpr) -&gt; bool {
@@ -289,8 +275,7 @@ quickcheck! {
         let parsed = parse(&amp;source);
         parsed.is_ok()
     }
-}
-<span class="boring">}</span></code></pre></pre>
+}</code></pre>
 <p><strong>Properties to test:</strong></p>
 <ul>
 <li>Parsing never panics on any input</li>
@@ -304,9 +289,7 @@ cargo fuzz init
 cargo fuzz run parse_fuzz
 </code></pre>
 <p>Create a fuzz target:</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>// fuzz/fuzz_targets/parse_fuzz.rs
+<pre><code class="language-rust ignore">// fuzz/fuzz_targets/parse_fuzz.rs
 #![no_main]
 use libfuzzer_sys::fuzz_target;
 
@@ -314,8 +297,7 @@ fuzz_target!(|data: &amp;[u8]| {
     if let Ok(s) = std::str::from_utf8(data) {
         let _ = myparser::parse(s);  // Should never panic
     }
-});
-<span class="boring">}</span></code></pre></pre>
+});</code></pre>
 <p><strong>Fuzzing finds:</strong></p>
 <ul>
 <li>Parser crashes on malformed input</li>
@@ -326,21 +308,16 @@ fuzz_target!(|data: &amp;[u8]| {
 <p>Run fuzzing for hours/days on CI. Even 10 minutes often finds bugs.</p>
 <h2 id="testing-error-messages"><a class="header" href="#testing-error-messages">Testing Error Messages</a></h2>
 <p>Errors should be helpful. Test them:</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>#[test]
+<pre><code class="language-rust ignore">#[test]
 fn test_undefined_variable_error() {
     let result = run("x + 1");
     let err = result.unwrap_err();
     assert!(err.contains("undefined"));
     assert!(err.contains("x"));
-}
-<span class="boring">}</span></code></pre></pre>
+}</code></pre>
 <h2 id="regression-tests"><a class="header" href="#regression-tests">Regression Tests</a></h2>
 <p>When you fix a bug, add a test:</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>#[test]
+<pre><code class="language-rust ignore">#[test]
 fn test_issue_42_nested_if() {
     // This used to crash due to incorrect phi node generation
     let source = r#"
@@ -349,8 +326,7 @@ fn test_issue_42_nested_if() {
         } else { 3 }
     "#;
     assert_eq!(run(source).unwrap(), 1);
-}
-<span class="boring">}</span></code></pre></pre>
+}</code></pre>
 <h2 id="test-organization"><a class="header" href="#test-organization">Test Organization</a></h2>
 <p>Structure your tests:</p>
 <pre><code>tests/
