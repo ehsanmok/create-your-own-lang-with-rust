@@ -207,16 +207,16 @@ Enable optimizations with the `-O` flag:
 
 ```bash
 # Without optimization
-secondlang --ir examples/fibonacci.sl
+rustup run nightly cargo run -- --ir examples/fibonacci.sl
 
 # With optimization
-secondlang --ir -O examples/fibonacci.sl
+rustup run nightly cargo run -- --ir -O examples/fibonacci.sl
 ```
 
 ## Testing
 
 ```bash
-cargo test visitor
+rustup run nightly cargo test
 ```
 
 In the next chapter, we look at what [LLVM IR](./ir.md) looks like before we start generating it.

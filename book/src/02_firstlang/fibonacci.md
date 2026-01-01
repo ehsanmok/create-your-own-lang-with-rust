@@ -84,10 +84,10 @@ The iterative version is more efficient ($O(n)$ vs $O(2^n)$ - see [Big O notatio
 
 ## Running It
 
-Save to `fibonacci.fl` and run:
+Save to `examples/fibonacci.fl` and run:
 
 ```bash
-cargo run -- fibonacci.fl
+cargo run -- examples/fibonacci.fl
 55
 ```
 

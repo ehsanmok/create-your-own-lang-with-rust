@@ -208,14 +208,14 @@ All in a fraction of a second.
 ## Testing
 
 ```bash
-cargo test codegen
+rustup run nightly cargo test compile
 ```
 
 <div class="checkpoint">
 
 At this point, you should be able to:
 
-- Run `cargo run -- --ir examples/simple.sl` and see LLVM IR output
+- Run `rustup run nightly cargo run -- --ir examples/fibonacci.sl` and see LLVM IR output
 - See functions like `@fib` in the IR
 - Verify the IR compiles without errors
 
