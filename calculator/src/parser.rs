@@ -62,11 +62,15 @@ fn build_ast_from_expr(pair: pest::iterators::Pair<Rule>) -> Node {
                 }
             }
         }
+        Rule::Term => build_ast_from_term(pair),
         unknown => panic!("Unknown expr: {:?}", unknown),
     }
 }
 
 fn build_ast_from_term(pair: pest::iterators::Pair<Rule>) -> Node {
+    assert_eq!(pair.as_rule(), Rule::Term);
+
+    let pair = pair.into_inner().next().unwrap();
     match pair.as_rule() {
         Rule::Int => {
             let int: i32 = pair.as_str().parse().unwrap();
@@ -106,6 +110,10 @@ mod tests {
     #[test]
     fn basics() {
         assert!(parse("b").is_err());
+
+        let one = parse("1");
+        assert!(one.is_ok());
+        assert_eq!(one.unwrap()[0], Node::Int(1));
     }
 
     #[test]

@@ -33,7 +33,7 @@ Don't let this overwhelm you - let's break it down line by line:
 
 **`Expr = { UnaryExpr | BinaryExpr | Term }`** - An expression is either unary (`-1`), binary (`1 + 2`), or a simple term (just a number). The `|` means "or" - try each alternative in order.
 
-**`Term = _{ Int | "(" ~ Expr ~ ")" }`** - A term is either a number or a parenthesized expression. This is how we handle `(1 + 2) * 3` - the parenthesized part becomes a single term.
+**`Term = { Int | "(" ~ Expr ~ ")" }`** - A term is either a number or a parenthesized expression. This is how we handle `(1 + 2) * 3` - the parenthesized part becomes a single term.
 
 **`UnaryExpr = { Operator ~ Term }`** - A unary expression is an operator followed by a term, like `-1` or `+5`.
 
