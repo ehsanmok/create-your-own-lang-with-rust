@@ -203,7 +203,7 @@
 
 Expr = { BinaryExpr | UnaryExpr | Term }
 
-Term = _{ Int | "(" ~ Expr ~ ")" }
+Term = { Int | "(" ~ Expr ~ ")" }
 
 UnaryExpr = { Operator ~ Term }
 
@@ -222,7 +222,7 @@ EOF = _{ EOI | ";" }
 <p>Don’t let this overwhelm you - let’s break it down line by line:</p>
 <p><strong><code>Program = _{ SOI ~ Expr ~ EOF }</code></strong> - A program is an expression, surrounded by “start of input” (<code>SOI</code>) and “end of file” (<code>EOF</code>). The <code>_{ }</code> means we don’t create a node for <code>Program</code> itself - it’s just a wrapper.</p>
 <p><strong><code>Expr = { UnaryExpr | BinaryExpr | Term }</code></strong> - An expression is either unary (<code>-1</code>), binary (<code>1 + 2</code>), or a simple term (just a number). The <code>|</code> means “or” - try each alternative in order.</p>
-<p><strong><code>Term = _{ Int | "(" ~ Expr ~ ")" }</code></strong> - A term is either a number or a parenthesized expression. This is how we handle <code>(1 + 2) * 3</code> - the parenthesized part becomes a single term.</p>
+<p><strong><code>Term = { Int | "(" ~ Expr ~ ")" }</code></strong> - A term is either a number or a parenthesized expression. This is how we handle <code>(1 + 2) * 3</code> - the parenthesized part becomes a single term.</p>
 <p><strong><code>UnaryExpr = { Operator ~ Term }</code></strong> - A unary expression is an operator followed by a term, like <code>-1</code> or <code>+5</code>.</p>
 <p><strong><code>BinaryExpr = { (UnaryExpr | Term) ~ (Operator ~ Term)+ }</code></strong> - A binary expression is something followed by one or more operator-term pairs. This handles <code>1 + 2</code>, <code>1 + 2 + 3</code>, and even <code>-1 + 2</code> (unary expression followed by operator-term).</p>
 <p><strong><code>Operator = { "+" | "-" }</code></strong> - Our operators are just plus and minus for now.</p>
