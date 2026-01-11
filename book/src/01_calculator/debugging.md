@@ -6,11 +6,10 @@ Before we move on, let's establish debugging techniques you'll use throughout th
 
 > Your language is a pipeline. Data flows through stages: Source → Tokens → AST → Output. When something breaks, find *which stage* produced the wrong output.
 
-```
-Source Code  →  Parser  →  AST  →  Executor  →  Result
-     ↓            ↓         ↓         ↓           ↓
-   "1+2"      tokens    tree      eval      3 (or error!)
-```
+<p align="center">
+</br>
+    <a href><img alt="dataflow: source code to result" src="../img/dataflow.svg"> </a>
+</p>
 
 Debug by checking each arrow: Is the input to this stage correct? Is the output?
 
