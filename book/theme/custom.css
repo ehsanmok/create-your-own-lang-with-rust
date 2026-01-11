@@ -457,7 +457,8 @@ blockquote p {
 }
 
 /* =============================================================================
-   NAVIGATION BUTTONS
+   NAVIGATION BUTTONS (Previous/Next chapter arrows)
+   Fix: Reduce hover area so it doesn't cover content
    ============================================================================= */
 
 .nav-chapters {
@@ -469,6 +470,26 @@ blockquote p {
 .nav-chapters:hover {
   color: var(--accent-color) !important;
   transform: scale(1.1);
+}
+
+/* Desktop navigation arrows - fix the wide hover area covering content */
+.nav-wide-wrapper {
+  /* Make the wrapper not block mouse events on content */
+  pointer-events: none;
+}
+
+.nav-wide-wrapper .nav-chapters {
+  /* Only the actual arrow buttons receive mouse events */
+  pointer-events: auto;
+  /* Reduce width so hover area is smaller */
+  max-width: 50px;
+  /* Transparent background until hover */
+  background: transparent;
+}
+
+.nav-wide-wrapper .nav-chapters:hover {
+  background: rgba(250, 248, 245, 0.95);
+  border-radius: 4px;
 }
 
 /* =============================================================================
