@@ -39,29 +39,106 @@ The REPL is simple:
 
 The magic is in the feature flags. The same REPL works with three different backends:
 
+| Backend | Description | Rust Version |
+|---------|-------------|--------------|
+| **Interpreter** | Walks AST directly | Stable |
+| **VM** | Compiles to bytecode | Stable |
+| **JIT** | Compiles to native code via LLVM | Nightly |
+
+This is powerful for learning! You can compare how the same expression is handled by each backend. Let's run through two examples with all three.
+
+### Interpreter Output Example
+
+The interpreter walks the AST and computes results directly:
+
 ```bash
-# Interpreter (stable Rust)
-# Walks the AST and computes directly
 cargo run --bin repl --features interpreter
-
-# Bytecode VM (stable Rust)
-# Compiles to bytecode, then interprets that
-cargo run --bin repl --features vm
-
-# JIT (requires nightly Rust + LLVM)
-# Compiles to native machine code
-rustup run nightly cargo run --bin repl --features jit
 ```
 
-This is powerful for learning! You can compare how the same expression is handled:
+You see the AST structure and direct evaluation:
 
-- The interpreter shows the AST structure
-- The VM shows the bytecode being generated
-- The JIT shows the LLVM IR
+```text
+Calculator prompt. Expressions are line evaluated.
+>> 1 + 2
+Compiling the source: 1 + 2
+[BinaryExpr { op: Plus, lhs: Int(1), rhs: Int(2) }]
+3
+```
+
+The interpreter is the simplest backend. It parses the input into an AST (`BinaryExpr` with `Plus` operator, left-hand side `Int(1)`, right-hand side `Int(2)`), then walks the tree and computes the result directly.
+
+A more complex expression shows a nested AST:
+
+```text
+>> (1 + 2) - (8 - 10)
+Compiling the source: (1 + 2) - (8 - 10)
+[BinaryExpr { op: Minus, lhs: BinaryExpr { op: Plus, lhs: Int(1), rhs: Int(2) }, rhs: BinaryExpr { op: Minus, lhs: Int(8), rhs: Int(10) } }]
+5
+```
+
+The outer `BinaryExpr` has `Minus` as its operator, with two inner `BinaryExpr` nodes as children. The interpreter recursively evaluates each subtree: `(1 + 2) = 3`, `(8 - 10) = -2`, then `3 - (-2) = 5`.
+
+### VM Output Example
+
+The VM compiles AST to bytecode, then executes it on a stack machine:
+
+```bash
+cargo run --bin repl --no-default-features --features vm
+```
+
+You see bytecode generation step by step:
+
+```text
+Calculator prompt. Expressions are line evaluated.
+>> 1 + 2
+Compiling the source: 1 + 2
+[BinaryExpr { op: Plus, lhs: Int(1), rhs: Int(2) }]
+compiling node BinaryExpr { op: Plus, lhs: Int(1), rhs: Int(2) }
+added instructions [1, 0, 0] from opcode OpConstant(0)
+added instructions [1, 0, 0, 1, 0, 1] from opcode OpConstant(1)
+added instructions [1, 0, 0, 1, 0, 1, 3] from opcode OpAdd
+added instructions [1, 0, 0, 1, 0, 1, 3, 2] from opcode OpPop
+byte code: Bytecode { instructions: [1, 0, 0, 1, 0, 1, 3, 2], constants: [Int(1), Int(2)] }
+3
+```
+
+Instead of walking the tree directly, the VM compiles the AST to bytecode first. You can see each instruction being added:
+
+1. `OpConstant(0)` - Push constant at index 0 (which is `1`)
+2. `OpConstant(1)` - Push constant at index 1 (which is `2`)
+3. `OpAdd` - Pop two values, push their sum
+4. `OpPop` - Pop and return the result
+
+A more complex expression shows more bytecode instructions being generated:
+
+```text
+>> (1 + 2) - (8 - 10)
+Compiling the source: (1 + 2) - (8 - 10)
+[BinaryExpr { op: Minus, lhs: BinaryExpr { ... }, rhs: BinaryExpr { ... } }]
+compiling node BinaryExpr { ... }
+added instructions [1, 0, 0] from opcode OpConstant(0)
+added instructions [1, 0, 0, 1, 0, 1] from opcode OpConstant(1)
+added instructions [1, 0, 0, 1, 0, 1, 3] from opcode OpAdd
+added instructions [1, 0, 0, 1, 0, 1, 3, 1, 0, 2] from opcode OpConstant(2)
+added instructions [1, 0, 0, 1, 0, 1, 3, 1, 0, 2, 1, 0, 3] from opcode OpConstant(3)
+added instructions [1, 0, 0, 1, 0, 1, 3, 1, 0, 2, 1, 0, 3, 4] from opcode OpSub
+added instructions [1, 0, 0, 1, 0, 1, 3, 1, 0, 2, 1, 0, 3, 4, 4] from opcode OpSub
+added instructions [1, 0, 0, 1, 0, 1, 3, 1, 0, 2, 1, 0, 3, 4, 4, 2] from opcode OpPop
+byte code: Bytecode { instructions: [1, 0, 0, 1, 0, 1, 3, 1, 0, 2, 1, 0, 3, 4, 4, 2], constants: [Int(1), Int(2), Int(8), Int(10)] }
+5
+```
+
+Four constants, multiple operations, all encoded in a flat byte array. The VM then executes this bytecode using a simple stack machine.
 
 ### JIT Output Example
 
-With `--features jit`, you see the generated LLVM IR:
+The JIT compiles to native machine code via LLVM (requires nightly Rust):
+
+```bash
+rustup run nightly cargo run --bin repl --no-default-features --features jit
+```
+
+You see the generated LLVM IR:
 
 ```text
 Calculator prompt. Expressions are line evaluated.
@@ -78,59 +155,21 @@ entry:
 
 Notice something interesting: the IR just says `ret i32 3`! LLVM computed `1 + 2 = 3` at compile time and baked the answer directly into the code. This is **constant folding**, one of LLVM's many optimizations.
 
-Let's try a more complex expression:
-
-```text
->> -2 + 5
-Compiling the source: -2 + 5
-[BinaryExpr { op: Plus, lhs: UnaryExpr { op: Minus, child: Int(2) }, rhs: Int(5) }]
-Generated LLVM IR: define i32 @jit() {
-entry:
-  ret i32 3
-}
-
-3
-```
-
-Again, LLVM optimized `(-2) + 5` to just `3`. The AST shows the full structure, but the compiled code is minimal.
-
-### VM Output Example
-
-With `--features vm`, you see bytecode generation step by step:
-
-```text
-Calculator prompt. Expressions are line evaluated.
->> 1 + 2
-Compiling the source: 1 + 2
-[BinaryExpr { op: Plus, lhs: Int(1), rhs: Int(2) }]
-compiling node BinaryExpr { op: Plus, lhs: Int(1), rhs: Int(2) }
-added instructions [1, 0, 0] from opcode OpConstant(0)
-added instructions [1, 0, 0, 1, 0, 1] from opcode OpConstant(1)
-added instructions [1, 0, 0, 1, 0, 1, 3] from opcode OpAdd
-added instructions [1, 0, 0, 1, 0, 1, 3, 2] from opcode OpPop
-byte code: Bytecode { instructions: [1, 0, 0, 1, 0, 1, 3, 2], constants: [Int(1), Int(2)] }
-3
-```
-
-You can see each instruction being added:
-
-1. `OpConstant(0)` - Push constant at index 0 (which is `1`)
-2. `OpConstant(1)` - Push constant at index 1 (which is `2`)
-3. `OpAdd` - Pop two values, push their sum
-4. `OpPop` - Pop and return the result
-
-A more complex expression shows more bytecode:
+Let's try the same complex expression:
 
 ```text
 >> (1 + 2) - (8 - 10)
-byte code: Bytecode {
-  instructions: [1, 0, 0, 1, 0, 1, 3, 1, 0, 2, 1, 0, 3, 4, 4, 2],
-  constants: [Int(1), Int(2), Int(8), Int(10)]
+Compiling the source: (1 + 2) - (8 - 10)
+[BinaryExpr { op: Minus, lhs: BinaryExpr { op: Plus, lhs: Int(1), rhs: Int(2) }, rhs: BinaryExpr { op: Minus, lhs: Int(8), rhs: Int(10) } }]
+Generated LLVM IR: define i32 @jit() {
+entry:
+  ret i32 5
 }
+
 5
 ```
 
-Four constants, multiple operations, all encoded in a flat byte array.
+Again, LLVM optimized the whole expression to just `ret i32 5`. The AST shows the full nested structure, but the compiled native code is minimal - just returning a constant!
 
 ### Why Build a REPL?
 
