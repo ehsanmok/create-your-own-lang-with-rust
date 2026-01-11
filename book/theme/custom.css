@@ -394,6 +394,9 @@ blockquote p {
 .license-notice .logo-img {
   max-width: 280px;
   height: auto;
+  /* Sharper rendering for logo images */
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
 }
 
 /* Default: show light mode logo (for Rust theme - light background) */
