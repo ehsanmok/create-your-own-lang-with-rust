@@ -37,7 +37,7 @@ The REPL is simple:
 
 ### Three Backends, One Interface
 
-The magic is in the feature flags. The same REPL works with three different backends:
+It's all controlled by feature flags. The same REPL works with three different backends:
 
 | Backend | Description | Rust Version |
 |---------|-------------|--------------|
@@ -45,7 +45,7 @@ The magic is in the feature flags. The same REPL works with three different back
 | **VM** | Compiles to bytecode | Stable |
 | **JIT** | Compiles to native code via LLVM | Nightly |
 
-This is powerful for learning! You can compare how the same expression is handled by each backend. Let's run through two examples with all three.
+You can compare how the same expression is handled by each backend. Let's run through two examples with all three.
 
 ### Interpreter Output Example
 

@@ -190,7 +190,7 @@ done
 
 ## Running Tests
 
-Thirdlang has comprehensive tests covering all stages:
+Thirdlang has tests covering all stages:
 
 ```bash
 # Run all tests
@@ -328,4 +328,4 @@ Continue to **[What's Next: Your Journey Starts Here](../whats_next.md)** for:
 
 The concepts you learned - grammars, ASTs, type systems, code generation - apply to any language you might build or use.
 
-**Your journey starts here!**
+**Now go build something.**

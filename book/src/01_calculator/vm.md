@@ -138,7 +138,7 @@ This is a **fetch-decode-execute** loop:
 
 You might wonder: why use a stack? Why not just have named variables?
 
-Stacks are elegant because they handle *any* nesting automatically. For `(1 + 2) * (3 + 4)`, we first compute `1 + 2 = 3` (leaving 3 on the stack), then `3 + 4 = 7` (now stack has `[3, 7]`), then multiply to get 21. Each operation just pops its inputs and pushes its output. The stack naturally tracks what's "in progress."
+Stacks are neat because they handle *any* nesting automatically. For `(1 + 2) * (3 + 4)`, we first compute `1 + 2 = 3` (leaving 3 on the stack), then `3 + 4 = 7` (now stack has `[3, 7]`), then multiply to get 21. Each operation just pops its inputs and pushes its output. The stack naturally tracks what's "in progress."
 
 ## Running the VM
 

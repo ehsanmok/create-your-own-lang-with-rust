@@ -70,7 +70,7 @@
 
 # Beyond the Book
 
-- [What's Next: Your Journey Starts Here](whats_next.md)
+- [What's Next](whats_next.md)
 
 ---
 

@@ -67,7 +67,7 @@ Stmt::Function {
 
 ## How Function Calls Work
 
-When we evaluate a function call like `add(3, 4)`, several things happen in sequence. Understanding this sequence is crucial for understanding how programming languages work.
+When we evaluate a function call like `add(3, 4)`, several things happen in sequence. Understanding this sequence is key to understanding how programming languages work.
 
 Here's the process:
 

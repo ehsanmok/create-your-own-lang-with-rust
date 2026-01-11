@@ -64,7 +64,7 @@ Becomes:
 
 <a class="filename" href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/thirdlang/src/codegen.rs">thirdlang/src/codegen.rs</a>
 
-The `field_order` is crucial - it determines the memory layout.
+The `field_order` matters - it determines the memory layout.
 
 ## Methods as Functions
 
@@ -271,7 +271,7 @@ This follows the same pattern as Secondlang, but now with class support. Let's w
 
 5. **Call it and return** - We execute the native code. When it calls `malloc`, it's calling the real C malloc. When it calls our constructor, it's running the native x86/ARM code we generated. Fast!
 
-The magic is that the code we're running isn't being interpreted - it's real compiled code, just like if you wrote it in C or Rust. Objects really live on the heap. Methods really jump to function addresses. It's all native.
+The key point is that the code we're running isn't being interpreted - it's real compiled code, just like if you wrote it in C or Rust. Objects really live on the heap. Methods really jump to function addresses. It's all native.
 
 ## Memory Layout Summary
 
@@ -286,7 +286,7 @@ The magic is that the code we're running isn't being interpreted - it's real com
 
 ## Performance Considerations
 
-Our implementation is straightforward but not optimal:
+Our implementation is simple but not optimal:
 
 ### What We Do
 

@@ -60,7 +60,7 @@ Key terms used throughout this book.
 
 **Mangling**: Encoding names to be unique. `Counter.increment` becomes `Counter__increment` in generated code.
 
-**mem2reg**: LLVM optimization pass that promotes stack allocations (alloca) to SSA registers. Essential for efficient code.
+**mem2reg**: LLVM optimization pass that promotes stack allocations (alloca) to SSA registers. Required for efficient code.
 
 **Method**: Function associated with a class. Receives `self` as implicit first parameter.
 

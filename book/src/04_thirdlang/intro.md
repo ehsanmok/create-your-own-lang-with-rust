@@ -38,7 +38,7 @@ NewExpr = { "new" ~ Identifier ~ "(" ~ Args? ~ ")" }
 Delete = { "delete" ~ Expr }
 ```
 
-The syntactic additions unlock a powerful new paradigm: **object-oriented programming**.
+These additions give us **object-oriented programming**.
 
 ### Compiler: New Concepts
 

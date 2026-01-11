@@ -10,7 +10,7 @@
   - Practical, hands-on approach
 
 - **Engineering a Compiler** by Cooper & Torczon
-  - Comprehensive academic textbook
+  - Academic textbook, thorough coverage
 
 ## Rust Resources
 

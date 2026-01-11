@@ -199,7 +199,7 @@ Production compilers do many more optimizations:
 | [Inlining](https://en.wikipedia.org/wiki/Inline_expansion) | Replace function calls with function bodies |
 | [Tail call optimization](https://en.wikipedia.org/wiki/Tail_call) | Turn tail recursion into loops |
 
-We leave these as exercises. The visitor pattern makes adding new optimizations straightforward.
+We leave these as exercises. The visitor pattern makes adding new optimizations easy.
 
 ## Using the Optimizations
 

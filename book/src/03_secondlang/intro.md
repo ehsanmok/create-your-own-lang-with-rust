@@ -99,7 +99,7 @@ def fib(n: int) -> int {
 fib(10)
 ```
 
-The programs are nearly identical. Type annotations are the only difference, but they unlock compile-time safety and native code generation.
+The programs are nearly identical. Type annotations are the only difference, but they give us compile-time safety and native code generation.
 
 ## Project Structure
 
@@ -134,7 +134,7 @@ firstlang/
 │   └── interpreter.rs   # Tree-walking, no codegen
 ```
 
-The new modules (`types.rs`, `typeck.rs`, `visitor.rs`, `codegen.rs`) represent the additional complexity that types bring, but also the power they unlock.
+The new modules (`types.rs`, `typeck.rs`, `visitor.rs`, `codegen.rs`) represent the additional complexity that types bring - and the capabilities they enable.
 
 ## Prerequisites
 

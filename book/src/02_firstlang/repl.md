@@ -155,7 +155,7 @@ done
 
 ## Running Tests
 
-Firstlang has comprehensive integration tests covering:
+Firstlang has integration tests covering:
 
 - Variables and assignments
 - Functions with parameters

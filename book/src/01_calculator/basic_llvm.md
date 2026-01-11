@@ -93,7 +93,7 @@ Here's what's happening:
 
 - **`add_fn.get_nth_param(0)`** - Get the first parameter. LLVM functions have an array of parameters, indexed from 0.
 - **`.unwrap().into_int_value()`** - Parameters come as generic "basic values." We know ours are integers, so we convert them.
-- **`builder.build_int_add(x, y, "result")`** - The magic! This emits an `add` instruction. The `"result"` is just a name for the output (helps when reading IR).
+- **`builder.build_int_add(x, y, "result")`** - This emits an `add` instruction. The `"result"` is just a name for the output (helps when reading IR).
 - **`builder.build_return(Some(&sum))`** - Emit a `ret` instruction to return our sum.
 
 That's it! We've built a complete LLVM function. But it's just IR in memory - we haven't run it yet.

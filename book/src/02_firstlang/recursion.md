@@ -1,12 +1,12 @@
 # Recursion
 
-[Recursion](https://en.wikipedia.org/wiki/Recursion_(computer_science)) is when a function calls itself. At first, this seems like a paradox - how can a function call itself when it's still running? But with the call stack we built in the [functions](./functions.md) chapter, it works beautifully.
+[Recursion](https://en.wikipedia.org/wiki/Recursion_(computer_science)) is when a function calls itself. At first, this seems like a paradox - how can a function call itself when it's still running? But with the call stack we built in the [functions](./functions.md) chapter, it just works.
 
 Think of recursion like Russian nesting dolls (matryoshka). Each doll contains a smaller version of itself, until you reach the smallest doll that contains nothing. To solve a problem recursively, you solve a smaller version of the same problem, until you reach a problem so small it's trivial to solve.
 
 ## The Key Insight
 
-A recursive function has two essential parts:
+A recursive function has two parts:
 
 1. **Base case** - A condition where we return directly, without recursion. This is our "smallest doll" - the problem we can solve without any more work.
 
@@ -22,7 +22,7 @@ $$ n! = n \times (n-1) \times (n-2) \times \cdots \times 1 $$
 
 So \(5! = 5 \times 4 \times 3 \times 2 \times 1 = 120\).
 
-Here's the beautiful insight: \(5! = 5 \times 4!\), and \(4! = 4 \times 3!\), and so on. We can define factorial in terms of itself:
+Here's the key insight: \(5! = 5 \times 4!\), and \(4! = 4 \times 3!\), and so on. We can define factorial in terms of itself:
 
 $$
 n! = \begin{cases}
@@ -49,7 +49,7 @@ The function calls itself with a smaller `n` until `n` reaches 1. Then the resul
 
 ## The Call Stack in Action
 
-Here's where the call stack from [Functions](./functions.md) becomes crucial. Each recursive call creates a new stack frame with its own `n`. When we call `factorial(4)`:
+Here's where the call stack from [Functions](./functions.md) comes into play. Each recursive call creates a new stack frame with its own `n`. When we call `factorial(4)`:
 
 1. `factorial(4)` starts, pushing a frame with `n = 4`
 2. It calls `factorial(3)`, pushing another frame with `n = 3`
@@ -167,8 +167,8 @@ Recursion is natural for problems with recursive structure:
 - Divide-and-conquer algorithms (merge sort, quicksort)
 - Parsing nested structures (JSON, HTML, our AST!)
 
-For simple loops, iteration is usually clearer. But for inherently recursive problems, recursion can be elegant and expressive.
+For simple loops, iteration is usually clearer. But for inherently recursive problems, recursion is often more natural.
 
 ## The Ultimate Test: Fibonacci
 
-Now we're ready for [Fibonacci](./fibonacci.md) - the culmination of everything we've built! It's more complex than factorial (two recursive calls!), but our interpreter handles it beautifully.
+Now we're ready for [Fibonacci](./fibonacci.md) - the culmination of everything we've built! It's more complex than factorial (two recursive calls!), but our interpreter handles it just fine.

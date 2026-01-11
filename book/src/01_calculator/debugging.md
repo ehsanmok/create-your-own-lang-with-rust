@@ -89,7 +89,7 @@ If a complex expression fails, simplify until you find the minimal failing case.
 
 ## When Using LLVM (Later)
 
-When we add LLVM compilation, two more techniques become essential:
+When we add LLVM compilation, two more techniques become useful:
 
 ### Print the IR
 

@@ -194,7 +194,7 @@ We add an optional optimization step to our JIT runner:
 
 ## Understanding Each Pass
 
-### mem2reg: The Essential Pass
+### mem2reg: The Key Pass
 
 `mem2reg` converts stack-allocated variables to SSA registers. This is critical because our codegen creates allocas for every variable, but registers are much faster than memory.
 

@@ -38,7 +38,7 @@ def fib(n) {
 fib(10)  # = 55
 ```
 
-This is beautiful in its simplicity, but let's trace through what happens when we call `fib(4)`:
+This is simple, but let's trace through what happens when we call `fib(4)`:
 
 <p align="center">
 </br>
@@ -80,7 +80,7 @@ def fib_iter(n) {
 fib_iter(10)  # = 55
 ```
 
-The iterative version is more efficient ($O(n)$ vs $O(2^n)$ - see [Big O notation](https://en.wikipedia.org/wiki/Big_O_notation)), but the recursive version is more elegant and demonstrates the power of our language.
+The iterative version is more efficient ($O(n)$ vs $O(2^n)$ - see [Big O notation](https://en.wikipedia.org/wiki/Big_O_notation)), but the recursive version is cleaner and shows what our language can do.
 
 ## Running It
 

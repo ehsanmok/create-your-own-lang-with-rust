@@ -108,7 +108,7 @@ def fib(n: int) -> int {
 fib(35)  # Milliseconds instead of seconds!
 ```
 
-Adding `int` types and `->` return types might seem like a small syntactic change - just a few extra characters. But they unlock an entirely different execution model.
+Adding `int` types and `->` return types might seem like a small syntactic change - just a few extra characters. But they enable an entirely different execution model.
 
 **The numbers:**
 
@@ -121,7 +121,7 @@ Same algorithm. Same logic. Different execution model.
 
 ## What You'll Learn
 
-The journey from Firstlang to Secondlang teaches you how modern languages work:
+Moving from Firstlang to Secondlang shows you how modern languages work:
 
 1. **Type Systems** - How types catch errors at compile time
 2. **Type Inference** - Deducing types automatically (like Rust, TypeScript)

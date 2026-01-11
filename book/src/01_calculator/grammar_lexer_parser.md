@@ -47,7 +47,7 @@ Don't let this overwhelm you - let's break it down line by line:
 
 ## From Grammar to Parser
 
-We use **[pest](https://pest.rs/)** to turn this grammar into a working parser. The magic happens with a derive macro:
+We use **[pest](https://pest.rs/)** to turn this grammar into a working parser. A derive macro does the heavy lifting:
 
 ```rust,ignore
 {{#include ../../../calculator/src/parser.rs:parser}}

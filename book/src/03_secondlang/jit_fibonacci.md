@@ -166,7 +166,7 @@ done
 
 ## Running Tests
 
-Secondlang has comprehensive integration tests covering all compiler stages:
+Secondlang has integration tests covering all compiler stages:
 
 - **Parsing**: Grammar validation
 - **Type Checking**: Type inference and error detection

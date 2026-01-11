@@ -95,7 +95,7 @@ This 8-line program exercises *everything* a real language needs:
 
 If you can implement this, you have a real programming language.
 
-## The Journey Ahead
+## What's Coming
 
 Each chapter in Part II builds one piece:
 

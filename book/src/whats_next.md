@@ -1,6 +1,6 @@
-# What's Next: Your Journey Starts Here
+# What's Next
 
-Congratulations! You have built four programming languages from scratch:
+You've built four programming languages from scratch:
 
 | Language | What You Learned |
 |----------|------------------|
@@ -212,7 +212,7 @@ Instead of JIT, compile to a standalone executable:
 ./program  # Run without compiler
 ```
 
-LLVM makes this straightforward - use `TargetMachine` to emit object files.
+LLVM handles this - use `TargetMachine` to emit object files.
 
 ### Bytecode Interpreter
 
@@ -372,9 +372,9 @@ To go deeper, study these resources:
 - **[Crafting Interpreters](https://craftinginterpreters.com)** by Robert Nystrom
   - Free online, covers two complete interpreters
 - **[Engineering a Compiler](https://www.elsevier.com/books/engineering-a-compiler/cooper/978-0-12-815412-0)** by Cooper & Torczon
-  - Comprehensive academic textbook
+  - Academic textbook, thorough coverage
 - **[Types and Programming Languages](https://www.cis.upenn.edu/~bcpierce/tapl/)** by Benjamin Pierce
-  - Deep dive into type systems
+  - Detailed coverage of type systems
 
 ### Online Resources
 
@@ -432,4 +432,4 @@ The concepts you learned - grammars, ASTs, type systems, code generation - appea
 
 You now have the foundation to understand, modify, or create any of these.
 
-**Your journey starts here. Happy hacking!**
+Now go build something.

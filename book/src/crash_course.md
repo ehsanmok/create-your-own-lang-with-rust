@@ -5,7 +5,7 @@ Here is a bird's-eye view of a computer program execution
     <a href><img alt="compiler" src="./img/code-compiler-executor.svg"> </a>
 </p>
 
-All these three components are intertwined together and learning their connections is crucial in understanding what makes *Computing* possible. Informally, a *language* is a structured text with syntax and semantics. A *Source Code* written in a programming language needs a translator/compiler of *some sort*, to translate it to *another* language/format. Then an executor of *some sort*, to execute/run the translated commands with the goal of matching the syntax (and semantics) to *some form* of output.
+All these three components are intertwined together and learning their connections helps you understand what makes *Computing* possible. Informally, a *language* is a structured text with syntax and semantics. A *Source Code* written in a programming language needs a translator/compiler of *some sort*, to translate it to *another* language/format. Then an executor of *some sort*, to execute/run the translated commands with the goal of matching the syntax (and semantics) to *some form* of output.
 
 ## Elements of Computing
 
@@ -119,7 +119,7 @@ We explore [LLVM IR](https://en.wikipedia.org/wiki/LLVM#Intermediate_representat
 
 ## Conclusion
 
-In conclusion, we want to settle one of the most frequently asked questions
+Let's settle one of the most frequently asked questions
 
 ## <span style="color:blue">Is Python (or a language X) Compiled or Interpreted?</span>
 
