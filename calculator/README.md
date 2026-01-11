@@ -35,13 +35,13 @@ cargo run --bin main examples/simple.calc
 ### VM (stable Rust)
 
 ```bash
-cargo run --bin main --features vm examples/simple.calc
+cargo run --bin main --no-default-features --features vm examples/simple.calc
 ```
 
 ### JIT (nightly Rust + LLVM)
 
 ```bash
-rustup run nightly cargo run --bin main --features jit examples/simple.calc
+rustup run nightly cargo run --bin main --no-default-features --features jit examples/simple.calc
 ```
 
 ## REPL
@@ -57,13 +57,13 @@ cargo run --bin repl --features interpreter
 ### VM REPL
 
 ```bash
-cargo run --bin repl --features vm
+cargo run --bin repl --no-default-features --features vm
 ```
 
 ### JIT REPL
 
 ```bash
-rustup run nightly cargo run --bin repl --features jit
+rustup run nightly cargo run --bin repl --no-default-features --features jit
 ```
 
 ### Example Session

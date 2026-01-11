@@ -107,9 +107,9 @@ rustup run nightly cargo run --bin thirdlang -- examples/counter.tl
 
 ```bash
 cd calculator
-cargo run --bin main examples/simple.calc                              # Interpreter
-cargo run --bin main --features vm examples/simple.calc                # VM
-rustup run nightly cargo run --bin main --features jit examples/simple.calc  # JIT
+cargo run --bin main examples/simple.calc                                            # Interpreter
+cargo run --bin main --no-default-features --features vm examples/simple.calc        # VM
+rustup run nightly cargo run --bin main --no-default-features --features jit examples/simple.calc  # JIT
 ```
 
 ## Requirements
