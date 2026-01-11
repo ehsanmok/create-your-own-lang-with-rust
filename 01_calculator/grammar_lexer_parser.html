@@ -229,7 +229,7 @@ EOF = _{ EOI | ";" }
 <p><strong><code>Int = @{ ASCII_DIGIT+ }</code></strong> - An integer is one or more digits. The <code>@</code> makes it “atomic” - no whitespace inside.</p>
 <p><strong><code>WHITESPACE = _{ " " | "\t" | "\r" | "\n" }</code></strong> - pest automatically skips these between tokens, so <code>1+2</code> and <code>1 + 2</code> both work.</p>
 <h2 id="from-grammar-to-parser"><a class="header" href="#from-grammar-to-parser">From Grammar to Parser</a></h2>
-<p>We use <strong><a href="https://pest.rs/">pest</a></strong> to turn this grammar into a working parser. The magic happens with a derive macro:</p>
+<p>We use <strong><a href="https://pest.rs/">pest</a></strong> to turn this grammar into a working parser. A derive macro does the heavy lifting:</p>
 <pre><code class="language-rust ignore">#[derive(pest_derive::Parser)]
 #[grammar = "grammar.pest"]
 struct CalcParser;</code></pre>

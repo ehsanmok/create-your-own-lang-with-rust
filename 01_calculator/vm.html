@@ -373,7 +373,7 @@ pub struct VM {
 </ol>
 <h3 id="why-stacks"><a class="header" href="#why-stacks">Why Stacks?</a></h3>
 <p>You might wonder: why use a stack? Why not just have named variables?</p>
-<p>Stacks are elegant because they handle <em>any</em> nesting automatically. For <code>(1 + 2) * (3 + 4)</code>, we first compute <code>1 + 2 = 3</code> (leaving 3 on the stack), then <code>3 + 4 = 7</code> (now stack has <code>[3, 7]</code>), then multiply to get 21. Each operation just pops its inputs and pushes its output. The stack naturally tracks what’s “in progress.”</p>
+<p>Stacks are neat because they handle <em>any</em> nesting automatically. For <code>(1 + 2) * (3 + 4)</code>, we first compute <code>1 + 2 = 3</code> (leaving 3 on the stack), then <code>3 + 4 = 7</code> (now stack has <code>[3, 7]</code>), then multiply to get 21. Each operation just pops its inputs and pushes its output. The stack naturally tracks what’s “in progress.”</p>
 <h2 id="running-the-vm"><a class="header" href="#running-the-vm">Running the VM</a></h2>
 <p>To compile and run code through our VM:</p>
 <pre><code class="language-rust ignore">let byte_code = Interpreter::from_source(source);

@@ -186,32 +186,39 @@
 <p><strong>AOT (Ahead-of-Time) Compilation</strong>: Compiling to native code before execution, producing a standalone executable. Contrast with JIT.</p>
 <p><strong>Backend</strong>: The part of a compiler that generates output (machine code, bytecode, IR). Receives input from the frontend.</p>
 <p><strong>Basic Block</strong>: A sequence of instructions with no branches except at the end. Control enters at the beginning, exits at the end.</p>
+<p><strong>Builder</strong>: LLVM object for creating instructions. Maintains an insertion point and provides methods like <code>build_add()</code>, <code>build_call()</code>, etc.</p>
 <p><strong>Bytecode</strong>: A compact, portable instruction set for a virtual machine. Higher-level than machine code, interpreted or JIT-compiled.</p>
 <p><strong>Call Stack</strong>: Runtime data structure tracking function calls. Each call pushes a frame; return pops it.</p>
 <p><strong>Codegen (Code Generation)</strong>: The compiler phase that produces output code (LLVM IR, machine code, bytecode) from the AST.</p>
 <p><strong>Constructor</strong>: Special method (<code>__init__</code>) called when creating an object. Initializes fields.</p>
+<p><strong>Constant Folding</strong>: Optimization that evaluates constant expressions at compile time. <code>1 + 2</code> becomes <code>3</code> in the generated code.</p>
+<p><strong>Context</strong>: LLVM object that owns types, constants, and other LLVM data. Required to create modules and types.</p>
 <p><strong>Dead Code Elimination (DCE)</strong>: Optimization that removes code whose results are never used.</p>
 <p><strong>Destructor</strong>: Special method (<code>__del__</code>) called when destroying an object. Cleans up resources.</p>
 <p><strong>Dynamic Typing</strong>: Type checking at runtime. Variables can hold values of any type. Used in Python, JavaScript.</p>
+<p><strong>Environment</strong>: Data structure mapping variable and function names to their values. Supports nested scopes for local variables.</p>
 <p><strong>Frontend</strong>: The part of a compiler that processes source code (lexing, parsing, type checking). Produces input for the backend.</p>
 <p><strong>Fuzzing</strong>: Automated testing technique that generates random inputs to find crashes, hangs, or security issues.</p>
 <p><strong>GEP (GetElementPointer)</strong>: LLVM instruction for calculating addresses within structs or arrays. Does not access memory, only computes pointers.</p>
 <p><strong>Grammar</strong>: Formal rules defining valid syntax. We use PEG (Parsing Expression Grammar) with pest.</p>
 <p><strong>Heap</strong>: Memory region for dynamic allocation (<code>malloc</code>/<code>new</code>). Objects persist until explicitly freed. Contrast with stack.</p>
 <p><strong>Intermediate Representation (IR)</strong>: Code representation between source and machine code. LLVM IR is a common example. Enables optimization independent of source/target.</p>
+<p><strong>inkwell</strong>: Safe Rust bindings for the LLVM C API. Provides types like <code>Context</code>, <code>Module</code>, <code>Builder</code> for code generation.</p>
 <p><strong>Interpreter</strong>: Executes code directly without compilation to machine code. Tree-walking interpreters traverse the AST.</p>
 <p><strong>JIT (Just-In-Time) Compilation</strong>: Compiling to native code during execution. Combines interpretation flexibility with native speed.</p>
 <p><strong>Lexer (Tokenizer)</strong>: Converts source text into tokens (identifiers, numbers, operators). First stage of parsing.</p>
 <p><strong>LLVM</strong>: Compiler infrastructure providing reusable components for building compilers. We use it for code generation and optimization.</p>
 <p><strong>Mangling</strong>: Encoding names to be unique. <code>Counter.increment</code> becomes <code>Counter__increment</code> in generated code.</p>
-<p><strong>mem2reg</strong>: LLVM optimization pass that promotes stack allocations (alloca) to SSA registers. Essential for efficient code.</p>
+<p><strong>mem2reg</strong>: LLVM optimization pass that promotes stack allocations (alloca) to SSA registers. Required for efficient code.</p>
 <p><strong>Method</strong>: Function associated with a class. Receives <code>self</code> as implicit first parameter.</p>
+<p><strong>Module</strong>: LLVM container for functions, global variables, and type definitions. Compiled as a unit.</p>
 <p><strong>Monomorphization</strong>: Generating specialized code for each concrete type when using generics. <code>Box&lt;int&gt;</code> and <code>Box&lt;bool&gt;</code> become separate implementations.</p>
 <p><strong>Opaque Pointer</strong>: LLVM pointer type (<code>ptr</code>) without element type information. Modern LLVM uses opaque pointers exclusively.</p>
 <p><strong>Optimization Pass</strong>: A transformation that improves code without changing behavior. Examples: DCE, constant folding, inlining.</p>
 <p><strong>Parse Tree</strong>: Tree structure directly reflecting grammar rules. Typically converted to AST.</p>
 <p><strong>Parser</strong>: Converts tokens into structured representation (AST). Checks syntactic correctness.</p>
 <p><strong>Pass Manager</strong>: Infrastructure for running and ordering optimization passes. We use LLVM’s New Pass Manager.</p>
+<p><strong>pest</strong>: Rust library for parsing based on PEG grammars. Generates a parser from a <code>.pest</code> grammar file.</p>
 <p><strong>PEG (Parsing Expression Grammar)</strong>: Grammar formalism that is unambiguous and efficient to parse. Used by pest.</p>
 <p><strong>Phi Node (φ)</strong>: SSA construct for merging values from different control flow paths. “If we came from block A, use X; if from B, use Y.”</p>
 <p><strong>REPL (Read-Eval-Print Loop)</strong>: Interactive environment for entering and executing code one expression at a time.</p>
@@ -224,6 +231,7 @@
 <p><strong>Symbol Table</strong>: Data structure mapping names to their definitions (variables, functions, types).</p>
 <p><strong>Target Triple</strong>: String describing a compilation target: architecture-vendor-os (e.g., <code>x86_64-apple-darwin</code>).</p>
 <p><strong>Terminator</strong>: Instruction that ends a basic block. Must be <code>ret</code>, <code>br</code>, <code>switch</code>, etc.</p>
+<p><strong>Token</strong>: Individual unit produced by the lexer. Examples: number (<code>42</code>), identifier (<code>foo</code>), operator (<code>+</code>), keyword (<code>if</code>).</p>
 <p><strong>Tree-Walking Interpreter</strong>: Interpreter that traverses the AST directly, executing nodes recursively.</p>
 <p><strong>Type Inference</strong>: Automatically determining types without explicit annotations. <code>x = 5</code> infers <code>x: int</code>.</p>
 <p><strong>Type System</strong>: Rules governing how types work. Defines what operations are valid on which types.</p>

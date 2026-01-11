@@ -46,6 +46,9 @@ html {
   --content-max-width: 1400px;
   --page-padding: 20px;
 
+  /* Override the ugly brown hover color with a subtle warm gray */
+  --theme-hover: rgba(196, 91, 41, 0.1);
+
   /* Primary Accent - Rust Orange Family */
   --accent-color: #c45b29;
   --accent-hover: #d96830;
@@ -389,8 +392,11 @@ blockquote p {
    ============================================================================= */
 
 .license-notice .logo-img {
-  max-width: 320px;
+  max-width: 280px;
   height: auto;
+  /* Sharper rendering for logo images */
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
 }
 
 /* Default: show light mode logo (for Rust theme - light background) */
@@ -438,6 +444,13 @@ blockquote p {
 .sidebar {
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.85em;
+  /* Limit sidebar width to prevent it from covering content */
+  max-width: 300px !important;
+}
+
+/* Disable sidebar resize handle - prevents user from expanding it too wide */
+.sidebar-resize-handle {
+  display: none !important;
 }
 
 .sidebar .chapter {
@@ -457,7 +470,8 @@ blockquote p {
 }
 
 /* =============================================================================
-   NAVIGATION BUTTONS
+   NAVIGATION BUTTONS (Previous/Next chapter arrows)
+   Fix: Reduce hover area so it doesn't cover content
    ============================================================================= */
 
 .nav-chapters {
@@ -469,6 +483,61 @@ blockquote p {
 .nav-chapters:hover {
   color: var(--accent-color) !important;
   transform: scale(1.1);
+  /* Override the default brownish --theme-hover background */
+  background-color: transparent !important;
+}
+
+/* Desktop navigation arrows - fix the wide hover area covering content */
+/* Default mdBook has min-width: 90px and full height, causing overlap */
+.nav-wide-wrapper {
+  pointer-events: none;
+}
+
+.nav-wide-wrapper .nav-chapters {
+  pointer-events: auto;
+  /* Override mdBook defaults aggressively */
+  min-width: 40px !important;
+  max-width: 40px !important;
+  width: 40px !important;
+  background: transparent !important;
+  /* Reduce the hover area - only cover the arrow, not full height */
+  top: 50% !important;
+  bottom: auto !important;
+  height: 60px !important;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Ensure previous button stays at left edge of viewport, not content */
+.nav-wide-wrapper .nav-chapters.previous {
+  left: 0 !important;
+}
+
+/* Ensure next button stays at right edge of viewport */
+.nav-wide-wrapper .nav-chapters.next {
+  right: 0 !important;
+}
+
+.nav-wide-wrapper .nav-chapters:hover {
+  background: rgba(250, 248, 245, 0.95) !important;
+  border-radius: 8px;
+}
+
+/* Mobile navigation - also override brown hover */
+.mobile-nav-chapters {
+  background-color: transparent !important;
+}
+
+.mobile-nav-chapters:hover {
+  background-color: rgba(250, 248, 245, 0.9) !important;
+}
+
+/* Sidebar resize handle - remove brown color */
+.sidebar .sidebar-resize-handle:hover,
+.sidebar-resize-indicator {
+  background-color: var(--accent-color) !important;
 }
 
 /* =============================================================================

@@ -261,7 +261,7 @@ call fib          ; Direct jump, no lookup
 
 fib(35)  # Milliseconds instead of seconds!
 </code></pre>
-<p>Adding <code>int</code> types and <code>-&gt;</code> return types might seem like a small syntactic change - just a few extra characters. But they unlock an entirely different execution model.</p>
+<p>Adding <code>int</code> types and <code>-&gt;</code> return types might seem like a small syntactic change - just a few extra characters. But they enable an entirely different execution model.</p>
 <p><strong>The numbers:</strong></p>
 <div class="table-wrapper"><table><thead><tr><th>Implementation</th><th><code>fib(35)</code> Time</th><th>Speedup</th></tr></thead><tbody>
 <tr><td>Firstlang interpreter</td><td>~8 seconds</td><td>1x (baseline)</td></tr>
@@ -270,7 +270,7 @@ fib(35)  # Milliseconds instead of seconds!
 </div>
 <p>Same algorithm. Same logic. Different execution model.</p>
 <h2 id="what-youll-learn"><a class="header" href="#what-youll-learn">What You’ll Learn</a></h2>
-<p>The journey from Firstlang to Secondlang teaches you how modern languages work:</p>
+<p>Moving from Firstlang to Secondlang shows you how modern languages work:</p>
 <ol>
 <li><strong>Type Systems</strong> - How types catch errors at compile time</li>
 <li><strong>Type Inference</strong> - Deducing types automatically (like Rust, TypeScript)</li>

@@ -249,7 +249,7 @@ entry:
 <ul>
 <li><strong><code>add_fn.get_nth_param(0)</code></strong> - Get the first parameter. LLVM functions have an array of parameters, indexed from 0.</li>
 <li><strong><code>.unwrap().into_int_value()</code></strong> - Parameters come as generic “basic values.” We know ours are integers, so we convert them.</li>
-<li><strong><code>builder.build_int_add(x, y, "result")</code></strong> - The magic! This emits an <code>add</code> instruction. The <code>"result"</code> is just a name for the output (helps when reading IR).</li>
+<li><strong><code>builder.build_int_add(x, y, "result")</code></strong> - This emits an <code>add</code> instruction. The <code>"result"</code> is just a name for the output (helps when reading IR).</li>
 <li><strong><code>builder.build_return(Some(&amp;sum))</code></strong> - Emit a <code>ret</code> instruction to return our sum.</li>
 </ul>
 <p>That’s it! We’ve built a complete LLVM function. But it’s just IR in memory - we haven’t run it yet.</p>

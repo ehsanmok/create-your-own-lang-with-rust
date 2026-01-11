@@ -310,7 +310,7 @@ pub struct CodeGen&lt;'ctx&gt; {
         Ok(struct_type)
     }</code></pre>
 <p><a class="filename" href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/thirdlang/src/codegen.rs">thirdlang/src/codegen.rs</a></p>
-<p>The <code>field_order</code> is crucial - it determines the memory layout.</p>
+<p>The <code>field_order</code> matters - it determines the memory layout.</p>
 <h2 id="methods-as-functions"><a class="header" href="#methods-as-functions">Methods as Functions</a></h2>
 <p>Methods compile to regular functions with a naming convention:</p>
 <pre><code>class Point {
@@ -916,7 +916,7 @@ pub fn jit_run(program: &amp;Program, classes: ClassRegistry) -&gt; Result&lt;i6
 <p><strong>Call it and return</strong> - We execute the native code. When it calls <code>malloc</code>, it’s calling the real C malloc. When it calls our constructor, it’s running the native x86/ARM code we generated. Fast!</p>
 </li>
 </ol>
-<p>The magic is that the code we’re running isn’t being interpreted - it’s real compiled code, just like if you wrote it in C or Rust. Objects really live on the heap. Methods really jump to function addresses. It’s all native.</p>
+<p>The key point is that the code we’re running isn’t being interpreted - it’s real compiled code, just like if you wrote it in C or Rust. Objects really live on the heap. Methods really jump to function addresses. It’s all native.</p>
 <h2 id="memory-layout-summary"><a class="header" href="#memory-layout-summary">Memory Layout Summary</a></h2>
 <div class="table-wrapper"><table><thead><tr><th>Thirdlang</th><th>LLVM IR</th><th>Notes</th></tr></thead><tbody>
 <tr><td><code>class Point { x: int }</code></td><td><code>%Point = type { i64 }</code></td><td>Struct type</td></tr>
@@ -928,7 +928,7 @@ pub fn jit_run(program: &amp;Program, classes: ClassRegistry) -&gt; Result&lt;i6
 </tbody></table>
 </div>
 <h2 id="performance-considerations"><a class="header" href="#performance-considerations">Performance Considerations</a></h2>
-<p>Our implementation is straightforward but not optimal:</p>
+<p>Our implementation is simple but not optimal:</p>
 <h3 id="what-we-do"><a class="header" href="#what-we-do">What We Do</a></h3>
 <ul>
 <li>Direct field access via GEP (fast)</li>

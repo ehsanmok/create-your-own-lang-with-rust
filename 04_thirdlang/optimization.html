@@ -391,7 +391,7 @@ pub fn jit_run_with_opts(
     }
 }</code></pre>
 <h2 id="understanding-each-pass"><a class="header" href="#understanding-each-pass">Understanding Each Pass</a></h2>
-<h3 id="mem2reg-the-essential-pass"><a class="header" href="#mem2reg-the-essential-pass">mem2reg: The Essential Pass</a></h3>
+<h3 id="mem2reg-the-key-pass"><a class="header" href="#mem2reg-the-key-pass">mem2reg: The Key Pass</a></h3>
 <p><code>mem2reg</code> converts stack-allocated variables to SSA registers. This is critical because our codegen creates allocas for every variable, but registers are much faster than memory.</p>
 <p>Before:</p>
 <pre><code>%x = alloca i64

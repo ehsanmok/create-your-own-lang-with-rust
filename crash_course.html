@@ -183,7 +183,7 @@
 </br>
     <a href><img alt="compiler" src="./img/code-compiler-executor.svg"> </a>
 </p>
-<p>All these three components are intertwined together and learning their connections is crucial in understanding what makes <em>Computing</em> possible. Informally, a <em>language</em> is a structured text with syntax and semantics. A <em>Source Code</em> written in a programming language needs a translator/compiler of <em>some sort</em>, to translate it to <em>another</em> language/format. Then an executor of <em>some sort</em>, to execute/run the translated commands with the goal of matching the syntax (and semantics) to <em>some form</em> of output.</p>
+<p>All these three components are intertwined together and learning their connections helps you understand what makes <em>Computing</em> possible. Informally, a <em>language</em> is a structured text with syntax and semantics. A <em>Source Code</em> written in a programming language needs a translator/compiler of <em>some sort</em>, to translate it to <em>another</em> language/format. Then an executor of <em>some sort</em>, to execute/run the translated commands with the goal of matching the syntax (and semantics) to <em>some form</em> of output.</p>
 <h2 id="elements-of-computing"><a class="header" href="#elements-of-computing">Elements of Computing</a></h2>
 <h3 id="what-is-a-grammar"><a class="header" href="#what-is-a-grammar">What is a Grammar?</a></h3>
 <p>A <strong><a href="https://en.wikipedia.org/wiki/Formal_grammar">formal grammar</a></strong> is a set of rules that define what makes valid code in a programming language. Think of it like the grammar of English: “The cat sat” is valid, but “Cat the sat” is not.</p>
@@ -258,7 +258,7 @@ WHITESPACE = _{ " " | "\t" | "\n" }   // Whitespace is silent (ignored)
 <h3 id="code-generation"><a class="header" href="#code-generation">Code Generation</a></h3>
 <p><a href="https://en.wikipedia.org/wiki/Code_generation_(compiler)">Code generation</a> for a compiler is when the compiler <em>converts an IR to some Machine Code</em>. But it has a wider semantic too for example, when using Rust declarative macro via <code>macro_rules!</code> to automate some repetitive implementations, you’re essentially generating codes (as well as expanding the syntax).</p>
 <h2 id="conclusion"><a class="header" href="#conclusion">Conclusion</a></h2>
-<p>In conclusion, we want to settle one of the most frequently asked questions</p>
+<p>Let’s settle one of the most frequently asked questions</p>
 <h2 id="is-python-or-a-language-x-compiled-or-interpreted"><a class="header" href="#is-python-or-a-language-x-compiled-or-interpreted"><span style="color:blue">Is Python (or a language X) Compiled or Interpreted?</span></a></h2>
 <p>This is in fact the <span style="color:red">WRONG</span> question to ask!</p>
 <p>Being AOT compiled, JIT compiled or interpreted is <strong>implementation-dependent</strong>. For example, the standard Python <em>implementation</em> is <a href="https://www.python.org/"><strong>CPython</strong></a> which compiles a Python source code (in CPython VM) to CPython Bytecode (contents of <code>.pyc</code>) and <strong>interprets</strong> the Bytecode. However, another implementation of Python is <a href="https://www.pypy.org/"><strong>PyPy</strong></a> which (more or less) compiles a Python source code (in PyPy VM) to PyPy Bytecode and <strong>JIT</strong> compiles the PyPy Bytecode to the Machine Code (and is usually faster than CPython interpreter).</p>

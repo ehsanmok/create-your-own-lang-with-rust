@@ -248,7 +248,7 @@ fib(10)
     }
 }
 fib(10)</code></pre>
-<p>The programs are nearly identical. Type annotations are the only difference, but they unlock compile-time safety and native code generation.</p>
+<p>The programs are nearly identical. Type annotations are the only difference, but they give us compile-time safety and native code generation.</p>
 <h2 id="project-structure"><a class="header" href="#project-structure">Project Structure</a></h2>
 <pre><code>secondlang/
 ├── Cargo.toml
@@ -276,7 +276,7 @@ fib(10)</code></pre>
 │   ├── ast.rs           # Simpler: no TypedExpr
 │   └── interpreter.rs   # Tree-walking, no codegen
 </code></pre>
-<p>The new modules (<code>types.rs</code>, <code>typeck.rs</code>, <code>visitor.rs</code>, <code>codegen.rs</code>) represent the additional complexity that types bring, but also the power they unlock.</p>
+<p>The new modules (<code>types.rs</code>, <code>typeck.rs</code>, <code>visitor.rs</code>, <code>codegen.rs</code>) represent the additional complexity that types bring - and the capabilities they enable.</p>
 <h2 id="prerequisites"><a class="header" href="#prerequisites">Prerequisites</a></h2>
 <p>LLVM is required. Check your version with <code>llvm-config --version</code> and update <code>Cargo.toml</code> accordingly:</p>
 <ul>

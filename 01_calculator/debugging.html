@@ -184,10 +184,10 @@
 <blockquote>
 <p>Your language is a pipeline. Data flows through stages: Source → Tokens → AST → Output. When something breaks, find <em>which stage</em> produced the wrong output.</p>
 </blockquote>
-<pre><code>Source Code  →  Parser  →  AST  →  Executor  →  Result
-     ↓            ↓         ↓         ↓           ↓
-   "1+2"      tokens    tree      eval      3 (or error!)
-</code></pre>
+<p align="center">
+</br>
+    <a href><img alt="dataflow: source code to result" src="../img/dataflow.svg"> </a>
+</p>
 <p>Debug by checking each arrow: Is the input to this stage correct? Is the output?</p>
 <h2 id="print-the-ast"><a class="header" href="#print-the-ast">Print the AST</a></h2>
 <p>The AST is your program’s structure. When behavior is wrong, print it:</p>
@@ -238,7 +238,7 @@ fn test_combined() {
 </code></pre>
 <p>If a complex expression fails, simplify until you find the minimal failing case.</p>
 <h2 id="when-using-llvm-later"><a class="header" href="#when-using-llvm-later">When Using LLVM (Later)</a></h2>
-<p>When we add LLVM compilation, two more techniques become essential:</p>
+<p>When we add LLVM compilation, two more techniques become useful:</p>
 <h3 id="print-the-ir"><a class="header" href="#print-the-ir">Print the IR</a></h3>
 <pre><code class="language-rust ignore">// After code generation
 codegen.module.print_to_stderr();</code></pre>
