@@ -15,6 +15,7 @@ git-repository-icon = "fa-github"
 mathjax-support = true
 smart-punctuation = true
 copy-fonts = true
+no-section-label = true
 
 [output.html.search]
 enable = true

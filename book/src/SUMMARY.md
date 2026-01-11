@@ -7,7 +7,7 @@
 
 ---
 
-## Part I: Calculator
+# Part I: Calculator
 
 - [Calculator](01_calculator/calc_intro.md)
   - [Grammar, Lexer and Parser](01_calculator/grammar_lexer_parser.md)
@@ -22,10 +22,9 @@
 
 ---
 
+# Part II: Firstlang (Interpreted)
+
 - [From Calculator to Real Language](transition_1_to_2.md)
-
-## Part II: Firstlang (Interpreted)
-
 - [Firstlang: Your First Real Language](02_firstlang/intro.md)
   - [Python-like Syntax](02_firstlang/syntax.md)
   - [Variables and Assignment](02_firstlang/variables.md)
@@ -38,10 +37,9 @@
 
 ---
 
+# Part III: Secondlang (Compiled)
+
 - [From Interpreted to Compiled](transition_2_to_3.md)
-
-## Part III: Secondlang (Compiled)
-
 - [Secondlang: Adding Types and Compilation](03_secondlang/intro.md)
   - [Why Types Matter](03_secondlang/why_types.md)
   - [Type Annotations](03_secondlang/annotations.md)
@@ -54,10 +52,9 @@
 
 ---
 
+# Part IV: Thirdlang (Object-Oriented)
+
 - [From Functions to Objects](transition_3_to_4.md)
-
-## Part IV: Thirdlang (Object-Oriented)
-
 - [Thirdlang: Adding Classes and Objects](04_thirdlang/intro.md)
   - [Why Classes?](04_thirdlang/why_classes.md)
   - [Class Syntax and Parsing](04_thirdlang/classes_syntax.md)
@@ -71,10 +68,14 @@
 
 ---
 
+# Beyond the Book
+
 - [What's Next: Your Journey Starts Here](whats_next.md)
 
 ---
 
-- [Appendix: Testing Your Language](testing.md)
+# Appendices
+
+- [Testing Your Language](testing.md)
 - [Glossary](glossary.md)
 - [Resources](resources.md)
