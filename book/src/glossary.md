@@ -14,6 +14,8 @@ Key terms used throughout this book.
 
 **Basic Block**: A sequence of instructions with no branches except at the end. Control enters at the beginning, exits at the end.
 
+**Builder**: LLVM object for creating instructions. Maintains an insertion point and provides methods like `build_add()`, `build_call()`, etc.
+
 **Bytecode**: A compact, portable instruction set for a virtual machine. Higher-level than machine code, interpreted or JIT-compiled.
 
 **Call Stack**: Runtime data structure tracking function calls. Each call pushes a frame; return pops it.
@@ -22,11 +24,17 @@ Key terms used throughout this book.
 
 **Constructor**: Special method (`__init__`) called when creating an object. Initializes fields.
 
+**Constant Folding**: Optimization that evaluates constant expressions at compile time. `1 + 2` becomes `3` in the generated code.
+
+**Context**: LLVM object that owns types, constants, and other LLVM data. Required to create modules and types.
+
 **Dead Code Elimination (DCE)**: Optimization that removes code whose results are never used.
 
 **Destructor**: Special method (`__del__`) called when destroying an object. Cleans up resources.
 
 **Dynamic Typing**: Type checking at runtime. Variables can hold values of any type. Used in Python, JavaScript.
+
+**Environment**: Data structure mapping variable and function names to their values. Supports nested scopes for local variables.
 
 **Frontend**: The part of a compiler that processes source code (lexing, parsing, type checking). Produces input for the backend.
 
@@ -39,6 +47,8 @@ Key terms used throughout this book.
 **Heap**: Memory region for dynamic allocation (`malloc`/`new`). Objects persist until explicitly freed. Contrast with stack.
 
 **Intermediate Representation (IR)**: Code representation between source and machine code. LLVM IR is a common example. Enables optimization independent of source/target.
+
+**inkwell**: Safe Rust bindings for the LLVM C API. Provides types like `Context`, `Module`, `Builder` for code generation.
 
 **Interpreter**: Executes code directly without compilation to machine code. Tree-walking interpreters traverse the AST.
 
@@ -54,6 +64,8 @@ Key terms used throughout this book.
 
 **Method**: Function associated with a class. Receives `self` as implicit first parameter.
 
+**Module**: LLVM container for functions, global variables, and type definitions. Compiled as a unit.
+
 **Monomorphization**: Generating specialized code for each concrete type when using generics. `Box<int>` and `Box<bool>` become separate implementations.
 
 **Opaque Pointer**: LLVM pointer type (`ptr`) without element type information. Modern LLVM uses opaque pointers exclusively.
@@ -65,6 +77,8 @@ Key terms used throughout this book.
 **Parser**: Converts tokens into structured representation (AST). Checks syntactic correctness.
 
 **Pass Manager**: Infrastructure for running and ordering optimization passes. We use LLVM's New Pass Manager.
+
+**pest**: Rust library for parsing based on PEG grammars. Generates a parser from a `.pest` grammar file.
 
 **PEG (Parsing Expression Grammar)**: Grammar formalism that is unambiguous and efficient to parse. Used by pest.
 
@@ -89,6 +103,8 @@ Key terms used throughout this book.
 **Target Triple**: String describing a compilation target: architecture-vendor-os (e.g., `x86_64-apple-darwin`).
 
 **Terminator**: Instruction that ends a basic block. Must be `ret`, `br`, `switch`, etc.
+
+**Token**: Individual unit produced by the lexer. Examples: number (`42`), identifier (`foo`), operator (`+`), keyword (`if`).
 
 **Tree-Walking Interpreter**: Interpreter that traverses the AST directly, executing nodes recursively.
 
