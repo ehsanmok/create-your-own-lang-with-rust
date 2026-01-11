@@ -1,8 +1,8 @@
 <div class="license-notice">
 <p><em>Materials in this book are distributed under the terms of <a href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/LICENSE">Creative Commons BY-NC-SA 4.0</a></em></p>
 <img alt="license" src="./img/by-nc-sa.png">
-<img src="./img/logo_light_mode.png" alt="CreateLang.rs Logo" class="logo-img logo-light" width="320">
-<img src="./img/logo_dark_mode.png" alt="CreateLang.rs Logo" class="logo-img logo-dark" width="320">
+<img src="./img/logo_light_mode.png" alt="CreateLang.rs Logo" class="logo-img logo-light" width="280">
+<img src="./img/logo_dark_mode.png" alt="CreateLang.rs Logo" class="logo-img logo-dark" width="280">
 </div>
 
 ---
