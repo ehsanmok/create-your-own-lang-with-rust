@@ -188,7 +188,7 @@
 </ul>
 <p>This is how Python, Java, Ruby, and many other languages work. You compile source code to bytecode once, then run the bytecode interpreter wherever you need it.</p>
 <h3 id="what-is-bytecode"><a class="header" href="#what-is-bytecode">What Is Bytecode?</a></h3>
-<p>Think of bytecode as a <em>simplified assembly language</em> designed for our VM. Real assembly has hundreds of instructions. Our bytecode has just four:</p>
+<p>Think of bytecode as a <em>simplified assembly language</em> designed for our VM. Real assembly has hundreds of instructions. These four carry the arithmetic:</p>
 <div class="table-wrapper"><table><thead><tr><th>Opcode</th><th>What it does</th></tr></thead><tbody>
 <tr><td><code>OpConstant(index)</code></td><td>Push a constant onto the stack</td></tr>
 <tr><td><code>OpAdd</code></td><td>Pop two values, push their sum</td></tr>
@@ -196,7 +196,7 @@
 <tr><td><code>OpPop</code></td><td>Pop and discard the top value</td></tr>
 </tbody></table>
 </div>
-<p>That’s it! With just these four operations, we can evaluate any arithmetic expression.</p>
+<p>The full enum also has <code>OpPlus</code> and <code>OpMinus</code> for unary expressions, but these four are enough to evaluate any binary arithmetic expression.</p>
 <h2 id="step-1-define-opcodes"><a class="header" href="#step-1-define-opcodes">Step 1: Define Opcodes</a></h2>
 <p>We represent opcodes as bytes. This makes bytecode compact and fast to decode:</p>
 <pre><code class="language-rust ignore">pub enum OpCode {

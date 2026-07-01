@@ -210,7 +210,7 @@
 <p><strong>LLVM</strong>: Compiler infrastructure providing reusable components for building compilers. We use it for code generation and optimization.</p>
 <p><strong>Mangling</strong>: Encoding names to be unique. <code>Counter.increment</code> becomes <code>Counter__increment</code> in generated code.</p>
 <p><strong>mem2reg</strong>: LLVM optimization pass that promotes stack allocations (alloca) to SSA registers. Required for efficient code.</p>
-<p><strong>Method</strong>: Function associated with a class. Receives <code>self</code> as implicit first parameter.</p>
+<p><strong>Method</strong>: Function associated with a class. Receives <code>self</code> (the object) as its first parameter.</p>
 <p><strong>Module</strong>: LLVM container for functions, global variables, and type definitions. Compiled as a unit.</p>
 <p><strong>Monomorphization</strong>: Generating specialized code for each concrete type when using generics. <code>Box&lt;int&gt;</code> and <code>Box&lt;bool&gt;</code> become separate implementations.</p>
 <p><strong>Opaque Pointer</strong>: LLVM pointer type (<code>ptr</code>) without element type information. Modern LLVM uses opaque pointers exclusively.</p>

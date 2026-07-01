@@ -395,11 +395,10 @@ impl Default for ConstantFolder {
 
 impl ExprVisitor for ConstantFolder {
     fn visit_binary(&amp;mut self, op: BinaryOp, left: &amp;TypedExpr, right: &amp;TypedExpr) -&gt; Expr {
-        // First, recursively fold children
+        // Fold children before the parent so nested constants collapse bottom-up.
         let l = self.visit_expr(left);
         let r = self.visit_expr(right);
 
-        // Try to fold if both are constants
         if let (Expr::Int(lv), Expr::Int(rv)) = (&amp;l.expr, &amp;r.expr) {
             let result = match op {
                 BinaryOp::Add =&gt; Some(lv + rv),
@@ -414,7 +413,7 @@ impl ExprVisitor for ConstantFolder {
             }
         }
 
-        // Try boolean constant folding for comparisons
+        // Comparisons between two constants fold to a boolean.
         if let (Expr::Int(lv), Expr::Int(rv)) = (&amp;l.expr, &amp;r.expr) {
             let result = match op {
                 BinaryOp::Lt =&gt; Some(*lv &lt; *rv),
@@ -430,7 +429,6 @@ impl ExprVisitor for ConstantFolder {
             }
         }
 
-        // Can't fold, return as-is
         Expr::Binary {
             op,
             left: Box::new(l),
@@ -519,11 +517,10 @@ impl Default for AlgebraicSimplifier {
 
 impl ExprVisitor for AlgebraicSimplifier {
     fn visit_binary(&amp;mut self, op: BinaryOp, left: &amp;TypedExpr, right: &amp;TypedExpr) -&gt; Expr {
-        // First, recursively simplify children
+        // Simplify children first so identities apply to already-reduced operands.
         let l = self.visit_expr(left);
         let r = self.visit_expr(right);
 
-        // Apply algebraic identities
         match (&amp;op, &amp;l.expr, &amp;r.expr) {
             // x + 0 = x
             (BinaryOp::Add, _, Expr::Int(0)) =&gt; return l.expr,

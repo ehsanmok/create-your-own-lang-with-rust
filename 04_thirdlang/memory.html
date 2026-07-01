@@ -329,8 +329,8 @@ delete r   # Calls __del__, then free()
 <p><a class="filename" href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/thirdlang/src/codegen.rs">thirdlang/src/codegen.rs</a></p>
 <p>Generated LLVM IR:</p>
 <pre><code>; delete p  (where p is a Point with destructor)
-call void @Point__del(ptr %p)   ; Destructor
-call void @free(ptr %p)          ; Free memory
+call void @Point____del__(ptr %p)   ; Destructor
+call void @free(ptr %p)             ; Free memory
 </code></pre>
 <h2 id="memory-safety-issues"><a class="header" href="#memory-safety-issues">Memory Safety Issues</a></h2>
 <p>Without automatic memory management, several bugs become possible:</p>
@@ -399,7 +399,7 @@ delete p
 </p>
 <ol>
 <li><code>malloc(16)</code> returns <code>0x1000</code></li>
-<li><code>Point__init(0x1000, 10, 20)</code> initializes fields</li>
+<li><code>Point____init__(0x1000, 10, 20)</code> initializes fields</li>
 <li><code>p</code> holds the pointer <code>0x1000</code></li>
 </ol>
 <h3 id="step-2-delete-p"><a class="header" href="#step-2-delete-p">Step 2: delete p</a></h3>
@@ -408,7 +408,7 @@ delete p
     <a href><img alt="delete ptr" src="../img/delete-ptr.svg"> </a>
 </p>
 <ol>
-<li><code>Point__del(0x1000)</code> runs destructor</li>
+<li><code>Point____del__(0x1000)</code> runs destructor</li>
 <li><code>free(0x1000)</code> returns memory to OS</li>
 <li><code>p</code> still holds <code>0x1000</code> but it is invalid now!</li>
 </ol>
@@ -457,7 +457,7 @@ delete p           # Caller deletes
 <strong>Related Topics</strong>
 <ul>
 <li><a href="constructors.html">Constructors</a> - The <code>__init__</code> method</li>
-<li><a href="why_classes.html">Why Classes</a> - Stack vs heap motivation</li>
+<li><a href="why_classes.html">The Case for Classes</a> - Stack vs heap motivation</li>
 <li><a href="codegen_classes.html">LLVM Codegen</a> - How new/delete compile to IR</li>
 </ul>
 </div>

@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Why Classes? - Create Your Own Programming Language with Rust</title>
+        <title>The Case for Classes - Create Your Own Programming Language with Rust</title>
 
 
         <!-- Custom HTML head -->
@@ -178,9 +178,9 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="why-classes"><a class="header" href="#why-classes">Why Classes?</a></h1>
-<p>Before diving into implementation, let us understand <em>why</em> we want classes. After all, <a href="../03_secondlang/intro.html">Secondlang</a> works fine with just primitive types (<code>int</code> and <code>bool</code>). If you have not read <a href="../03_secondlang/why_types.html">Why Types Matter</a>, that chapter explains the benefits of static typing that we build upon here.</p>
-<h2 id="the-problem-related-data-scattered"><a class="header" href="#the-problem-related-data-scattered">The Problem: Related Data Scattered</a></h2>
+                        <h1 id="the-case-for-classes"><a class="header" href="#the-case-for-classes">The Case for Classes</a></h1>
+<p>Before diving into implementation, let us understand <em>why</em> we want classes. After all, <a href="../03_secondlang/intro.html">Secondlang</a> works fine with just primitive types (<code>int</code> and <code>bool</code>). If you have not read <a href="../03_secondlang/why_types.html">The Case for Types</a>, that chapter explains the benefits of static typing that we build upon here.</p>
+<h2 id="related-data-scattered"><a class="header" href="#related-data-scattered">Related Data Scattered</a></h2>
 <p>In Secondlang, we can only work with individual <code>int</code> and <code>bool</code> values:</p>
 <pre><code># A "point" represented as separate variables
 x1 = 10
@@ -205,7 +205,7 @@ distance_squared(x1, y1, x2, y2)
 <li><strong>Verbose</strong> - Every function needs all the pieces passed separately</li>
 <li><strong>No encapsulation</strong> - Anyone can mess with <code>x1</code> directly</li>
 </ol>
-<h2 id="the-solution-group-data-with-classes"><a class="header" href="#the-solution-group-data-with-classes">The Solution: Group Data with Classes</a></h2>
+<h2 id="grouping-data-with-classes"><a class="header" href="#grouping-data-with-classes">Grouping Data with Classes</a></h2>
 <p>With classes, we bundle related data and behavior together:</p>
 <pre><code>class Point {
     x: int
@@ -225,7 +225,7 @@ distance_squared(x1, y1, x2, y2)
 
 p1 = new Point(10, 20)
 p2 = new Point(30, 40)
-p1.distance_squared(p2)  # Clean and clear!
+p1.distance_squared(p2)
 </code></pre>
 <p>Now:</p>
 <ol>
@@ -258,7 +258,7 @@ class Rectangle { width: int  height: int  ... }
 </code></pre>
 <p>This is called a <strong><a href="https://en.wikipedia.org/wiki/Nominal_type_system">nominal type system</a></strong> - types are identified by their names.</p>
 <h2 id="memory-model-stack-vs-heap"><a class="header" href="#memory-model-stack-vs-heap">Memory Model: Stack vs Heap</a></h2>
-<p>Here is where things get interesting. In Secondlang, everything lives on the <strong>stack</strong>. With classes, objects live on the <strong>heap</strong>, and variables hold <strong>pointers</strong> to them:</p>
+<p>In Secondlang, everything lives on the <strong>stack</strong>. With classes, objects live on the <strong>heap</strong>, and variables hold <strong>pointers</strong> to them:</p>
 <p align="center">
 </br>
     <a href><img alt="stack vs heap" src="../img/stack-vs-heap.svg"> </a>

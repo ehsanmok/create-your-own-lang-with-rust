@@ -214,9 +214,9 @@ pub enum Node {
 </code></pre>
 <p>This handles <code>-1</code> (minus applied to 1) or <code>-(2 + 3)</code> (minus applied to a whole expression).</p>
 <p><strong>Binary expressions</strong> - An operator between two things:</p>
-<pre><code>BinaryExpr = { Term ~ (Operator ~ Term)* }
+<pre><code>BinaryExpr = { (UnaryExpr | Term) ~ (Operator ~ Term)+ }
 </code></pre>
-<p>This handles <code>1 + 2</code> (plus between 1 and 2) or <code>1 + 2 + 3</code> (chained additions).</p>
+<p>This handles <code>1 + 2</code> (plus between 1 and 2) or <code>1 + 2 + 3</code> (chained additions). The <code>+</code> (one or more) requires at least one operator, which keeps a lone <code>Term</code> from matching as a binary expression.</p>
 <p>Here’s a complex example: <code>"-1 + (2 + 3)"</code> forms this tree:</p>
 <p align="center">
 </br>
@@ -275,7 +275,7 @@ pub fn parse(source: &amp;str) -&gt; std::result::Result&lt;Vec&lt;Node&gt;, pes
 <li>Evaluate the right side (<code>2</code>) → get <code>2</code></li>
 <li>Apply the operator (<code>+</code>) → get <code>3</code></li>
 </ol>
-<p>If the left side were <code>(3 + 4)</code> instead of <code>1</code>, we’d recursively evaluate that first. This is why trees are so powerful - the structure tells us the order of operations.</p>
+<p>If the left side were <code>(3 + 4)</code> instead of <code>1</code>, we’d recursively evaluate that first. This is what the tree buys us: the structure itself encodes the order of operations.</p>
 <p>Here’s the evaluation function:</p>
 <pre><code class="language-rust ignore">    pub fn eval(&amp;self, node: &amp;Node) -&gt; i32 {
         match node {
@@ -340,14 +340,14 @@ impl Compile for Interpreter {
 <p>Run tests locally with:</p>
 <pre><code class="language-bash">cargo test interpreter --tests
 </code></pre>
-<h2 id="why-this-pattern-matters"><a class="header" href="#why-this-pattern-matters">Why This Pattern Matters</a></h2>
+<h2 id="the-tree-walking-pattern"><a class="header" href="#the-tree-walking-pattern">The Tree-Walking Pattern</a></h2>
 <p>The pattern we just learned - parse to AST, recursively evaluate - is the foundation of <em>every</em> interpreter. Python, Ruby, JavaScript interpreters all do this (with more node types, of course).</p>
 <p>In the next sections, we’ll see two other ways to execute the same AST:</p>
 <ul>
 <li><strong>JIT compilation</strong> - Convert the AST to machine code, then run it</li>
 <li><strong>Bytecode VM</strong> - Convert to simpler instructions, then interpret those</li>
 </ul>
-<p>Same AST, three different backends. That’s the power of separating parsing from execution.</p>
+<p>Same AST, three different backends. That is what separating parsing from execution gives us.</p>
 <div class="checkpoint">
 <p>At this point, you should be able to:</p>
 <ul>

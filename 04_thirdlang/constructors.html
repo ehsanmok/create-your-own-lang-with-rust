@@ -363,7 +363,7 @@ r = new Point(10, true)    # ERROR: expected int, got bool
 <pre><code>; new Point(10, 20)
 %size = call i64 @llvm.sizeof.s_Point()
 %raw = call ptr @malloc(i64 %size)
-call void @Point__init(ptr %raw, i64 10, i64 20)
+call void @Point____init__(ptr %raw, i64 10, i64 20)
 ; %raw is now a pointer to an initialized Point
 </code></pre>
 <h2 id="memory-layout"><a class="header" href="#memory-layout">Memory Layout</a></h2>

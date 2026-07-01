@@ -239,7 +239,7 @@ entry:
 <li><strong><code>builder.position_at_end(entry)</code></strong> - Point the builder at our entry block. New instructions will go here.</li>
 </ul>
 <h3 id="step-3-build-the-function-body"><a class="header" href="#step-3-build-the-function-body">Step 3: Build the Function Body</a></h3>
-<p>Now the fun part - generating the actual addition:</p>
+<p>Now we generate the actual addition:</p>
 <pre><code class="language-rust ignore">    let x = fn_val.get_nth_param(0).unwrap().into_int_value();
     let y = fn_val.get_nth_param(1).unwrap().into_int_value();
 
@@ -265,7 +265,7 @@ entry:
         let y = 2;
         assert_eq!(add.call(x, y), x + y);
     }</code></pre>
-<p>This is where it gets real:</p>
+<p>Here the IR becomes executable code:</p>
 <ul>
 <li><strong><code>module.create_jit_execution_engine(OptimizationLevel::None)</code></strong> - Creates a JIT compiler. LLVM takes our IR and compiles it to native x86/ARM code <em>right now</em>, in memory.</li>
 <li><strong><code>execution_engine.get_function::&lt;unsafe extern "C" fn(i32, i32) -&gt; i32&gt;("add")</code></strong> - Look up our compiled function. The type signature tells Rust how to call it.</li>

@@ -213,7 +213,6 @@ pub struct CodeGen&lt;'ctx&gt; {
 <h2 id="compilation-pipeline"><a class="header" href="#compilation-pipeline">Compilation Pipeline</a></h2>
 <pre><code class="language-rust ignore">    /// Compile a program and return the module
     pub fn compile(&amp;mut self, program: &amp;Program) -&gt; Result&lt;(), String&gt; {
-        // Declare libc functions
         self.declare_libc_functions();
 
         // First pass: create LLVM struct types for classes
@@ -257,7 +256,6 @@ pub struct CodeGen&lt;'ctx&gt; {
         // Fourth pass: create __main wrapper for all top-level non-function statements
         self.compile_main_wrapper_all(program)?;
 
-        // Verify module
         self.module
             .verify()
             .map_err(|e| format!("Module verification failed: {}", e.to_string()))?;
@@ -302,7 +300,6 @@ pub struct CodeGen&lt;'ctx&gt; {
             field_types.push(llvm_type);
         }
 
-        // Create named struct type
         let struct_type = self.context.opaque_struct_type(&amp;class.name);
         struct_type.set_body(&amp;field_types, false);
 
@@ -336,6 +333,13 @@ entry:
 </tbody></table>
 </div>
 <p>This avoids name collisions between classes.</p>
+<h3 id="how-name-mangling-works"><a class="header" href="#how-name-mangling-works">How Name Mangling Works</a></h3>
+<p>The mangled name is just the class name and method name joined by a <code>__</code> separator:</p>
+<pre><code class="language-rust ignore">let fn_name = format!("{}__{}", class_name, method.name);</code></pre>
+<p>For ordinary methods this reads exactly as you would expect: <code>get_x</code> on <code>Point</code> becomes <code>Point__get_x</code>. The surprising case is the dunder methods. Since <code>method.name</code> for a constructor is already <code>__init__</code> (two leading underscores of its own), joining it with the <code>__</code> separator produces four underscores in a row:</p>
+<pre><code class="language-text">"Point" + "__" + "__init__"  =  "Point____init__"
+</code></pre>
+<p>The same happens for destructors: <code>Point____del__</code>. This is why the call sites for <code>new</code> and <code>delete</code> in <a href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/thirdlang/src/codegen.rs">thirdlang/src/codegen.rs</a> look up <code>Point____init__</code> and <code>Point____del__</code> rather than <code>Point__init</code> or <code>Point__del</code>. The extra underscores are not a special encoding, just the separator meeting a name that already starts with <code>__</code>.</p>
 <h3 id="self-as-first-parameter"><a class="header" href="#self-as-first-parameter">Self as First Parameter</a></h3>
 <p>Every method takes <code>self</code> (a pointer) as its first parameter:</p>
 <pre><code>define i64 @Point__get_x(ptr %self) { ... }
@@ -500,7 +504,6 @@ store i64 42, ptr %x_ptr
                 let obj_val = self.compile_expr(object)?;
                 let obj_ptr = obj_val.into_pointer_value();
 
-                // Get class name
                 let class_name = object.ty.class_name().ok_or("Expected class type")?;
                 let fn_name = format!("{}__{}", class_name, method);
 
@@ -810,7 +813,6 @@ store i64 42, ptr %x_ptr
                 let obj_val = self.compile_expr(object)?;
                 let obj_ptr = obj_val.into_pointer_value();
 
-                // Get class name
                 let class_name = object.ty.class_name().ok_or("Expected class type")?;
                 let fn_name = format!("{}__{}", class_name, method);
 
@@ -959,7 +961,7 @@ pub fn jit_run(program: &amp;Program, classes: ClassRegistry) -&gt; Result&lt;i6
 <ul>
 <li>Run <code>cargo run --bin thirdlang -- --ir examples/point.tl</code> and see IR</li>
 <li>See <code>%Point</code> struct type in the output</li>
-<li>See <code>Point__init</code> and other method functions</li>
+<li>See <code>Point____init__</code> and other method functions</li>
 </ul>
 </div>
 <div class="related-topics">

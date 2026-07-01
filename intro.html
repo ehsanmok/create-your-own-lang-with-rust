@@ -202,7 +202,7 @@
 cd create-your-own-lang-with-rust
 </code></pre>
 <h3 id="calculator-and-firstlang-stable-rust"><a class="header" href="#calculator-and-firstlang-stable-rust">Calculator and Firstlang (stable Rust)</a></h3>
-<p>These projects work with stable Rust 1.70+ and require no external dependencies:</p>
+<p>These projects work with stable Rust 1.83+ and require no external dependencies:</p>
 <pre><code class="language-bash"># Calculator - interpreter mode
 cd calculator
 cargo run --bin main examples/simple.calc
@@ -258,8 +258,8 @@ rustup run nightly cargo run --bin thirdlang -- examples/counter.tl
 <h3 id="part-i-calculator"><a class="header" href="#part-i-calculator">Part I: Calculator</a></h3>
 <p>We start with the <em>simplest possible language</em>: integer arithmetic with <code>+</code> and <code>-</code>. The grammar fits in 18 lines:</p>
 <pre><code class="language-text">Program = _{ SOI ~ Expr ~ EOF }
-Expr = { UnaryExpr | BinaryExpr | Term }
-Term = _{Int | "(" ~ Expr ~ ")" }
+Expr = { BinaryExpr | UnaryExpr | Term }
+Term = { Int | "(" ~ Expr ~ ")" }
 ...
 </code></pre>
 <p>This minimal language lets us focus on the fundamentals: what is a grammar? How does pest generate a parser? What is an AST? We explore <em>three different backends</em> (interpreter, bytecode VM, JIT) to show that the same AST can be executed in multiple ways.</p>

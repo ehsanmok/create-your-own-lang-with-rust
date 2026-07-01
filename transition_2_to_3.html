@@ -206,7 +206,7 @@
 call fib          ; Direct jump, no lookup
 </code></pre>
 <p>Two CPU instructions. No lookups, no checks, no allocations.</p>
-<h2 id="why-interpretation-is-slow"><a class="header" href="#why-interpretation-is-slow">Why Interpretation is Slow</a></h2>
+<h2 id="a-compiler-decides-once"><a class="header" href="#a-compiler-decides-once">A Compiler Decides Once</a></h2>
 <blockquote>
 <p>Imagine reading a recipe in French. An <em>interpreter</em> translates each word as you cook - slow, but you can start immediately. A <em>compiler</em> translates the whole recipe to English first, then you cook from the translation - upfront cost, but much faster execution.</p>
 </blockquote>
@@ -252,7 +252,7 @@ call fib          ; Direct jump, no lookup
 <tr><td>JIT compilation</td><td>Native speed</td></tr>
 </tbody></table>
 </div>
-<h2 id="the-payoff"><a class="header" href="#the-payoff">The Payoff</a></h2>
+<h2 id="the-speedup"><a class="header" href="#the-speedup">The Speedup</a></h2>
 <p>The exact same Fibonacci algorithm, but with type annotations:</p>
 <pre><code>def fib(n: int) -&gt; int {
     if (n &lt; 2) { return n }
@@ -280,8 +280,6 @@ fib(35)  # Milliseconds instead of seconds!
 <li><strong>JIT Compilation</strong> - Compiling and running code on the fly</li>
 </ol>
 <p>These are the same techniques used in production compilers. After Secondlang, you’ll understand how <code>rustc</code>, <code>swiftc</code>, and <code>clang</code> actually work under the hood.</p>
-<h2 id="ready"><a class="header" href="#ready">Ready?</a></h2>
-<p>Let’s add types and compile to native code.</p>
 
                     </main>
 

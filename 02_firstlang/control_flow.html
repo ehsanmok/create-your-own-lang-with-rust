@@ -242,7 +242,7 @@ When <code>x = 3</code>, the condition is <code>false</code>, so we return <code
 max(10, 20)  # 20
 max(20, 10)  # 20
 </code></pre>
-<p>The condition <code>a &gt; b</code> determines which value to return. Simple, but powerful.</p>
+<p>The condition <code>a &gt; b</code> determines which value to return.</p>
 <h2 id="loops-while"><a class="header" href="#loops-while">Loops: While</a></h2>
 <p>A <code>while</code> loop repeats its body as long as a condition is true:</p>
 <pre><code>x = 0
@@ -321,7 +321,7 @@ factorial(5)  # 120
 </code></pre>
 <p>Same result, different approach. Loops and recursion are often interchangeable.</p>
 <h2 id="control-flow-in-functions"><a class="header" href="#control-flow-in-functions">Control Flow in Functions</a></h2>
-<p>The real power comes from combining everything. Here’s a more complex example:</p>
+<p>Combining these constructs is where real programs take shape. Here’s a more complex example:</p>
 <pre><code>def countdown(n) {
     while (n &gt; 0) {
         n = n - 1
@@ -360,7 +360,7 @@ factorial(5)  # 120
 find_first_even(5)  # 2
 </code></pre>
 <p>When <code>i = 2</code>, the condition <code>i % 2 == 0</code> is true, and we return immediately. The loop doesn’t continue to <code>i = 3, 4, 5</code>. This “early return” pattern is common and efficient.</p>
-<h2 id="what-happens-under-the-hood"><a class="header" href="#what-happens-under-the-hood">What Happens Under the Hood</a></h2>
+<h2 id="control-flow-as-branching"><a class="header" href="#control-flow-as-branching">Control Flow as Branching</a></h2>
 <p>Both <code>if</code> and <code>while</code> are about <em>changing the flow of execution</em>. Without them, we execute line by line. With them, we can:</p>
 <ul>
 <li><strong>Skip code</strong> (the branch not taken in <code>if</code>)</li>

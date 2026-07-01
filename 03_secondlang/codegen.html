@@ -233,7 +233,6 @@ pub struct CodeGen&lt;'ctx&gt; {
             self.compile_main_wrapper(expr)?;
         }
 
-        // Verify module
         self.module
             .verify()
             .map_err(|e| format!("Module verification failed: {}", e.to_string()))?;
@@ -590,7 +589,6 @@ pub fn jit_run(program: &amp;Program) -&gt; Result&lt;i64, String&gt; {
 
     codegen.compile(program)?;
 
-    // Create execution engine
     let engine = codegen
         .module
         .create_jit_execution_engine(OptimizationLevel::Default)

@@ -194,27 +194,7 @@ ClassType = { Identifier }  // Class name as type
 <p>The <code>ClassType</code> rule matches any identifier. When we see <code>Point</code> in a type position, we now parse it as a class type. The type checker (later) verifies that a class with that name actually exists.</p>
 <h3 id="class-definition"><a class="header" href="#class-definition">Class Definition</a></h3>
 <p>Here is the grammar for class definitions:</p>
-<pre><code class="language-text">// =============================================================================
-// Class Definition
-// =============================================================================
-// class Point {
-//     x: int
-//     y: int
-//
-//     def __init__(self, x: int, y: int) {
-//         self.x = x
-//         self.y = y
-//     }
-//
-//     def distance(self, other: Point) -&gt; int {
-//         dx = self.x - other.x
-//         return dx * dx
-//     }
-//
-//     def __del__(self) { }
-// }
-
-ClassDef = { "class" ~ Identifier ~ "{" ~ ClassBody ~ "}" }
+<pre><code class="language-text">ClassDef = { "class" ~ Identifier ~ "{" ~ ClassBody ~ "}" }
 ClassBody = { (FieldDef | MethodDef)* }
 
 // Field definition: x: int
@@ -473,8 +453,8 @@ fn parse_method_def(pair: Pair&lt;Rule&gt;) -&gt; Result&lt;MethodDef, String&gt
 
     let name = inner.next().unwrap().as_str().to_string();
 
-    // Skip 'self' parameter
-    inner.next(); // SelfParam
+    // Every method's first parameter is `self`; it is implicit in the AST.
+    inner.next();
 
     let mut params: Vec&lt;(String, Type)&gt; = Vec::new();
     let mut return_type = Type::Unit;

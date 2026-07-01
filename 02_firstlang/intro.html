@@ -185,12 +185,12 @@
 <h3 id="grammar-from-18-lines-to-70-lines"><a class="header" href="#grammar-from-18-lines-to-70-lines">Grammar: From 18 Lines to 70 Lines</a></h3>
 <p>The Calculator grammar was minimal:</p>
 <pre><code class="language-text">Program = _{ SOI ~ Expr ~ EOF }
-Expr = { UnaryExpr | BinaryExpr | Term }
-Term = _{Int | "(" ~ Expr ~ ")" }
+Expr = { BinaryExpr | UnaryExpr | Term }
+Term = { Int | "(" ~ Expr ~ ")" }
 UnaryExpr = { Operator ~ Term }
-BinaryExpr = { Term ~ (Operator ~ Term)+ }
+BinaryExpr = { (UnaryExpr | Term) ~ (Operator ~ Term)+ }
 Operator = { "+" | "-" }
-Int = @{ Operator? ~ ASCII_DIGIT+ }
+Int = @{ ASCII_DIGIT+ }
 </code></pre>
 <p>Firstlang adds <em>statements</em>, <em>identifiers</em>, <em>functions</em>, and <em>control flow</em>:</p>
 <pre><code class="language-text">// New: Statements instead of just expressions

@@ -180,12 +180,15 @@
                     <main>
                         <h1 id="thirdlang"><a class="header" href="#thirdlang">Thirdlang</a></h1>
 <blockquote>
+<p><strong>Setup</strong>: Like Secondlang, Thirdlang compiles with LLVM and needs Rust nightly plus LLVM 20, with <code>LLVM_SYS_201_PREFIX</code> pointing at your LLVM (for example <code>export LLVM_SYS_201_PREFIX=/opt/homebrew/opt/llvm</code> on macOS). If the crate will not build, check this first. See <a href="#prerequisites">Prerequisites</a> below for details.</p>
+</blockquote>
+<blockquote>
 <p><strong>Prerequisites</strong>: This chapter builds on <a href="../03_secondlang/intro.html">Secondlang</a>. Make sure you understand <a href="../03_secondlang/inference.html">type checking</a> and <a href="../03_secondlang/codegen.html">LLVM code generation</a> before proceeding.</p>
 </blockquote>
 <p>In Part III, we built <a href="../03_secondlang/intro.html">Secondlang</a>, a statically typed language with LLVM JIT compilation. Now we take the final step: adding <strong>classes</strong> and <strong>object-oriented programming</strong>.</p>
 <h2 id="what-changes-from-secondlang"><a class="header" href="#what-changes-from-secondlang">What Changes from Secondlang?</a></h2>
 <p>The transition from Secondlang to Thirdlang demonstrates how to add user-defined types to a language. While Secondlang has primitive types (<code>int</code>, <code>bool</code>), Thirdlang allows programmers to define their own types with <strong>classes</strong>.</p>
-<h3 id="grammar-40-lines-added"><a class="header" href="#grammar-40-lines-added">Grammar: ~40 Lines Added</a></h3>
+<h3 id="grammar-50-lines-added"><a class="header" href="#grammar-50-lines-added">Grammar: ~50 Lines Added</a></h3>
 <p>Secondlang’s type system:</p>
 <pre><code class="language-text">Type = { IntType | BoolType }
 IntType = { "int" }
@@ -395,6 +398,9 @@ llvm-config --version
 <li>LLVM 20.x: <code>features = ["llvm20-1"]</code></li>
 <li>LLVM 19.x: <code>features = ["llvm19-1"]</code></li>
 </ul>
+<p>Point <code>llvm-sys</code> at your LLVM install with the version-specific prefix variable (<code>LLVM_SYS_201_PREFIX</code> for LLVM 20):</p>
+<pre><code class="language-bash">export LLVM_SYS_201_PREFIX=/opt/homebrew/opt/llvm   # macOS (Homebrew); adjust for your system
+</code></pre>
 <h2 id="quick-start"><a class="header" href="#quick-start">Quick Start</a></h2>
 <pre><code class="language-bash">cd thirdlang
 
@@ -410,7 +416,7 @@ rustup run nightly cargo test
 <h2 id="outline"><a class="header" href="#outline">Outline</a></h2>
 <p>In the following chapters, we build Thirdlang step by step:</p>
 <ol>
-<li><a href="why_classes.html">Why Classes?</a> - Object-oriented concepts</li>
+<li><a href="why_classes.html">The Case for Classes</a> - Object-oriented concepts</li>
 <li><a href="classes_syntax.html">Class Syntax and Parsing</a> - Grammar and AST</li>
 <li><a href="constructors.html">Constructors and Object Creation</a> - <code>__init__</code> and <code>new</code></li>
 <li><a href="methods.html">Methods and Self</a> - Method calls and the <code>self</code> parameter</li>

@@ -182,7 +182,7 @@
 <p>You’ve built a working calculator. It parses expressions like <code>(1 + 2) * 3</code>, constructs an AST, and evaluates (or compiles) the result through three different backends: an interpreter, a bytecode VM, and an LLVM JIT compiler. That’s a real achievement - you understand the core pipeline that every language uses.</p>
 <p>But something is missing. Try this thought experiment: Can you write a program that computes the first 10 Fibonacci numbers? Can you store intermediate results? Can you abstract repeated patterns into functions?</p>
 <p>No - because a calculator is not a <em>programming language</em> yet.</p>
-<h2 id="the-realization"><a class="header" href="#the-realization">The Realization</a></h2>
+<h2 id="where-calculators-fall-short"><a class="header" href="#where-calculators-fall-short">Where Calculators Fall Short</a></h2>
 <p>A calculator is like a sophisticated pocket calculator: it takes input, computes output, and forgets everything in between. There’s no <em>memory</em> of previous computations, no way to <em>name</em> values for reuse, and no way to <em>decide</em> which computation to perform based on conditions.</p>
 <p>Think about what you <em>can’t</em> do:</p>
 <pre><code>x = 10          # No variables!
@@ -262,8 +262,6 @@ fib(10)  # → 55
 <li><strong>Fibonacci</strong> - The culmination</li>
 </ol>
 <p>By the end, you’ll have something you can actually <em>program</em> in. Not just evaluate expressions - write real algorithms.</p>
-<h2 id="ready"><a class="header" href="#ready">Ready?</a></h2>
-<p>Let’s build a real language.</p>
 
                     </main>
 

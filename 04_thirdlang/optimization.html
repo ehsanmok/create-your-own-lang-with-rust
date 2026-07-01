@@ -313,14 +313,10 @@ entry:
         Target::initialize_native(&amp;InitializationConfig::default())
             .map_err(|e| format!("Failed to initialize native target: {}", e))?;
 
-        // Get the default target triple for this machine
         let triple = TargetMachine::get_default_triple();
-
-        // Get the target from the triple
         let target = Target::from_triple(&amp;triple)
             .map_err(|e| format!("Failed to get target from triple: {}", e))?;
 
-        // Create target machine with default settings
         let target_machine = target
             .create_target_machine(
                 &amp;triple,
@@ -332,11 +328,9 @@ entry:
             )
             .ok_or_else(|| "Failed to create target machine".to_string())?;
 
-        // Create pass builder options
         let pass_options = PassBuilderOptions::create();
         pass_options.set_verify_each(true); // Verify IR after each pass
 
-        // Run the passes
         self.module
             .run_passes(passes, &amp;target_machine, pass_options)
             .map_err(|e| format!("Failed to run passes: {}", e))
@@ -372,18 +366,16 @@ pub fn jit_run_with_opts(
 
     codegen.compile(program)?;
 
-    // Run optimization passes if specified
     if let Some(pass_pipeline) = passes {
         codegen.run_passes(pass_pipeline)?;
     }
 
-    // Create execution engine
     let engine = codegen
         .module
         .create_jit_execution_engine(OptimizationLevel::Default)
         .map_err(|e| format!("Failed to create JIT: {}", e.to_string()))?;
 
-    // Call the __main wrapper function
+    // Call the __main wrapper that holds the top-level statements.
     unsafe {
         let func: inkwell::execution_engine::JitFunction&lt;unsafe extern "C" fn() -&gt; i64&gt; =
             engine.get_function("__main").map_err(|e| e.to_string())?;
@@ -426,6 +418,56 @@ ret i64 %result
 <li>Merges blocks with single predecessors</li>
 <li>Simplifies trivial branches</li>
 </ul>
+<p>The <code>counter.tl</code> example has no branches, so <code>simplifycfg</code> has nothing to do there. To see it work, we need a method with control flow. Consider an <code>abs</code> method:</p>
+<pre><code>class Number {
+    value: int
+
+    def abs(self) -&gt; int {
+        if (self.value &lt; 0) {
+            return 0 - self.value
+        } else {
+            return self.value
+        }
+    }
+}
+</code></pre>
+<p>After <code>mem2reg</code>, the <code>abs</code> method has three basic blocks and two separate <code>ret</code> instructions, one per branch:</p>
+<pre><code>define i64 @Number__abs(ptr %self) {
+entry:
+  %field_ptr = getelementptr %Number, ptr %self, i32 0, i32 0
+  %field = load i64, ptr %field_ptr
+  %lt = icmp slt i64 %field, 0
+  br i1 %lt, label %then, label %else
+
+then:
+  %sub = sub i64 0, %field
+  ret i64 %sub
+
+else:
+  ret i64 %field
+}
+</code></pre>
+<p>Adding <code>simplifycfg</code> (<code>--passes "mem2reg,simplifycfg"</code>) merges the two exits into a single return block. Because control can reach it from either branch, LLVM inserts a <code>phi</code> node to pick the right value based on which block executed:</p>
+<pre><code>define i64 @Number__abs(ptr %self) {
+entry:
+  %field_ptr = getelementptr %Number, ptr %self, i32 0, i32 0
+  %field = load i64, ptr %field_ptr
+  %lt = icmp slt i64 %field, 0
+  br i1 %lt, label %then, label %else
+
+common.ret:
+  %common.ret.op = phi i64 [ %sub, %then ], [ %field, %else ]
+  ret i64 %common.ret.op
+
+then:
+  %sub = sub i64 0, %field
+  br label %common.ret
+
+else:
+  br label %common.ret
+}
+</code></pre>
+<p>The <code>phi</code> node is how SSA form expresses “the value depends on the path taken”. Merging returns like this keeps the CFG small, which helps later passes and the backend generate tighter code.</p>
 <h2 id="using-the-cli"><a class="header" href="#using-the-cli">Using the CLI</a></h2>
 <pre><code class="language-bash"># Run without optimization
 thirdlang examples/point.tl

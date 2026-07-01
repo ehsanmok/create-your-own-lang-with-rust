@@ -333,7 +333,6 @@ x = c.get()         # Get returns an int
         }
 
         Expr::Call { name, args } =&gt; {
-            // Look up function type
             let func_type = env
                 .get(name)
                 .or_else(|| ctx.global_env.get(name))
@@ -368,7 +367,6 @@ x = c.get()         # Get returns an int
         } =&gt; {
             typecheck_expr(ctx, object, env)?;
 
-            // Get the class info
             let class_name = object
                 .ty
                 .class_name()
@@ -385,7 +383,6 @@ x = c.get()         # Get returns an int
                 .ok_or_else(|| format!("Unknown method {} on class {}", method, class_name))?
                 .clone();
 
-            // Check argument count
             if args.len() != method_info.params.len() {
                 return Err(format!(
                     "Method {}.{} expects {} arguments, got {}",
@@ -396,7 +393,6 @@ x = c.get()         # Get returns an int
                 ));
             }
 
-            // Type check arguments
             for (arg, (_, param_type)) in args.iter_mut().zip(method_info.params.iter()) {
                 typecheck_expr(ctx, arg, env)?;
                 let _ = arg.ty.unify(param_type)?;
@@ -408,7 +404,6 @@ x = c.get()         # Get returns an int
         Expr::FieldAccess { object, field } =&gt; {
             typecheck_expr(ctx, object, env)?;
 
-            // Get the class info
             let class_name = object
                 .ty
                 .class_name()
@@ -427,14 +422,12 @@ x = c.get()         # Get returns an int
         }
 
         Expr::New { class, args } =&gt; {
-            // Get the class info
             let class_info = ctx
                 .classes
                 .get(class)
                 .ok_or_else(|| format!("Unknown class: {}", class))?
                 .clone();
 
-            // Get constructor if exists
             if let Some(ctor) = class_info.get_method("__init__") {
                 if args.len() != ctor.params.len() {
                     return Err(format!(

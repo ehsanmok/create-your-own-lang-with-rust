@@ -417,10 +417,7 @@ Assignment { name: "is_big", value: Binary(...), ty: Bool }
             }
 
             // Type mismatch
-            _ =&gt; Err(format!(
-                "Type mismatch: expected {:?}, got {:?}",
-                self, other
-            )),
+            _ =&gt; Err(format!("Type mismatch: expected {}, got {}", self, other)),
         }
     }</code></pre>
 <p><a class="filename" href="https://github.com/ehsanmok/create-your-own-lang-with-rust/blob/master/secondlang/src/types.rs">secondlang/src/types.rs</a></p>
@@ -496,7 +493,8 @@ Assignment { name: "is_big", value: Binary(...), ty: Bool }
 pub fn typecheck(program: &amp;mut Program) -&gt; Result&lt;(), String&gt; {
     let mut env = TypeEnv::new();
 
-    // First pass: collect function signatures
+    // Collect every function signature first so functions can refer to each
+    // other regardless of the order they are defined in.
     for stmt in program.iter() {
         if let Stmt::Function {
             name,
@@ -514,7 +512,6 @@ pub fn typecheck(program: &amp;mut Program) -&gt; Result&lt;(), String&gt; {
         }
     }
 
-    // Second pass: type check each statement
     for stmt in program.iter_mut() {
         typecheck_stmt(stmt, &amp;mut env)?;
     }
@@ -604,14 +601,12 @@ def isOdd(n: int) -&gt; bool {
         }
 
         Expr::Call { name, args } =&gt; {
-            // Look up function type
             let func_type = env
                 .get(name)
                 .ok_or_else(|| format!("Undefined function: {}", name))?
                 .clone();
 
             if let Type::Function { params, ret } = func_type {
-                // Check argument count
                 if args.len() != params.len() {
                     return Err(format!(
                         "Function {} expects {} arguments, got {}",
@@ -621,10 +616,9 @@ def isOdd(n: int) -&gt; bool {
                     ));
                 }
 
-                // Type check each argument
                 for (arg, param_type) in args.iter_mut().zip(params.iter()) {
                     typecheck_expr(arg, env)?;
-                    let _ = arg.ty.unify(param_type)?;
+                    let _ = param_type.unify(&amp;arg.ty)?;
                 }
 
                 expr.ty = *ret;
@@ -643,7 +637,6 @@ def isOdd(n: int) -&gt; bool {
                 return Err(format!("If condition must be bool, got {}", cond.ty));
             }
 
-            // Type check branches
             let mut then_env = env.clone();
             let mut then_type = Type::Unit;
             for stmt in then_branch.iter_mut() {
@@ -763,7 +756,7 @@ let result = typecheck("add(1, true)");
 <strong>Related Topics</strong>
 <ul>
 <li><a href="./annotations.html">Type Annotations</a> - Where types come from</li>
-<li><a href="./why_types.html">Why Types Matter</a> - Motivation for static types</li>
+<li><a href="./why_types.html">The Case for Types</a> - Motivation for static types</li>
 <li><a href="./codegen.html">Code Generation</a> - How types inform IR generation</li>
 <li><a href="../04_thirdlang/classes_syntax.html">Thirdlang Types</a> - Extending types for classes</li>
 </ul>

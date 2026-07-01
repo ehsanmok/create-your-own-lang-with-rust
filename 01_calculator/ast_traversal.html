@@ -323,14 +323,14 @@ impl Compile for Jit {
 <p><strong>Setup LLVM</strong> - Create context, module, builder</p>
 </li>
 <li>
-<p><strong>Create wrapper function</strong> - We need a function to call, so we create <code>__jit</code> with signature <code>() -&gt; i64</code></p>
+<p><strong>Create wrapper function</strong> - We need a function to call, so we create <code>jit</code> with signature <code>() -&gt; i32</code></p>
 </li>
 <li>
 <p><strong>Compile AST</strong> - <code>recursive_builder</code> walks the tree:</p>
 <ul>
-<li>Compile <code>Int(1)</code> → creates i64 constant <code>1</code></li>
-<li>Compile <code>Int(2)</code> → creates i64 constant <code>2</code></li>
-<li>Compile <code>Add</code> → creates <code>add i64 1, 2</code> instruction, returns the result</li>
+<li>Compile <code>Int(1)</code> → creates i32 constant <code>1</code></li>
+<li>Compile <code>Int(2)</code> → creates i32 constant <code>2</code></li>
+<li>Compile <code>Add</code> → creates <code>add i32 1, 2</code> instruction, returns the result</li>
 </ul>
 </li>
 <li>
@@ -343,7 +343,7 @@ impl Compile for Jit {
 <p><strong>Execute</strong> - Call the function, get <code>3</code></p>
 </li>
 </ol>
-<h3 id="why-this-matters"><a class="header" href="#why-this-matters">Why This Matters</a></h3>
+<h3 id="scaling-to-any-expression"><a class="header" href="#scaling-to-any-expression">Scaling to Any Expression</a></h3>
 <p>The recursive builder pattern scales to any expression, no matter how complex:</p>
 <pre><code>-((1 + 2) * (3 - 4))
 </code></pre>

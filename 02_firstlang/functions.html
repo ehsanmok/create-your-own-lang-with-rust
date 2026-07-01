@@ -302,7 +302,7 @@ outer()
     <a href><img alt="call stack" src="../img/call-stack.svg"> </a>
 </p>
 <p>The stack grows when functions are called and shrinks when they return. This is why we call it a <em>stack</em> - last in, first out.</p>
-<h2 id="why-frames-matter"><a class="header" href="#why-frames-matter">Why Frames Matter</a></h2>
+<h2 id="one-frame-per-call"><a class="header" href="#one-frame-per-call">One Frame Per Call</a></h2>
 <p>Consider this code:</p>
 <pre><code>def foo(x) {
     return x + 1
@@ -352,7 +352,7 @@ quadruple(5)    # 20
 <li><code>quadruple</code> returns <code>20</code>, pop its frame</li>
 </ol>
 <p>Notice how <code>x</code> has different values in different frames, even though they’re all named <code>x</code>.</p>
-<p>Next, we’ll add <a href="./control_flow.html">control flow</a> to make our functions more powerful - the ability to make decisions and repeat actions.</p>
+<p>Next, we’ll add <a href="./control_flow.html">control flow</a>: the ability to make decisions and repeat actions.</p>
 
                     </main>
 

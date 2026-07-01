@@ -179,6 +179,9 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="secondlang"><a class="header" href="#secondlang">Secondlang</a></h1>
+<blockquote>
+<p><strong>Setup</strong>: Secondlang compiles with LLVM, so before anything else you need Rust nightly and LLVM 20 installed, with <code>LLVM_SYS_201_PREFIX</code> pointing at your LLVM (for example <code>export LLVM_SYS_201_PREFIX=/opt/homebrew/opt/llvm</code> on macOS). A missing or mismatched LLVM is the most common reason this crate fails to build. See <a href="#prerequisites">Prerequisites</a> below for versions and details.</p>
+</blockquote>
 <p>In Part II, we built <a href="../02_firstlang/intro.html">Firstlang</a>, an interpreted language with functions, recursion, and control flow. Now we take the next step: adding a <em>type system</em> and compiling to native code using LLVM.</p>
 <h2 id="what-changes-from-firstlang"><a class="header" href="#what-changes-from-firstlang">What Changes from Firstlang?</a></h2>
 <p>The transition from Firstlang to Secondlang illustrates a key insight in language design: <strong>types are primarily a semantic addition, not a syntactic one</strong>. The grammar changes are minimal, but the compiler architecture changes significantly.</p>
@@ -284,6 +287,9 @@ fib(10)</code></pre>
 <li>LLVM 19.x: <code>features = ["llvm19-1"]</code></li>
 <li>LLVM 18.x: <code>features = ["llvm18-1"]</code></li>
 </ul>
+<p>The <code>llvm-sys</code> crate (which inkwell builds on) locates LLVM through a version-specific environment variable. For LLVM 20 that is <code>LLVM_SYS_201_PREFIX</code>:</p>
+<pre><code class="language-bash">export LLVM_SYS_201_PREFIX=/opt/homebrew/opt/llvm   # macOS (Homebrew); adjust for your system
+</code></pre>
 <p>Secondlang also requires Rust nightly due to inkwell’s dependency on edition 2024.</p>
 <pre><code class="language-bash">rustup toolchain install nightly
 </code></pre>
@@ -302,7 +308,7 @@ rustup run nightly cargo run -- --check examples/fibonacci.sl
 <h2 id="outline"><a class="header" href="#outline">Outline</a></h2>
 <p>In the following chapters, we build Secondlang step by step:</p>
 <ol>
-<li><a href="why_types.html">Why Types Matter</a> - Benefits of static typing</li>
+<li><a href="why_types.html">The Case for Types</a> - Benefits of static typing</li>
 <li><a href="annotations.html">Type Annotations</a> - Grammar and parsing changes</li>
 <li><a href="inference.html">Type Inference</a> - Deducing types automatically</li>
 <li><a href="optimizations.html">AST Optimizations</a> - Visitor pattern and optimization passes</li>
