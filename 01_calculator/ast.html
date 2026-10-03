@@ -185,7 +185,7 @@
 <p>We’ve parsed our source code into pest’s representation. But pest gives us a generic tree of “pairs” - it doesn’t know that <code>+</code> means addition or that <code>1</code> is a number we want to compute with. We need our own data structure that captures <em>meaning</em>, not just syntax.</p>
 <h2 id="from-string-to-tree"><a class="header" href="#from-string-to-tree">From String to Tree</a></h2>
 <p>AST comes into the picture when we want to go from the string representation of our program like <code>"-1"</code> or <code>"1 + 2"</code> to something more manageable. Since our program is not a random string (that’s what the grammar ensures), we can use its structure to our advantage.</p>
-<p>Here’s what <code>1 + 2</code> looks like as a tree:</p>
+<p>Here’s what <code>-1</code> and <code>1 + 2</code> look like as trees:</p>
 <p align="center">
   </br>
     <a href><img  alt="ast" src="../img/ast.svg"> </a>
