@@ -8,7 +8,7 @@ We've parsed our source code into pest's representation. But pest gives us a gen
 
 AST comes into the picture when we want to go from the string representation of our program like `"-1"` or `"1 + 2"` to something more manageable. Since our program is not a random string (that's what the grammar ensures), we can use its structure to our advantage.
 
-Here's what `1 + 2` looks like as a tree:
+Here's what `-1` and `1 + 2` look like as trees:
 
 <p align="center">
   </br>
